@@ -1,0 +1,26 @@
+
+<template name="discussion_architecture">
+    
+    <h1>Architecture</h1>
+    <p>TODO</p>
+    
+    <h2>Hybrid Modules</h2>
+    <p>TODO</p>
+    
+    <h3>Module List</h3>
+    {{> architecture_modules }}
+    
+</template>
+
+
+<template name="architecture_modules">
+    <ul>
+    {{#each list}}
+        <li>
+            <a href="/pydoc/{{this}}">DOC</a>  
+            <a href="/source/{{this}}">SRC</a>
+            {{this}}
+        </li>
+    {{/each}}
+    </ul>
+</template>

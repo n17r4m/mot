@@ -1,0 +1,15 @@
+<template name="source_index">
+<p>Pass file path</p>
+</template>
+
+<template name="source">
+{{#markdown}}
+```
+{{source data.data}}
+```
+{{/markdown}}
+</template>
+
+<template name="pydoc">
+{{{pydoc data.data}}}
+</template>

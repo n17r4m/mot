@@ -1,0 +1,42 @@
+
+
+<template name="app">
+  {{> menu}}
+  <section>{{> Template.dynamic template=main}}</section>
+</template>
+
+
+<template name="app_index">
+    <div class="section active">{{> hello}}</div>
+    <div class="section">{{> info}}</div>
+</template>
+
+<template name="hello">
+  <p>Server up since {{startup_time}}</p>
+  <p>The button has been pressed {{button_presses}} times.</p>
+  <button style="margin:1em; padding: 0.5em; font-size: 1.5em">+1</button>
+  
+</template>
+
+<template name="info">
+  <h1>Resources</h1>
+  <h2>Meteor</h2>
+  <ul>
+    <li><a href="https://www.meteor.com/try" target="_blank">Do the Tutorial</a></li>
+    <li><a href="http://guide.meteor.com" target="_blank">Follow the Guide</a></li>
+    <li><a href="https://docs.meteor.com" target="_blank">Read the Docs</a></li>
+    <li><a href="https://forums.meteor.com" target="_blank">Discussions</a></li>
+    <li><a href="https://github.com/kadirahq/flow-router">Flow-Router</a></li>
+  </ul>
+  <h2>Plotly.js</h2>
+  <ul>
+    <li><a href="https://plot.ly/javascript/" target="_blank">Homepage</a></li>
+    <li><a href="https://github.com/plotly/plotly.js" target="_blank">GitHub</a></li>
+  </ul>
+</template>
+
+
+
+
+
+

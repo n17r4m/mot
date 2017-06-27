@@ -1,0 +1,24 @@
+
+
+<template name="simulate"> 
+  <h1>Simulate</h1>
+  <div class="controls">
+    {{#each controls}}
+      <div class="control">{{> simulation_control}}</div>
+    {{/each}}
+  </div>
+  <div>
+    <button>Generate Simulation</button>
+  </div>
+</template>
+
+
+<template name="simulation_control">
+  <h3>{{arg}}</h3>
+  <label>{{help}}</label>
+  {{#if custom}}
+    <button>Select</button>
+  {{else}}
+    <input type="text" size="6" value={{default}}>
+  {{/if}}
+</template>

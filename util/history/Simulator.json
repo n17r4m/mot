@@ -1,0 +1,22 @@
+{ "args": [
+    {"arg": "bg", "help": "The background image to use", "type": "str", "custom": true},
+    {"arg": "output_video", "help": "file to save simulated video to", "type": "str", "custom": true},
+    {"arg": ["-n", "--num"], "help": "number of frames to generate", "type": "int", "default": 10},  
+    {"arg": ["-fps", "--fps"], "help": "frames per second", "type": "int", "default": 300},
+    {"arg": ["-d", "--drop_dir"], "help": "dir to drop sprites", "default": "drop", "type": "str"},
+    {"arg": ["-s", "--sand_dir"], "help": "dir to sand sprites", "default": "sand", "type": "str"},
+    
+    {"arg": ["-dn",  "--drop_num"], "help": "number of drops", "type": "int", "default": 250},
+    {"arg": ["-dvm", "--drop_vel_mean"], "help": "drop velocity mean", "type": "float", "default": -2.5},
+    {"arg": ["-dvv", "--drop_vel_var"], "help": "drop velocity variance", "type": "float", "default": 3},
+    {"arg": ["-dsm", "--drop_size_mean"], "help": "drop size mean", "type": "float", "default": 8},
+    {"arg": ["-dsv", "--drop_size_var"], "help": "drop size variance", "type": "float", "default": 10},
+    
+    {"arg": ["-sn",  "--sand_num"], "help": "number of sand particles", "type": "int", "default": 300},
+    {"arg": ["-svm", "--sand_vel_mean"], "help": "sand velocity mean", "type": "float", "default": 1},
+    {"arg": ["-svv", "--sand_vel_var"], "help": "sand velocity variance", "type": "float", "default": 1},
+    {"arg": ["-ssm", "--sand_size_mean"], "help": "sand size mean", "type": "float", "default": 8},
+    {"arg": ["-ssv", "--sand_size_var"], "help": "sand size variance", "type": "float", "default": 6},
+    
+    {"arg": ["-b", "--bag"], "help": "bag file to save to", "type": "str", "default": ":memory:", "custom": true}
+]}
