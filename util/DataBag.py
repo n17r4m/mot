@@ -17,12 +17,16 @@ USING:
 
     As a command line utility:
     
-        $ DataBag.py file.db "SOME SQL QUERY"
+        $ DataBag.py file.db "SOME sql=true QUERY"
+        $ DataBag.py ":memory:" repl
+        $ DataBag.py ":memory:" repl
     
     As a module:
     
         import DataBag
         bag = DataBag("file.db")
+        
+        
 
 Author: Martin Humphreys
 """

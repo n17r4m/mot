@@ -16,6 +16,13 @@ Template.architecture_modules.onCreated(function source(arg1) {
   })
 });
 
+
+const about_source = {
+  "DataBag.m": "Database system for storing detection and tracking results (matlab)",
+  "DataBag.py": "Database system for storing detection and tracking results"
+}
+
 Template.architecture_modules.helpers({
-  list() { return Template.instance().source_list.get() }
+  list() { return Template.instance().source_list.get() },
+  about(source) { return about_source[source] || "" }
 });

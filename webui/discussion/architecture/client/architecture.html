@@ -2,10 +2,18 @@
 <template name="discussion_architecture">
     
     <h1>Architecture</h1>
-    <p>TODO</p>
+    <p>The design and structure of this multiple object tracking system</p>
+    
+    <h2>Design Objective</h2>
+    
+    <ol>
+        <li>Exceed the state of the art in multiple object tracking</li>
+        <li>Deliver a robust video analysis toolkit which can be used by industry</li>
+    </ol>
     
     <h2>Hybrid Modules</h2>
-    <p>TODO</p>
+    <p>Insofar much as possible, the python modules found in this project are 
+    also stand-alone command line utilities, and all that that entails.</p>
     
     <h3>Module List</h3>
     {{> architecture_modules }}
@@ -17,9 +25,12 @@
     <ul>
     {{#each list}}
         <li>
-            <a href="/pydoc/{{this}}">DOC</a>  
+            <a href="/pydoc/{{this}}">DOC</a> 
+            <a href="/help/{{this}}">HELP</a>  
             <a href="/source/{{this}}">SRC</a>
             {{this}}
+            <span style="display: inline-block; font-size: small; margin-left: 1em;">{{about this}}</span>
+            
         </li>
     {{/each}}
     </ul>
