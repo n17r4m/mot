@@ -26,7 +26,6 @@ Template.pydoc.onCreated(function source(arg1) {
   var self = this
   self.doc = new ReactiveVar("")
   Meteor.call("pydoc", this.data.data(), function(err, html){
-    console.info(err, html)
     if (err){
         self.doc.set("Error")
     } else {
@@ -37,5 +36,21 @@ Template.pydoc.onCreated(function source(arg1) {
 
 Template.pydoc.helpers({
   pydoc(file) { return Template.instance().doc.get() }
+});
+
+Template.pyhelp.onCreated(function source(arg1) {
+  var self = this
+  self.help = new ReactiveVar("")
+  Meteor.call("pyhelp", this.data.data(), function(err, text){
+    if (err){
+        self.help.set("Error")
+    } else {
+        self.help.set(text)
+    }
+  })
+});
+
+Template.pyhelp.helpers({
+  pyhelp(file) { return Template.instance().help.get() }
 });
 

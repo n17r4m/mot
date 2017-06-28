@@ -15,3 +15,9 @@ FlowRouter.route('/pydoc/:file', {
         BlazeLayout.render("pydoc", {data: params.file});
     }
 });
+
+FlowRouter.route('/pyhelp/:file', {
+    action: function(params) {
+        BlazeLayout.render("pyhelp", {data: params.file});
+    }
+});

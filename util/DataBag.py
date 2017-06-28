@@ -4,7 +4,7 @@ Storage for detection and tracking information
 
 SCHEMA
 
-    Particles
+    particles: id INTEGER PRIMARY KEY, area INTEGER, intensity INTEGER, perimeter INTEGER, 
 
 
 CHANGELOG:
@@ -144,7 +144,7 @@ class DataBag(object):
         c = self.cursor()
         if not self.tableExists("frames"):    c.execute("CREATE TABLE frames (frame INTEGER, bitmap BLOB)")
         if not self.tableExists("assoc"):     c.execute("CREATE TABLE assoc (frame INTEGER, particle INTEGER, x REAL, y REAL)")
-        if not self.tableExists("particles"): c.execute("CREATE TABLE particles (id INTEGER PRIMARY KEY, area INTEGER, intensity INTEGER, perimeter INTEGER)")
+        if not self.tableExists("particles"): c.execute("CREATE TABLE particles (id INTEGER PRIMARY KEY, area REAL, intensity REAL, perimeter REAL)")
         if not self.tableExists("meta"):
             c.execute("CREATE TABLE meta (name TEXT PRIMARY KEY, value TEXT)")
             c.execute("INSERT INTO meta (name, value) VALUES ('revision', '1')")
@@ -162,7 +162,9 @@ class DataBag(object):
             c.execute("INSERT INTO categories (id, name) VALUES (3, 'sand')")
             c.execute("INSERT INTO categories (id, name) VALUES (4, 'bubble')")
             self.commit()
-            
+        
+        
+        
         c.execute("ALTER TABLE particles ADD COLUMN category INTEGER DEFAULT 0")
         c.execute("ALTER TABLE particles ADD COLUMN width REAL DEFAULT 0")
         c.execute("ALTER TABLE particles ADD COLUMN height REAL DEFAULT 0")

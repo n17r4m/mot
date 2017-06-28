@@ -52,5 +52,20 @@ Meteor.methods({
           
         })
         return future.wait();
+    },
+    pyhelp: function readpydoc(file){
+        var future = new Future();
+        
+        file = file.replace(/[\/|\\]/g, "SLASH") // Kill slashes
+        
+        exec(path + file + " --help", {cwd: path}, function(err, stdout, stderr){
+            if (err){
+                future.throw(err)
+            } else {
+                future.return(stdout.toString());  
+            }
+          
+        })
+        return future.wait();
     }
 })
