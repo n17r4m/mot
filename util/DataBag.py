@@ -17,14 +17,16 @@ USING:
 
     As a command line utility:
     
-        $ DataBag.py file.db "SOME sql=true QUERY"
+        $ DataBag.py file.db query "SOME sql=true QUERY"
+        $ DataBag.py file.db repl
         $ DataBag.py ":memory:" repl
-        $ DataBag.py ":memory:" repl
+        $ DataBag.py newfile.db import import.csv
+        $ DataBag.py 1file.db compare 2file.csv
     
     As a module:
     
-        import DataBag
-        bag = DataBag("file.db")
+        from DataBag import DataBag
+        bag = DataBag("../data/file.db")
         
         
 
