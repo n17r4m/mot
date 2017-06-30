@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 """
-Storage for detection and tracking information
+Storage for detection and tracking information. Indubitably.
 
 SCHEMA
 
