@@ -142,7 +142,7 @@ class DataBag(object):
     def migration_0(self):
         self.say("Migrating to revision", 1)
         c = self.cursor()
-        if not self.tableExists("frames"):    c.execute("CREATE TABLE frames (frame INTEGER, bitmap BLOB)")
+        if not self.tableExists("frames"):    c.execute("CREATE TABLE frames (frame INTEGER PRIMARY KEY, bitmap BLOB)")
         if not self.tableExists("assoc"):     c.execute("CREATE TABLE assoc (frame INTEGER, particle INTEGER, x REAL, y REAL)")
         if not self.tableExists("particles"): c.execute("CREATE TABLE particles (id INTEGER PRIMARY KEY, area REAL, intensity REAL, perimeter REAL)")
         if not self.tableExists("meta"):
@@ -165,9 +165,9 @@ class DataBag(object):
         
         
         
+        c.execute("ALTER TABLE particles ADD COLUMN radius REAL DEFAULT 0")
         c.execute("ALTER TABLE particles ADD COLUMN category INTEGER DEFAULT 0")
-        c.execute("ALTER TABLE particles ADD COLUMN width REAL DEFAULT 0")
-        c.execute("ALTER TABLE particles ADD COLUMN height REAL DEFAULT 0")
+        
         self.commit()
         
         self.tryQuery("CREATE INDEX Idx1 on particles (area, intensity, perimeter)")

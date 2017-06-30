@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="31cm" height="24cm" viewBox="15 24 601 477" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <g>
+      <rect style="fill: #ffffff" x="58.0994" y="58.3614" width="125.5" height="28"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="58.0994" y="58.3614" width="125.5" height="28"/>
+      <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="120.849" y="77.3614">frames</text>
+      <rect style="fill: #ffffff" x="58.0994" y="86.3614" width="125.5" height="36"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="58.0994" y="86.3614" width="125.5" height="36"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="61.0994" y="100.361">+frame: INTEGER</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="61.0994" y="116.361">+bitmap: BLOB</text>
+      <rect style="fill: #ffffff" x="58.0994" y="122.361" width="125.5" height="8"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="58.0994" y="122.361" width="125.5" height="8"/>
+    </g>
+    <g>
+      <rect style="fill: #ffffff" x="58.0994" y="141.361" width="148.6" height="28"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="58.0994" y="141.361" width="148.6" height="28"/>
+      <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="132.399" y="160.361">assoc</text>
+      <rect style="fill: #ffffff" x="58.0994" y="169.361" width="148.6" height="68"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="58.0994" y="169.361" width="148.6" height="68"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="61.0994" y="183.361">+frame: INTEGER</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="61.0994" y="199.361">+particle: INTEGER</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="61.0994" y="215.361">+x: REAL</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="61.0994" y="231.361">+y: REAL</text>
+      <rect style="fill: #ffffff" x="58.0994" y="237.361" width="148.6" height="8"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="58.0994" y="237.361" width="148.6" height="8"/>
+    </g>
+    <g>
+      <rect style="fill: #ffffff" x="256.099" y="58.3614" width="133.2" height="28"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="256.099" y="58.3614" width="133.2" height="28"/>
+      <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="322.699" y="77.3614">particles</text>
+      <rect style="fill: #ffffff" x="256.099" y="86.3614" width="133.2" height="68"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="256.099" y="86.3614" width="133.2" height="68"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="259.099" y="100.361">+id: INTEGER</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="259.099" y="116.361">+area: REAL</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="259.099" y="132.361">+intensity: REAL</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="259.099" y="148.361">+perimeter: REAL</text>
+      <rect style="fill: #ffffff" x="256.099" y="154.361" width="133.2" height="8"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="256.099" y="154.361" width="133.2" height="8"/>
+    </g>
+    <g>
+      <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="58.0994,179.361 33.9994,179.361 33.9994,96.3614 58.0994,96.3614 "/>
+      <polygon style="fill: #000000" points="31.9994,137.861 31.9994,129.861 23.9994,133.861 "/>
+    </g>
+    <g>
+      <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="206.699,195.361 226.899,195.361 226.899,96.3614 256.099,96.3614 "/>
+      <polygon style="fill: #000000" points="230.899,145.861 230.899,137.861 238.899,141.861 "/>
+    </g>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="22.9992" y="36.6483">
+      <tspan x="22.9992" y="36.6483">Revision 1</tspan>
+    </text>
+  </g>
+  <g>
+    <g>
+      <rect style="fill: #ffffff" x="47.9994" y="311.161" width="125.5" height="28"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="47.9994" y="311.161" width="125.5" height="28"/>
+      <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="110.749" y="330.161">frames</text>
+      <rect style="fill: #ffffff" x="47.9994" y="339.161" width="125.5" height="36"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="47.9994" y="339.161" width="125.5" height="36"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="50.9994" y="353.161">+frame: INTEGER</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="50.9994" y="369.161">+bitmap: BLOB</text>
+      <rect style="fill: #ffffff" x="47.9994" y="375.161" width="125.5" height="8"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="47.9994" y="375.161" width="125.5" height="8"/>
+    </g>
+    <g>
+      <rect style="fill: #ffffff" x="47.9994" y="396.188" width="148.6" height="28"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="47.9994" y="396.188" width="148.6" height="28"/>
+      <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="122.299" y="415.188">assoc</text>
+      <rect style="fill: #ffffff" x="47.9994" y="424.188" width="148.6" height="68"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="47.9994" y="424.188" width="148.6" height="68"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="50.9994" y="438.188">+frame: INTEGER</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="50.9994" y="454.188">+particle: INTEGER</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="50.9994" y="470.188">+x: REAL</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="50.9994" y="486.188">+y: REAL</text>
+      <rect style="fill: #ffffff" x="47.9994" y="492.188" width="148.6" height="8"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="47.9994" y="492.188" width="148.6" height="8"/>
+    </g>
+    <g>
+      <rect style="fill: #ffffff" x="228.999" y="311.161" width="148.6" height="28"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="228.999" y="311.161" width="148.6" height="28"/>
+      <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="303.299" y="330.161">particles</text>
+      <rect style="fill: #ffffff" x="228.999" y="339.161" width="148.6" height="100"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="228.999" y="339.161" width="148.6" height="100"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="231.999" y="353.161">+id: INTEGER</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="231.999" y="369.161">+area: REAL</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="231.999" y="385.161">+intensity: REAL</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="231.999" y="401.161">+perimeter: REAL</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="231.999" y="417.161">+radius: REAL</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="231.999" y="433.161">+category: INTEGER</text>
+      <rect style="fill: #ffffff" x="228.999" y="439.161" width="148.6" height="8"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="228.999" y="439.161" width="148.6" height="8"/>
+    </g>
+    <g>
+      <rect style="fill: #ffffff" x="463.999" y="424.161" width="105" height="28"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="463.999" y="424.161" width="105" height="28"/>
+      <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="516.499" y="443.161">categories</text>
+      <rect style="fill: #ffffff" x="463.999" y="452.161" width="105" height="36"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="463.999" y="452.161" width="105" height="36"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="466.999" y="466.161">+id: INTEGER</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="466.999" y="482.161">+value: TEXT</text>
+      <rect style="fill: #ffffff" x="463.999" y="488.161" width="105" height="8"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="463.999" y="488.161" width="105" height="8"/>
+      <rect style="fill: #ffffff" x="522.999" y="346.161" width="92.7" height="84"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 6; stroke: #000000" x="522.999" y="346.161" width="92.7" height="84"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="528.999" y="360.161">0:undefined</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="528.999" y="376.161">1:unknown</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="528.999" y="392.161">2:bitumen</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="528.999" y="408.161">3:sand</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="528.999" y="424.161">4:bubble</text>
+    </g>
+    <g>
+      <rect style="fill: #ffffff" x="398.864" y="325.161" width="102.4" height="28"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="398.864" y="325.161" width="102.4" height="28"/>
+      <text font-size="16" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:700" x="450.064" y="344.161">meta</text>
+      <rect style="fill: #ffffff" x="398.864" y="353.161" width="102.4" height="36"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="398.864" y="353.161" width="102.4" height="36"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="401.864" y="367.161">+name: TEXT</text>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="401.864" y="383.161">+value: TEXT</text>
+      <rect style="fill: #ffffff" x="398.864" y="389.161" width="102.4" height="8"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="398.864" y="389.161" width="102.4" height="8"/>
+      <rect style="fill: #ffffff" x="455.264" y="311.161" width="85" height="20"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 6; stroke: #000000" x="455.264" y="311.161" width="85" height="20"/>
+      <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="461.264" y="325.161">revision:2</text>
+    </g>
+    <g>
+      <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="47.9994,434.188 25.9994,434.188 25.9994,349.161 47.9994,349.161 "/>
+      <polygon style="fill: #000000" points="23.9994,391.675 23.9994,383.675 15.9994,387.675 "/>
+    </g>
+    <g>
+      <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="196.599,450.188 212.799,450.188 212.799,349.161 228.999,349.161 "/>
+      <polygon style="fill: #000000" points="216.799,399.675 216.799,391.675 224.799,395.675 "/>
+    </g>
+    <g>
+      <polyline style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="377.599,429.161 420.799,429.161 420.799,462.161 463.999,462.161 "/>
+      <polygon style="fill: #000000" points="424.799,445.661 424.799,437.661 432.799,441.661 "/>
+    </g>
+    <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="22.9992" y="290.786">
+      <tspan x="22.9992" y="290.786">Revision 2</tspan>
+    </text>
+  </g>
+</svg>

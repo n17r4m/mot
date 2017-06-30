@@ -1,0 +1,30 @@
+ul#architecture_modules_list {
+    list-style: none;  
+    margin-top: 2em;
+    
+}
+
+#architecture_modules_list li {
+    
+    
+    margin-bottom: -1em;
+}
+
+#architecture_modules_list span.div {
+    font-size: 2em;
+    line-height: 1.5em;
+    vertical-align: middle;
+}
+
+#architecture_modules_list span.about.this {
+    position: relative;
+    float: right;
+    right: 0;
+    width: 24em;
+    display: block; 
+    font-size: small;
+    margin-left: 1em;
+    color: #222;
+    vertical-align: middle;
+    clear: right;
+}

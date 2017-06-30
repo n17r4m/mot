@@ -3,3 +3,9 @@ FlowRouter.route('/', {
         BlazeLayout.render("index");
     }
 });
+
+FlowRouter.notFound = {
+    action: function() {
+        BlazeLayout.render("notFound");
+    }
+};

@@ -5,18 +5,20 @@ Converts a DataBag file or object descriptor into a simulated video.
 
 CHANGELOG:
     
-    v17.6.8   TODO
+    v17.6.8   Now using circles instead of hand-cropped sprites.
+              Hopefully, we can eventually use a well trained autoencoder 
+              to generate the sprites in the future.
 
 USING:
 
     As a command line utility:
     
-        $ Bag2Video.py input_bag output_video
+        $ Bag2Video.py bg_image input_bag output_video
     
     As a module:
     
         import Bag2Video from Bag2Video
-        b2v = BagToVideo(aDataBagObjectOrFilename)
+        b2v = BagToVideo(aDataBagObjectOrFilename, dotdict({"bg": backgroundImage}))
         b2v.generateAndSave("./output_video.avi")
         
 
@@ -93,9 +95,11 @@ class Particle:
         #  any intensity values behind the object being painted.
         
         p = self.particle
-        radius = np.sqrt(p.area / np.pi)
-        
-        cv2.circle(frame, (int(round(p.x)), int(round(p.y))), int(round(radius)), round(p.intensity))
+        print p
+        if p.id is not None:
+            radius = np.sqrt(p.area / np.pi)
+            
+            cv2.circle(frame, (int(round(p.x)), int(round(p.y))), int(round(radius)), round(p.intensity), -1, cv2.CV_AA)
         
         """ OLD sprite painting
         # Get sprite coordinates in the (f)rame and the (o)bject
@@ -163,7 +167,7 @@ class Bag2Video:
         self.height, self.width, self.channels = self.bg.shape
         self.vw = cv2.VideoWriter(opts.output_video, FOURCC , opts.fps, (self.width, self.height), False)
         
-
+        """
         self.sprites = {
             2: self.loadSprites(self.opts.drop_dir),
             3: self.loadSprites(self.opts.sand_dir),
@@ -176,7 +180,7 @@ class Bag2Video:
         
         if self.verbose:
             print "sprites loaded..."
-        
+        """
         
         
     
@@ -255,9 +259,9 @@ def build_parser():
     
     
     parser.add_argument("-fps", "--fps", help="frames per second", type=int, default=300)
-    parser.add_argument("-d", "--drop_dir", help="dir or path to drop sprites", default="data/particles/drop")
-    parser.add_argument("-s", "--sand_dir", help="dir or path to sand sprites", default="data/particles/sand")
-    parser.add_argument("-b", "--bubble_dir", help="dir or path to bubble sprites", default="data/particles/bubble")
+    #parser.add_argument("-d", "--drop_dir", help="dir or path to drop sprites", default="data/particles/drop")
+    #parser.add_argument("-s", "--sand_dir", help="dir or path to sand sprites", default="data/particles/sand")
+    #parser.add_argument("-b", "--bubble_dir", help="dir or path to bubble sprites", default="data/particles/bubble")
     
     parser.add_argument('-v', help='print verbose statements while executing', 
                               action = 'store_true')    

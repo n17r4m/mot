@@ -1,0 +1,34 @@
+
+
+
+<template name="help">
+    {{> discussion_top}}
+    <div class="ui main text container">
+        {{> Template.dynamic template=main}}
+    </div>
+    {{> discussion_bottom}}
+</template>
+
+<template name="help_top">
+    {{> menu}}
+</template>
+
+<template name="help_index">
+    <header>
+        <h2>Topics</h2>
+    </header>
+    <ul>
+        <li><a href="help/detection">Detection</a></li>
+        <li><a href="help/tracking">Tracking</a></li>
+        <li><a href="help/architecture">Architecture</a></li>
+        <li><a href="help/infrastructure">Infrastructure</a></li>
+    </ul>
+</template>
+
+<template name="help_bottom">
+    <hr>
+    <ul>
+        <li><a href="/help">Help</a></li>
+        <li><a href="/">Main</a></li>
+    </ul>
+</template>

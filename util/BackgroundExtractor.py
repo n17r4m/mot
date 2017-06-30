@@ -53,6 +53,7 @@ class BackgroundExtractor(object):
             f += 1
         return cv2.convertScaleAbs(bg)
   
+
 class AverageExtractor(BackgroundExtractor):
 
     def extract(self, verbose=False):

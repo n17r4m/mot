@@ -1,0 +1,74 @@
+
+<template name="discussion_architecture">
+    
+    <h1>Architecture</h1>
+    <p>The design and structure of this multiple object tracking system</p>
+    
+    <h2>Design Objective</h2>
+    
+    <ol>
+        <li>Exceed the state of the art in multiple object tracking</li>
+        <li>Develop a robust video analysis toolkit</li>
+    </ol>
+    
+    
+    
+    <h2>Hybrid Modules</h2>
+    <p>Insofar much as possible, the python modules found in this project are 
+    also stand-alone command line utilities.</p>
+    
+    <p>As an example, the <a href="/source/Query.py">Query.py</a> module has
+    a command line interface of:</p>
+    
+    {{> pyhelp data="Query.py"}}
+    
+    
+    
+    <h3>Module List</h3>
+    {{> architecture_modules }}
+    
+    <h2>DataBags</h2>
+    
+    <p>A DataBag is just a sqlite database.</p>
+    
+    <p>The <a href="/source/DataBag.py">python</a> and <a href="/source/DataBag.m">matlab</a> 
+    utilities provide many convenience functions, such as: running a query, entering
+    an interactive sql session, migration between scheme revisions, and of course, 
+    manipulating the data.</p>
+    
+    <h3>Schema</h3>
+    <img src="/schema.svg" width="100%">
+    
+    <p>All values are in absolute pixel values. That is, (x, y) are pixel positions,
+    area is sum of pixels, perimeter is the manhattan sum around the object boundry, 
+    and intensity is measured between 0-255</p>
+    
+    <h2>WebUI</h2>
+    
+    <p></p>
+    
+</template>
+
+
+<template name="architecture_modules">
+    <table class="ui definition table">
+        <head>
+            <tr>
+                <th>Module</th>
+                <th colspan="3"></th>
+                <th>Description</th>
+            </tr>
+        </head>
+        <tbody>
+            {{#each list}}    
+                <tr>
+                    <td>{{this}}</td>
+                    <td><a href="/pydoc/{{this}}">Doc</a></td>
+                    <td><a href="/pyhelp/{{this}}">Help</a></td>
+                    <td><a href="/source/{{this}}">Src</a></td>
+                    <td>{{about this}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</template>

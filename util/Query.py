@@ -14,7 +14,7 @@ $ Query.py file.db the_stored_query_name
 As a module:
 
 >>> import Query
->>> q = Query("file.db") # q = Query(bag)
+>>> q = Query("file.db") # or #  q = Query(bag)
 >>> particles = q.particles_in_frame(24)
 
 

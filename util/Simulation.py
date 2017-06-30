@@ -1,18 +1,18 @@
 #! /usr/bin/env python
 """
-Calculate the difference between an image and a video
+Generate a DataBag with certain properties.
 
 USING:
 
     As a command line utility:
     
-        $ FrameGrabber.py input_video frame_no output_image
+        $ Simulation.py 
     
     As a module:
     
-        import VideoDifference
-        dif = VideoDifference("input_video.avi", input_image)
-        bg = dif.difference()
+        from Simulation import Simulation
+        sim = Simulation(opts)
+        bag = sim.simulate("path/to/save.db")
 
 Author: Martin Humphreys
 """
@@ -320,26 +320,35 @@ def build_parser():
     parser.add_argument('output_video', help='file to save simulated video to')
     
     
-    parser.add_argument("-n", "--num", help="number of frames to generate", type=int, default=10)    
-ble")
+    parser.add_argument("-n", "--num", help="number of frames to generate", type=int, default=10)
+
+    parser.add_argument("-w", "--width", help="width of simulation", type=int, default=10)    
+    parser.add_argument("-h", "--height", help="height of simulation", type=int, default=10)    
+
     
     parser.add_argument("-dn",  "--drop_num", help="number of drops", type=int, default=250)
     parser.add_argument("-dvm", "--drop_vel_mean", help="drop velocity mean", type=float, default=-2.5)
     parser.add_argument("-dvv", "--drop_vel_var", help="drop velocity variance", type=float, default=3)
-    parser.add_argument("-dsm", "--drop_size_mean", help="drop size mean; 0 to randomly sample loaded drops", type=float, default=8)
-    parser.add_argument("-dsv", "--drop_size_var", help="drop size variance", type=float, default=10)    
+    parser.add_argument("-dsm", "--drop_size_mean", help="drop size mean;", type=float, default=50)
+    parser.add_argument("-dsv", "--drop_size_var", help="drop size variance", type=float, default=40)    
+    parser.add_argument("-dim", "--drop_intensity_mean", help="drop intensity mean;", type=float, default=200)
+    parser.add_argument("-div", "--drop_intensity_var", help="drop intensity variance", type=float, default=25)    
 
     parser.add_argument("-sn",  "--sand_num", help="number of sand particles", type=int, default=300)
     parser.add_argument("-svm", "--sand_vel_mean", help="sand velocity mean", type=float, default=1)
     parser.add_argument("-svv", "--sand_vel_var", help="sand velocity variance", type=float, default=1)
-    parser.add_argument("-ssm", "--sand_size_mean", help="sand size mean; 0 to randomly sample loaded sand", type=float, default=8)
-    parser.add_argument("-ssv", "--sand_size_var", help="sand size variance", type=float, default=6)
+    parser.add_argument("-ssm", "--sand_size_mean", help="sand size mean;", type=float, default=15)
+    parser.add_argument("-ssv", "--sand_size_var", help="sand size variance", type=float, default=10)
+    parser.add_argument("-sim", "--sand_intensity_mean", help="sand intensity mean;", type=float, default=100)
+    parser.add_argument("-siv", "--sand_intensity_var", help="sand intensity variance", type=float, default=50)
 
     parser.add_argument("-bn",  "--bubble_num", help="number of bubbles", type=int, default=10)
-    parser.add_argument("-bvm", "--bubble_vel_mean", help="bubble velocity mean", type=float, default=1)
-    parser.add_argument("-bvv", "--bubble_vel_var", help="bubble velocity variance", type=float, default=1)
-    parser.add_argument("-bsm", "--bubble_size_mean", help="bubble size mean; 0 to randomly sample loaded sand", type=float, default=8)
-    parser.add_argument("-bsv", "--bubble_size_var", help="bubble size variance", type=float, default=6)
+    parser.add_argument("-bvm", "--bubble_vel_mean", help="bubble velocity mean", type=float, default=-4)
+    parser.add_argument("-bvv", "--bubble_vel_var", help="bubble velocity variance", type=float, default=3)
+    parser.add_argument("-bsm", "--bubble_size_mean", help="bubble size mean;", type=float, default=200)
+    parser.add_argument("-bsv", "--bubble_size_var", help="bubble size variance", type=float, default=100)
+    parser.add_argument("-bim", "--bubble_intensity_mean", help="bubble intensity mean;", type=float, default=200)
+    parser.add_argument("-biv", "--bubble_intensity_var", help="bubble intensity variance", type=float, default=50)
 
     parser.add_argument("-b", "--bag", help="bag file to save to", type=str, default=":memory:")
     parser.add_argument('-v', help='print verbose statements while executing', 
