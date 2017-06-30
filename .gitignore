@@ -12,7 +12,7 @@ pids
 *.pid.lock
 
 # Data
-data
+data/*
 
 # Temporary data
 tmp
