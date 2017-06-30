@@ -11,6 +11,9 @@ pids
 *.seed
 *.pid.lock
 
+# Propriatary data
+data
+
 # Temporary data
 tmp
 *.tmp
