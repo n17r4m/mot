@@ -32,9 +32,12 @@ class BackgroundExtractor(object):
 
     def __init__(self, filename):
         self.vc = cv2.VideoCapture(filename)
+        self.filename = filename
         self.frames = int(self.vc.get(cv2.CAP_PROP_FRAME_COUNT))
         self.width = int(self.vc.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.vc.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        print self.frames, "frames"
+        print "size:", (self.width, self.height)
         
     def extract(self, verbose=False):  
         ret, frame = self.vc.read()
@@ -57,7 +60,10 @@ class BackgroundExtractor(object):
 class AverageExtractor(BackgroundExtractor):
 
     def extract(self, verbose=False):
+        
         shape = (self.height, self.width)
+        
+        
 
         avg_bg = np.zeros(shape)
 
@@ -114,9 +120,19 @@ class MaximumExtractor(BackgroundExtractor):
         BisBigger = np.where(BisBigger < 0, 1, 0)
         return A - A * BisBigger + B * BisBigger
 
+
+class MixedExtractor(BackgroundExtractor):
+    
+    def extract(self, verbose=False, ratio=0.5):
+        avg_ex = AverageExtractor(self.filename)
+        max_ex = MaximumExtractor(self.filename)
+        return (avg_ex.extract(verbose) * ratio) + (max_ex.extract(verbose) * (1-ratio))
+
+
+
 class SimpleExtractor(AverageExtractor):
     # The only difference between this and Average is that
-    #  we only average the first 10 frames...
+    # we only average the first 10 frames...
     def extract(self, verbose=False):
         shape = (self.height, self.width)
 
@@ -145,7 +161,7 @@ def build_parser():
     parser = ArgumentParser()
     parser.add_argument('input_video', help='video to extract bacground from')
     parser.add_argument('output_image', help='file to save extracted background to')
-    parser.add_argument('background_type', help='type of background extraction [running_avg, avg, maximum, simple]')
+    parser.add_argument('background_type', help='type of background extraction [running_avg, avg, maximum, mix, simple]')
     parser.add_argument('-v', help='print verbose statements while executing', 
                               action = 'store_true')
     return parser
@@ -162,6 +178,8 @@ def main():
         extractor = AverageExtractor(options.input_video)
     elif options.background_type == 'max':
         extractor = MaximumExtractor(options.input_video)
+    elif options.background_type == 'mix':
+        extractor = MixedExtractor(options.input_video)
     elif options.background_type == 'simple':
         extractor = SimpleExtractor(options.input_video)
 

@@ -12,7 +12,7 @@ pids
 *.pid.lock
 
 # Data
-data/*
+data
 
 # Temporary data
 tmp
@@ -64,4 +64,5 @@ typings/
 # dotenv environment variables file
 .env
 
+# cloud9
 .c9
