@@ -118,14 +118,14 @@ class Query(object):
     
     def frame_list(self):
         c = self.cursor()
-        c.execute("SELECT frame FROM frames")
+        c.execute("SELECT frame FROM frames ORDER BY frame")
         return c.fetchall()
     
     def particles_in_frame(self, frame, category = None):
         c = self.cursor()
-        fields = "id, area, intensity, category, x, y, width, height"
+        fields = "id, area, intensity, category, x, y, radius"
         if category is None:
-            c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ?", (frame,))
+            c.execute("SELECT " + fields + " FROM LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ?", (frame,))
         else:    
             c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ? and category = ?", (frame, category))
         return self.fieldmap(fields, c.fetchall())

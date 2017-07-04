@@ -1,3 +1,9 @@
+FlowRouter.route('/help/architecture', {
+    action: function(params) {
+        BlazeLayout.render("help", {main: "help_architecture"});
+    }
+});
+
 FlowRouter.route('/source', {
     action: function(params) {
         BlazeLayout.render("source_index");

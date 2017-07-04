@@ -99,7 +99,7 @@ class Particle:
         if p.id is not None:
             radius = np.sqrt(p.area / np.pi)
             
-            cv2.circle(frame, (int(round(p.x)), int(round(p.y))), int(round(radius)), round(p.intensity), -1, cv2.CV_AA)
+            cv2.circle(frame, (int(round(p.x)), int(round(p.y))), int(round(radius)), int(round(p.intensity)), -1)
         
         """ OLD sprite painting
         # Get sprite coordinates in the (f)rame and the (o)bject

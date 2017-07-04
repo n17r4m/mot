@@ -2,11 +2,6 @@
 """
 Storage for detection and tracking information.
 
-SCHEMA
-
-    particles: id INTEGER PRIMARY KEY, area INTEGER, intensity INTEGER, perimeter INTEGER, 
-
-
 CHANGELOG:
     
     v17.6.26  Reworked the database migration system
@@ -27,6 +22,8 @@ USING:
     
         from DataBag import DataBag
         bag = DataBag("../data/file.db")
+        bag = DataBag.fromArg(existingBagOrFilePathToDB)
+        
         
         
 

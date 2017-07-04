@@ -5,10 +5,11 @@ import './fortune.html';
 
 
 
-Template.fortune.onCreated(function source(arg1) {
+Template.fortune.onCreated(function fortune(verbose) {
   var self = this
   self.fortune = new ReactiveVar("")
   Meteor.call("fortune", function(err, fortune){
+    if (verbose){ console.info("Fortune:", fortune) }
     if (err){
         self.fortune.set("Error")
     } else {
@@ -18,5 +19,7 @@ Template.fortune.onCreated(function source(arg1) {
 });
 
 Template.fortune.helpers({
-  fortune() { return Template.instance().fortune.get() }
+  fortune(verbose) { 
+    if (verbose) { console.info("Your fortune is:", Template.instance().fortune.curValue) }
+    return Template.instance().fortune.get().replace(/\n/g, "<br>") }
 });

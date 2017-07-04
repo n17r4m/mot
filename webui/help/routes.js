@@ -4,12 +4,6 @@ FlowRouter.route('/help', {
     }
 });
 
-FlowRouter.route('/help/architecture', {
-    action: function(params) {
-        BlazeLayout.render("help", {main: "help_architecture"});
-    }
-});
-
 FlowRouter.route('/help/detection', {
     action: function(params) {
         BlazeLayout.render("help", {main: "help_detection"});
