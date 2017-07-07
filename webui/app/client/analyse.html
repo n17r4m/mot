@@ -1,11 +1,34 @@
 
 <template name="analyse">
+  <div class="section">
   <h1>Analyse</h1>
-  <ul>
-    <li>Scatterplot: area / frame (mean + quartiles lines) (tranformation? log, etc, switcher</li>
-    <li>Line: Total counts / frame</li>
-    <li>Horizontal bias chart (by area / by count /  by intensity?)</li>
-    <li>Irregularity: perimeter / area (deviation from pi)</li>
-  </ul>
-  <iframe src="http://threegraphs.com/charts/preview/6514/embed/" width="500" height="400" scrolling="no" frameborder="0" style="border:none;"></iframe>
+    
+    <select name="query" class="ui selection dropdown">
+      <option class="item">Select a visualization</option>
+      {{#each queries}}
+      <option value={{query}} class="item">{{label}}</option>
+      {{/each}}
+    </select>
+    
+    <select name="bag" class="ui selection dropdown">
+      <option class="item">Select a bag</option>
+      {{#each bagList}}
+      <option value={{this}} class="item">{{this}}</option>
+      {{/each}}
+    </select>
+    
+    <hr>
+    
+    <div id="analysis_chart" style="width:100%;height: 100%;"></div>
+    
+    <ul>
+      <li>Scatterplot: area / frame (mean + quartiles lines) (tranformation? log, etc, switcher</li>
+      <li>Line: Total counts / frame</li>
+      <li>Horizontal bias chart (by area / by count /  by intensity?)</li>
+      <li>Irregularity: perimeter / area (deviation from pi)</li>
+    </ul>
+    
+    
+    <!-- <iframe src="http://threegraphs.com/charts/preview/6514/embed/" width="500" height="400" scrolling="no" frameborder="0" style="border:none;"></iframe> -->
+  </div>
 </template>

@@ -151,6 +151,26 @@ class Query(object):
         return mean
 
 
+    def flow_vs_intensity_histogram(self, threshold = 110):
+        buf1 = self.bag.query('select -(a2.y-a1.y)*p.area from assoc a1, assoc a2, particles p where intensity >= '+str(threshold)+' and p.id==a1.particle and a1.particle==a2.particle and a1.frame == a2.frame - 1')
+        buf2 = self.bag.query('select -(a2.y-a1.y)*p.area from assoc a1, assoc a2, particles p where intensity < '+str(threshold)+' and p.id==a1.particle and a1.particle==a2.particle and a1.frame == a2.frame - 1')
+        buf1 = np.array([i[0] for i in buf1])
+        buf2 = np.array([i[0] for i in buf2])
+
+        q75, q25 = np.percentile(buf1, [75 ,25])                         
+        iqr = q75 - q25
+        lb = q25 - 1.5 * iqr
+        ub = q75 + 1.5 * iqr
+        buf1 = buf1[(buf1<ub) & (buf1>lb)]
+        
+        q75, q25 = np.percentile(buf2, [75 ,25])                         
+        iqr = q75 - q25
+        lb = q25 - 1.5 * iqr
+        ub = q75 + 1.5 * iqr
+        buf2 = buf2[(buf2<ub) & (buf2>lb)]
+        
+        return [buf1.tolist(), buf2.tolist()]
+
     def compare(self, db_file):
         
         c = self.cursor()

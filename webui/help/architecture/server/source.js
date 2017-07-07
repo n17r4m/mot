@@ -31,11 +31,7 @@ Meteor.methods({
         file = file.replace(/[\/|\\]/g, "SLASH") // Kill slashes
         
         fs.readFile(path + file, function(err, res){
-            if (err){
-                future.throw(err)
-            } else {
-                future.return(res.toString());  
-            }
+            err ? future.throw(err) : future.return(res.toString());
           
         })
         return future.wait();
@@ -44,14 +40,10 @@ Meteor.methods({
         var future = new Future();
         fs.readdir(path, function(err, res){
             res = res.filter(function(file){
-                return file.match(/\.py$|\.m/g) // only .py and .m files
+                return file.match(/^.*\.(py|m)$/i) // only .py and .m files
                     && file != "__init__.py"    // no __init__ files
             }).sort()
-            if (err){
-                future.throw(err)
-            } else {
-                future.return(res);
-            }
+            err ? future.throw(err) : future.return(res);
           
         })
         return future.wait();
@@ -62,11 +54,7 @@ Meteor.methods({
         file = file.replace(/[\/|\\]/g, "SLASH") // Kill slashes
         
         exec(path + "Documentor.py " + path + file, {cwd: path}, function(err, stdout, stderr){
-            if (err){
-                future.throw(err)
-            } else {
-                future.return(stdout.toString());  
-            }
+            err ? future.throw(err) : future.return(stdout.toString())
           
         })
         return future.wait();
@@ -77,11 +65,7 @@ Meteor.methods({
         file = file.replace(/[\/|\\]/g, "SLASH") // Kill slashes
         
         exec(path + file + " --help", {cwd: path}, function(err, stdout, stderr){
-            if (err){
-                future.throw(err)
-            } else {
-                future.return(stdout.toString());  
-            }
+            err ? future.throw(err) : future.return(stdout.toString())
           
         })
         return future.wait();

@@ -1,9 +1,5 @@
 
-import { Template } from 'meteor/templating';
-import { ReactiveVar } from 'meteor/reactive-var';
 
-
-import './analyse.html';
 import './compare.html';
 import './index.html';
 import './simulate.html';
@@ -37,19 +33,6 @@ Template.hello.events({
 
 
 
-
-Template.analyse.onRendered(function genChart(){
-  const data = [{
-    x: [1, 2, 3, 4, 5],
-    y: [1, 2, 4, 8, 16]
-  }];
-  const settings = {
-    margin: {
-      t: 0
-    }
-  };
-  Plotly.plot($('#tester')[0], data, settings);
-})
 
 
 Template.simulate.onCreated(function helloOnCreated() {
