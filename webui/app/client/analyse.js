@@ -43,11 +43,7 @@ function updateChart(instance){
     
     if (bn && q){
         
-        var settings = {
-            margin: {
-                t: 0
-            }
-        };
+        var settings = { margin: { t: 0 } };
         
         Meteor.call("runQuery", bn, q, [110], (err, res) => {
             if (err) { alert(err) }

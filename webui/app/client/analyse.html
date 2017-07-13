@@ -4,14 +4,14 @@
   <h1>Analyse</h1>
     
     <select name="query" class="ui selection dropdown">
-      <option class="item">Select a visualization</option>
+      <option class="item" value="">Select a visualization</option>
       {{#each queries}}
       <option value={{query}} class="item">{{label}}</option>
       {{/each}}
     </select>
     
     <select name="bag" class="ui selection dropdown">
-      <option class="item">Select a bag</option>
+      <option class="item" value="">Select a bag</option>
       {{#each bagList}}
       <option value={{this}} class="item">{{this}}</option>
       {{/each}}
