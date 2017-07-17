@@ -12,7 +12,7 @@ USING:
     
         import VideoDifference
         dif = VideoDifference("input_video.avi", input_image)
-        bg = dif.difference()
+        
 
 Author: Martin Humphreys
 """

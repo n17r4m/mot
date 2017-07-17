@@ -118,22 +118,45 @@ class Query(object):
     
     def frame_list(self):
         c = self.cursor()
-        c.execute("SELECT frame FROM frames ORDER BY frame")
-        return c.fetchall()
+        fields = "frame, particles"
+        c.execute("SELECT frame, count(particle) as particles FROM assoc GROUP BY frame")
+        return self.fieldmap(fields, c.fetchall())
+    
+    def particle_properties(self, frame, particle):
+        c = self.cursor()
+        fields = "id, area, intensity, category, x, y, radius, frame"
+        c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ? and particles.id = ?", (frame, particle))
+        rows = c.fetchall()
+        
+        if len(rows) > 0:
+            return self.fieldmap(fields, rows)[0]
+        else:
+            return None
     
     def particles_in_frame(self, frame, category = None):
         c = self.cursor()
-        fields = "id, area, intensity, category, x, y, radius"
+        fields = "id, area, intensity, category, x, y, radius, frame"
         if category is None:
-            c.execute("SELECT " + fields + " FROM LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ?", (frame,))
+            c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ?", (frame,))
         else:    
             c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ? and category = ?", (frame, category))
         return self.fieldmap(fields, c.fetchall())
     
+    
+    def particle_instances(self, particle, category = None):
+        c = self.cursor()
+        fields = "id, area, intensity, category, x, y, radius, frame"
+        if category is None:
+            c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE particles.id = ?", (particle,))
+        else:    
+            c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE particles.id = ? and category = ?", (particle, category))
+        return self.fieldmap(fields, c.fetchall())
+    
     def particle_points(self, particle):
         c = self.cursor()
-        c.execute("SELECT x, y FROM assoc WHERE particle = ?", (particle,))
-        return c.fetchall()
+        fields = "x, y"
+        c.execute("SELECT " + fields + " FROM assoc WHERE particle = ?", (particle,))
+        return self.fieldmap(fields, c.fetchall())
     
     def particle_velocities(self, particle):
         points = self.particle_points(particle)
