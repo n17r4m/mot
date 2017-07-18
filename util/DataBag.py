@@ -207,16 +207,15 @@ class DataBag(object):
         area = props.get("area", 0)
         perimeter = props.get("perimeter", 0)
         intensity = props.get("intensity", 0)
-        width = props.get("width", 0)
-        height = props.get("height", 0)
+        width = props.get("radius", 0)
         category = props.get("category", 0)
         
         
         c = self.cursor()
         if id is None:
-            c.execute("INSERT INTO particles (area, intensity, perimeter, w, h, category) VALUES (?, ?, ?, ?)", (area, intensity, perimeter, category))
+            c.execute("INSERT INTO particles (area, intensity, perimeter, radius, category) VALUES (?, ?, ?, ?, ?)", (area, intensity, perimeter, radius, category))
         else:
-            c.execute("INSERT INTO particles (id, area, intensity, perimeter, category) VALUES (?, ?, ?, ?, ?)", (id, area, intensity, perimeter, category))
+            c.execute("INSERT INTO particles (id, area, intensity, perimeter, radius, category) VALUES (?, ?, ?, ?, ?, ?)", (id, area, intensity, perimeter, radius, category))
         return c.lastrowid
 
     def insertParticle(self, props):
@@ -243,8 +242,7 @@ class DataBag(object):
         area = props.get("area", 1)
         intensity = props.get("intensity", 0)
         perimeter = props.get("perimeter", 0)
-        width = props.get("width", 0)
-        height = props.get("height", 0)
+        width = props.get("radius", 0)
         category = props.get("category", 0)
         
         samples = points.shape[0]

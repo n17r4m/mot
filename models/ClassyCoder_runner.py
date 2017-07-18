@@ -3,60 +3,81 @@ from keras.datasets import mnist
 from keras.utils import to_categorical
 import numpy as np
 
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
+from dataset_generator import dataset_generator
 
-x_train = x_train.astype('float32') / 255.
-x_test = x_test.astype('float32') / 255.
-#x_train = x_train.reshape((len(x_train), np.prod(x_train.shape[1:])))
-#x_test = x_test.reshape((len(x_test), np.prod(x_test.shape[1:])))
+DG = dataset_generator()
 
-#x_train = x_train.reshape((len(x_train), np.prod(x_train.shape[1:])))
-#x_test = x_test.reshape((len(x_test), np.prod(x_test.shape[1:])))
+CC = ClassyCoder((64, 64, 1), 5, True)
 
-x_train = x_train.reshape((len(x_train), 28, 28, 1))
-x_test = x_test.reshape((len(x_test), 28, 28, 1))
+categories = 5
 
-# convert class vectors to binary class matrices
-y_train = to_categorical(y_train, 10)
-y_test = to_categorical(y_test, 10)
-
-print x_train.shape
-print x_test.shape
-
-print y_train.shape
-print y_test.shape
-
-CC = ClassyCoder((28, 28, 1), 10)
+def fetch_data(n = 128, training=True):
+    (X, Y) = DG.fetch(n, training)
+    X = X.astype('float32') / 255.
+    X = X.reshape((len(X), 64, 64, 1))
+    Y = to_categorical(Y, categories)
+    return (X, Y)
 
 
-CC.classycoder.fit(x_train, [x_train, y_train],
-    epochs=1,
-    batch_size=32,
-    shuffle=True,
-    validation_data=(x_test, [x_test, y_test]))
+
+for i in range(5):
+    (x_train, y_train) = fetch_data(2000, True)
+    (x_test, y_test) = fetch_data(300, True)
+
+    CC.classycoder.fit(x_train, [x_train, y_train],
+        epochs=5,
+        batch_size=32,
+        shuffle=True,
+        validation_data=(x_test, [x_test, y_test]))
+    
+    
+    (x_auto, _) = fetch_data(8000, False)
+    y_auto = CC.imageclassifier.predict(x_auto)
+    y_auto = np.argmax(y_auto, axis=-1)
+    y_auto = to_categorical(y_auto, categories)
+    (x_test, y_test) = fetch_data(300, True)
+
+    CC.classycoder.fit(x_train, [x_train, y_train],
+        epochs=5,
+        batch_size=32,
+        shuffle=True,
+        validation_data=(x_test, [x_test, y_test]))
 
 
-# encode and decode some digits
+
+
+
+(x_test, y_test) = fetch_data(200, False)
+
+# encode and decode some crops
 # note that we take them from the *test* set
 encoded_imgs = CC.encoder.predict(x_test)
 decoded_imgs = CC.decoder.predict(encoded_imgs)
+classif_imgs = CC.featureclassifier.predict(encoded_imgs)
 
 # use Matplotlib (don't ask)
 import matplotlib.pyplot as plt
 
-n = 10  # how many digits we will display
+n = 20  # how many crops we will display
 plt.figure(figsize=(20, 4))
 for i in range(n):
     # display original
-    ax = plt.subplot(2, n, i + 1)
-    plt.imshow(x_test[i].reshape(28, 28))
+    ax = plt.subplot(3, n, i + 1)
+    plt.imshow(x_test[i].reshape(64, 64))
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
 
     # display reconstruction
-    ax = plt.subplot(2, n, i + 1 + n)
-    plt.imshow(decoded_imgs[i].reshape(28, 28))
+    ax = plt.subplot(3, n, i + 1 + n)
+    plt.imshow(decoded_imgs[i].reshape(64, 64))
+    plt.gray()
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+    
+    # display classification
+    ax = plt.subplot(3, n, i + 1 + 2*n)
+    plt.imshow(classif_imgs[i].reshape(1, 5))
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
@@ -67,11 +88,11 @@ plt.show()
 
 
 
-n = 10
+n = 20
 plt.figure(figsize=(20, 8))
 for i in range(n):
     ax = plt.subplot(1, n, i + 1)
-    plt.imshow(encoded_imgs[i].reshape(4, 4 * 8).T)
+    plt.imshow(encoded_imgs[i].reshape(4, 128).T)
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
