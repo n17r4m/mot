@@ -1,6 +1,10 @@
 
 from keras.models import Model, Sequential
-from keras.layers import Input, Activation, Flatten, Conv2D, Dense, MaxPooling2D, UpSampling2D, Concatenate, Dropout
+from keras.layers import Input, Activation, Flatten, Conv2D, Dense, MaxPooling2D, UpSampling2D, Concatenate, Dropout, AlphaDropout
+from keras.layers.normalization import BatchNormalization
+from keras.layers.advanced_activations import LeakyReLU
+from keras.regularizers import l2
+
 
 class ClassyCoder:
     
@@ -19,17 +23,18 @@ class ClassyCoder:
         
         if verbose:
             print "Network input shape is", input_img.get_shape()
-                
-        x = Conv2D(16, (3, 3), activation='relu', padding='same')(input_img)
-        print x.get_shape()
+        
+        x = Conv2D(16, (3, 3), padding='same', activity_regularizer=l2(10e-7))(input_img)
+        x = LeakyReLU(alpha=0.1)(x)
+        x = BatchNormalization()(x)
         x = MaxPooling2D((2, 2), padding='same')(x)
-        print x.get_shape()
-        x = Conv2D(8, (3, 3), activation='relu', padding='same')(x)
-        print x.get_shape()
+        x = Conv2D(8, (3, 3), padding='same', activity_regularizer=l2(10e-7))(x)
+        x = LeakyReLU(alpha=0.1)(x)
+        x = BatchNormalization()(x)
         x = MaxPooling2D((2, 2), padding='same')(x)
-        print x.get_shape()
-        x = Conv2D(8, (3, 3), activation='relu', padding='same')(x)
-        print x.get_shape()
+        x = Conv2D(8, (3, 3), padding='same', activity_regularizer=l2(10e-7))(x)
+        x = LeakyReLU(alpha=0.1)(x)
+        x = BatchNormalization()(x)
         encoded = MaxPooling2D((2, 2), padding='same', name="encoded")(x)
         
         
@@ -48,25 +53,22 @@ class ClassyCoder:
         # next, declare the auto_encoding output side
          
         n = 0;
-        n +=1; ae = Conv2D(8, (3, 3), activation='relu', padding='same')(encoded)
-        print ae.get_shape()
+        n +=1; ae = Conv2D(8, (3, 3), padding='same')(encoded)
+        n +=1; ae = LeakyReLU(alpha=0.1)(ae)
         n +=1; ae = UpSampling2D((2, 2))(ae)
-        print ae.get_shape()
-        n +=1; ae = Conv2D(8, (3, 3), activation='relu', padding='same')(ae)
-        print ae.get_shape()
+        n +=1; ae = Conv2D(8, (3, 3), padding='same')(ae)
+        n +=1; ae = LeakyReLU(alpha=0.1)(ae)
         n +=1; ae = UpSampling2D((2, 2))(ae)
-        print ae.get_shape()
-        n +=1; ae = Conv2D(16, (3, 3), activation='relu', padding='same')(ae)
-        print ae.get_shape()
+        n +=1; ae = Conv2D(16, (3, 3), padding='same')(ae)
+        n +=1; ae = LeakyReLU(alpha=0.1)(ae)
         n +=1; ae = UpSampling2D((2, 2))(ae)
-        print ae.get_shape()
         n +=1; decoded = Conv2D(1, (3, 3), activation='sigmoid', padding='same')(ae)
         
         if verbose:
             print "Decoder output shape is", decoded.get_shape()
         
         autoencoder = Model(input_img, decoded)
-        autoencoder.compile(optimizer='adadelta', loss='mean_squared_error', metrics=['mae'])
+        autoencoder.compile(optimizer='adam', loss='mse', metrics=['mae'])
         
         # use right side of architecture encoded input to construct an image
         encoded_input = Input(shape=(int(encoding_shape[1]),int(encoding_shape[2]),int(encoding_shape[3])))
@@ -81,9 +83,15 @@ class ClassyCoder:
         # and then, the classifier
         n = 0
         n +=1; cl = Flatten()(encoded)
-        n +=1; cl = Dense(encoding_dims, activation='relu')(cl)
-        n +=1; cl = Dropout(0.3)(cl)
-        n +=1; cl = Dense(64, activation='relu')(cl)
+        n +=1; cl = Dense(encoding_dims, activation='selu')(cl)
+        n +=1; cl = AlphaDropout(0.1)(cl)
+        n +=1; cl = Dense(256, activation='selu')(cl)
+        n +=1; cl = AlphaDropout(0.1)(cl)
+        n +=1; cl = Dense(128, activation='selu')(cl)
+        n +=1; cl = AlphaDropout(0.1)(cl)
+        n +=1; cl = Dense(64, activation='selu')(cl)
+        n +=1; cl = AlphaDropout(0.1)(cl)
+        n +=1; cl = Dense(32, activation='selu')(cl)
         n +=1; classified = Dense(num_categories, activation='softmax')(cl)
         
         if verbose:
@@ -91,7 +99,7 @@ class ClassyCoder:
         
         # provide classification on images
         imageclassifier = Model(input_img, classified)
-        imageclassifier.compile(optimizer='adadelta', loss='categorical_crossentropy', metrics=['mae'] )
+        imageclassifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['mae'] )
         
         # and classifications of encoded representations
         fc = encoded_input
@@ -99,15 +107,15 @@ class ClassyCoder:
             fc = imageclassifier.layers[l](fc)
         
         featureclassifier = Model(encoded_input, fc)
-        featureclassifier.compile(optimizer='adadelta', loss='categorical_crossentropy', metrics=['acc'])
+        featureclassifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
         
         
         # complete model (1 input, 2 outputs)
         classycoder = Model(inputs=[input_img], outputs=[decoded, classified])
         classycoder.compile(
-            optimizer='adadelta', 
-            loss=['mean_squared_error', 'categorical_crossentropy'],
-            loss_weights=[0.8, 1.2],
+            optimizer='adam', 
+            loss=['mse', 'categorical_crossentropy'],
+            loss_weights=[1, 1],
             metrics=['mae', 'acc'])
         
         
@@ -134,4 +142,8 @@ class ClassyCoder:
         # multiple output model, train this for the rest to work.
         self.classycoder = classycoder
         
-
+    def save(self, path):
+        self.classycoder.save_weights(path)
+    
+    def load(self, path):
+        self.classycoder.load_weights(path)

@@ -39,11 +39,11 @@ class Normalizer:
         
     def videoReaderFromArg(self, video):
         if isinstance(video, (str, unicode)):
-            vc = cv2.VideoCapture((video)
+            vc = cv2.VideoCapture(video)
         else:
             vc = video
     
-    def normalize(self, background, in_video, out_video, showit = False):
+    def normalize(self, background, in_video, out_video):
         vc = self.videoReaderFromArg(in_video)
         frames = int(vc.get(cv2.CAP_PROP_FRAME_COUNT))
         fps = float(vc.get(cv2.CAP_PROP_FPS)) 
@@ -55,38 +55,40 @@ class Normalizer:
         
         vw = cv2.VideoWriter(outfile, fourcc, fps, (width, height))
         
-        self.normalizeVideo(background, vc, vw, showit)
+        self.normalizeVideo(background, vc, vw)
         
     
-    def normalizeVideo(self, background, video_reader, video_writer, showit = False):
+    def normalizeVideo(self, background, video_reader, video_writer):
         f = 1
         while(True):
             ret, frame = video_reader.read()
             if not ret:
                 break;
             f += 1
-            normal_frame = self.normaliseFrame(background, frame, showit)
+            normal_frame = self.normaliseFrame(background, frame)
             
             video_writer.write(normal_frame)
-            
-    def normalizeFrame(self, background, frame, showit = False):
+        
+    def normalizeFrame(self, background, frame):
         if callable(background):
             bg = background(frame)
         else:
             bg = self.imageFromArg(background)
         
-        a = frame
-        b = bg
+        a = frame.astype('float')
+        a = self.transformRange(a, 0, 255, 5, 255)
         
-        c = a/((b.astype('float')+1)/256)
+        b = bg.astype('float')
+        a = self.transformRange(a, 0, 255, 5, 255)
+        
+        
+        c = a/((b+1)/256)
         d = c*(c < 255)+255*np.ones(np.shape(c))*(c > 255)
         
-        if showit:
-            cv2.imshow("watch", e)
-            cv2.waitKey(1)
-            
         return d.astype('uint8')    
-            
+    
+    def transformRange(self, value, oldmin, oldmax, newmin, newmax):
+        return (((value - oldmin) * (newmax - newmin)) / (oldmax - oldmin)) + newmin
   
 def build_parser():
     parser = ArgumentParser()

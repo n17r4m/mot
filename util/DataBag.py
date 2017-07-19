@@ -207,7 +207,7 @@ class DataBag(object):
         area = props.get("area", 0)
         perimeter = props.get("perimeter", 0)
         intensity = props.get("intensity", 0)
-        width = props.get("radius", 0)
+        radius = props.get("radius", 0)
         category = props.get("category", 0)
         
         
