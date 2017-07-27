@@ -1,24 +1,18 @@
 #! /usr/bin/env python
 """
-Given an array of images (np.arrays), returns an array of BW images with
-foreground and background separated.
-
-Choose between simple, simple w/ OTSU, and adaptive thresholding.
-
-TODO: implement parsing of params from command line, probably refactor
-       this entire class... it's not pretty.
+Convert images into binary images.
 
 USING:
 
     As a command line utility:
     
-        $ BinaryExtractor.py input_array output_array [type]
+        $ BinaryExtractor.py input_video output_video [--threshold threshold --invert --frame frame]
     
     As a module:
     
-        import BinaryExtractor
-        extractor = BinaryExtractor(input_array, type)
-        bg = extractor.extract()
+        from BinaryExtractor import BinaryExtractor
+        binaryExtractor = BinaryExtractor([invert=False, threshold=50])
+        frame_binarized = binaryExtractor.extract(input_frame)
 
 Author: Kevin Gordon
 """
@@ -28,15 +22,13 @@ import numpy as np
 import os
 import cv2
 
+from FrameGrabber import FrameGrabber
 
 class BinaryExtractor(object):
 
-    def __init__(self, threshold=50, otsu=False, invert=False):
+    def __init__(self, threshold=50, invert=False):
         self.type = 0
         self.threshold = threshold
-
-        if otsu:
-            self.type = cv2.THRESH_OTSU
 
         if invert:
             self.type += cv2.THRESH_BINARY_INV
@@ -45,43 +37,16 @@ class BinaryExtractor(object):
 
     def extract(self, frame):
         t, frame = cv2.threshold(frame, self.threshold, 255, self.type)
-        return np.uint8(frame)
-
-class AdaptiveBinaryExtractor(BinaryExtractor):
-
-    def __init__(self, params={}, gaussian=False, **kw):
-        super(AdaptiveBinaryExtractor, self).__init__(**kw)
-        if gaussian:
-            self.method = cv2.ADAPTIVE_THRESH_GAUSSIAN_C
-        else:
-            self.method = cv2.ADAPTIVE_THRESH_MEAN_C
-
-        if 'blockSize' in params:
-            self.blockSize = params['blockSize']
-        else:
-            self.blockSize = 17
-
-        if 'c' in params:
-            self.c = params['c']
-        else:
-            self.c = 15
-
-    def extract(self, frame):
-        buf = cv2.adaptiveThreshold(frame, 255, self.method, self.type, self.blockSize, self.c)            
-        return np.uint8(buf)
-      
+        return frame.astype('uint8')
 
 def build_parser():
     parser = ArgumentParser()
-    parser.add_argument('input_array', help='images to extract binary image from')
-    parser.add_argument('output_array', help='filename of output array')
-    parser.add_argument('type', help='simple or adaptive thresholding')
-    parser.add_argument('-otsu', help='otsu\'s method (simple thresholding)',
-                                 action = 'store_true')
-    parser.add_argument('-inv', help='invert the output', 
-                                action = 'store_true')
-    parser.add_argument('-gaussian', help='gaussian (adaptive threshold)',
-                                     action = 'store_true')
+    parser.add_argument('input_video', help='video to extract binary video from')
+    parser.add_argument('output_video', help='filename of output array')
+
+    parser.add_argument('-t', '--threshold', help='binary threshold, above threshold->1, below threshold->0', type=int)
+    parser.add_argument('-inv', '--invert', help='invert the output', action = 'store_true')
+    parser.add_argument('-f', '--frame', help='frame to process', type=int, nargs='?')
 
     return parser
 
@@ -89,21 +54,30 @@ def build_parser():
 def main():
     parser = build_parser()
     options = parser.parse_args()
-    if not os.path.isfile(options.input_array):
-        parser.error("binary file %s does not exist." % options.input_array)
+
+    if not os.path.isfile(options.input_video):
+        parser.error("input video file %s does not exist." % options.input_video)
     
-    array = np.load(options.input_array)
+    in_video = FrameGrabber(options.input_video)
 
-    if options.type == 'simple':
-        extractor = BinaryExtractor(array, invert=options.inv, otsu=options.otsu)
+    binarizer = BinaryExtractor(options.threshold, options.invert)
 
-    if options.type == 'adaptive':
-        extractor = AdaptiveBinaryExtractor(params={}, input_array=array, gaussian=options.gaussian)
+    vw = cv2.VideoWriter(options.output_video, 
+                         in_video.fourcc, 
+                         in_video.fps, 
+                         in_video.shape)
 
+    if options.frame:        
+        N = [options.frame]
+    else:
+        N = range(in_video.frames)
 
-    binary = extractor.extract()
+    for i in N:
+        in_frame = in_video.frame(i)
+        binary_frame = binarizer.extract(in_frame)
+        vw.write(binary_frame)
 
-    np.save(options.output_array, np.array(binary))
+    vw.release()
 
 if __name__ == '__main__':
     main()

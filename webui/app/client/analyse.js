@@ -9,19 +9,28 @@ import './analyse.html';
 Template.analyse.onCreated(function makeVars(){
     this.bagList = new ReactiveVar([])
     this.bagName = new ReactiveVar()
+    this.dayList = new ReactiveVar([])
+    this.dayName = new ReactiveVar()
     this.query = new ReactiveVar()
 })
 
 Template.analyse.onRendered(function updateBagList(){
     this.$("select.dropdown").dropdown()
-    Meteor.call("bagList", (err, list) => {
-        return err ? this.bagList.set("Error") : this.bagList.set(list)
+    
+    
+})
+
+Template.analyse.onRendered(function updateDayList(){
+    this.$("select.dropdown").dropdown()
+    Meteor.call("dayList", (err, list) => {
+        return err ? this.dayList.set("Error") : this.dayList.set(list)
     })
     
 })
 
 Template.analyse.helpers({
     bagList() { return Template.instance().bagList.get() },
+    dayList() { return Template.instance().dayList.get() },
     queries() { return Queries.filter((q) => q.type == "analyse") }
 });
 
@@ -30,14 +39,22 @@ Template.analyse.events({
         instance.query.set(event.currentTarget.value)
         updateChart(instance)
     },
+    "change select[name=day]": function daySelect(event, instance){
+        instance.dayName.set(event.currentTarget.value)
+        Meteor.call("bagList", instance.dayName.get(), (err, list) => {
+            return err ? instance.bagList.set("Error") : instance.bagList.set(list)
+        })
+    },
     "change select[name=bag]": function bagSelect(event, instance){
         instance.bagName.set(event.currentTarget.value)
         updateChart(instance)
     }
+    
 })
 
 function updateChart(instance){
-    const bn = instance.bagName.get(),
+    const day = instance.dayName.get(),
+          bn = instance.bagName.get(),
           q  = instance.query.get()
           
     
@@ -45,7 +62,7 @@ function updateChart(instance){
         
         var settings = { margin: { t: 0 } };
         
-        Meteor.call("runQuery", bn, q, [110], (err, res) => {
+        Meteor.call("runQuery", day, bn, q, [110], (err, res) => {
             if (err) { alert(err) }
             
             switch(q){

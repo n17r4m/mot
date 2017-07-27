@@ -33,7 +33,7 @@ class Normalizer:
         
     def imageFromArg(self, image):
         if isinstance(image, (str, unicode)):
-            return cv2.imread(image)
+            return cv2.imread(image, 0)
         else:
             return image
         
@@ -42,6 +42,7 @@ class Normalizer:
             vc = cv2.VideoCapture(video)
         else:
             vc = video
+        return vc
     
     def normalize(self, background, in_video, out_video):
         vc = self.videoReaderFromArg(in_video)
@@ -49,11 +50,10 @@ class Normalizer:
         fps = float(vc.get(cv2.CAP_PROP_FPS)) 
         if fps == float('inf'):
             fps = 300
-        width = int(self.vc.get(cv2.CAP_PROP_FRAME_WIDTH))
-        height = int(self.vc.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        fourcc = int(self.vc.get(cv2.CAP_PROP_FOURCC))
-        
-        vw = cv2.VideoWriter(outfile, fourcc, fps, (width, height))
+        width = int(vc.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(vc.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fourcc = int(vc.get(cv2.CAP_PROP_FOURCC))
+        vw = cv2.VideoWriter(out_video, fourcc, fps, (width, height))
         
         self.normalizeVideo(background, vc, vw)
         
@@ -65,18 +65,22 @@ class Normalizer:
             if not ret:
                 break;
             f += 1
-            normal_frame = self.normaliseFrame(background, frame)
-            
+            normal_frame = self.normalizeFrame(background, frame)
             video_writer.write(normal_frame)
         
     def normalizeFrame(self, background, frame):
+        
+        
+        
         if callable(background):
             bg = background(frame)
         else:
             bg = self.imageFromArg(background)
         
+        
         a = frame.astype('float')
         a = self.transformRange(a, 0, 255, 5, 255)
+        
         
         b = bg.astype('float')
         a = self.transformRange(a, 0, 255, 5, 255)
@@ -103,7 +107,7 @@ def main():
     opts = parser.parse_args()
     if not os.path.isfile(opts.input_video):
         parser.error("Video file %s does not exist." % opts.input_video)
-    if not os.path.isfile(options.background):
+    if not os.path.isfile(opts.background):
         parser.error("Image file %s does not exist." % opts.background)
     norm = Normalizer()
     norm.normalize(opts.background, opts.input_video, opts.output_video)

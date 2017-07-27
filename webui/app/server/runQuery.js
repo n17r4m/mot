@@ -10,14 +10,14 @@ const bag_path = "/local/scratch/mot/data/bags/",
      util_path = "/local/scratch/mot/util/"
 
 Meteor.methods({
-    runQuery: function runQuery(bagName, query, args){
+    runQuery: function runQuery(day, bagName, query, args){
         
         if (!Queries.includes(query)){ return [] } 
         console.info(args)
         if (!args) { args = [] }
         
         var future = new Future(),
-            file = bagName.replace(/[\/|\\]/g, "SLASH"), // Kill slashes
+            file = day + "/" + bagName.replace(/[\/|\\]/g, "SLASH"), // Kill slashes
             cmd = util_path + "Query.py " + bag_path + file + " "
         
         exec(cmd + query + " " + args.join(" "), {cwd: util_path, maxBuffer: Infinity}, (err, stdout, stderr) => {

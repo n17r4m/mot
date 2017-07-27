@@ -30,16 +30,22 @@ import cv2
 
 class BackgroundExtractor(object):
 
-    def __init__(self, filename):
-        self.vc = cv2.VideoCapture(filename)
-        self.filename = filename
+    def __init__(self, video, opts):
+        
+        if isinstance(video, (str, unicode)):
+            self.vc = cv2.VideoCapture(video)
+        else:
+            self.vc = video
+        
+        self.opts = opts
         self.frames = int(self.vc.get(cv2.CAP_PROP_FRAME_COUNT))
         self.width = int(self.vc.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.height = int(self.vc.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        print self.frames, "frames"
-        print "size:", (self.width, self.height)
+        if self.opts.verbose:
+            print "Extracting from", self.frames, "frames"
+            print "size:", (self.width, self.height)
         
-    def extract(self, verbose=False):  
+    def extract(self):  
         ret, frame = self.vc.read()
         bg = np.float32(frame)
         f = 1
@@ -59,7 +65,7 @@ class BackgroundExtractor(object):
 
 class AverageExtractor(BackgroundExtractor):
 
-    def extract(self, verbose=False):
+    def extract(self):
         
         shape = (self.height, self.width)
         
@@ -83,7 +89,7 @@ class AverageExtractor(BackgroundExtractor):
                 count +=1
                 print "Error reading video frame " + str(i) + " ..."
 
-            if i%100==0 and verbose:
+            if i%100==0 and self.opts.verbose:
                 print 'processed frame ' + str(i) + ' of ' + str(N-1)
 
         print "error reading", count, 'frames'
@@ -91,7 +97,7 @@ class AverageExtractor(BackgroundExtractor):
 
 class MaximumExtractor(BackgroundExtractor):
 
-    def extract(self, verbose=False):
+    def extract(self):
         shape = (self.height, self.width)
 
         max_bg = np.zeros(shape)
@@ -110,7 +116,41 @@ class MaximumExtractor(BackgroundExtractor):
             else:
                 print "Error reading video frame " + str(i) + " ..."
 
-            if i%100==0 and verbose:
+            if i%100==0 and self.opts.verbose:
+                print 'processed frame ' + str(i) + ' of ' + str(N-1)
+
+        return np.uint8(max_bg)
+
+    def maximum (self, A, B):
+        BisBigger = A-B
+        BisBigger = np.where(BisBigger < 0, 1, 0)
+        return A - A * BisBigger + B * BisBigger
+
+
+class FastMaximumExtractor(BackgroundExtractor):
+
+    def extract(self):
+        shape = (self.height, self.width)
+
+        max_bg = np.zeros(shape)
+
+        N = int(self.frames)
+        self.vc.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
+        for i in range(N):
+            
+            # 19 times faster!
+            if i % 19 == 0:
+                self.vc.set(cv2.CAP_PROP_POS_FRAMES, i)
+                ret, frame = self.vc.read()
+    
+                if ret:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    max_bg = self.maximum(max_bg, frame)
+                else:
+                    print "Error reading video frame " + str(i) + " ..."
+
+            if i%100==0 and self.opts.verbose:
                 print 'processed frame ' + str(i) + ' of ' + str(N-1)
 
         return np.uint8(max_bg)
@@ -123,22 +163,22 @@ class MaximumExtractor(BackgroundExtractor):
 
 class MixedExtractor(BackgroundExtractor):
     
-    def extract(self, verbose=False, ratio=0.5):
-        avg_ex = AverageExtractor(self.filename)
-        max_ex = MaximumExtractor(self.filename)
-        return (avg_ex.extract(verbose) * ratio) + (max_ex.extract(verbose) * (1-ratio))
+    def extract(self, ratio=0.5):
+        avg_ex = AverageExtractor(self.vc)
+        max_ex = MaximumExtractor(self.vc)
+        return (avg_ex.extract() * ratio) + (max_ex.extract() * (1-ratio))
 
 
 
-class SimpleExtractor(AverageExtractor):
+class SimpleExtractor(BackgroundExtractor):
     # The only difference between this and Average is that
-    # we only average the first 10 frames...
-    def extract(self, verbose=False):
+    # we only average the first N frames...
+    def extract(self):
         shape = (self.height, self.width)
 
-        avg_bg = np.zeros(shape)
+        max_bg = np.zeros(shape)
 
-        N = 20
+        N = 100
         self.vc.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
         for i in range(N):
@@ -147,44 +187,50 @@ class SimpleExtractor(AverageExtractor):
 
             if ret:
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                avg_bg += frame * 1.0 / N
+                max_bg = self.maximum(max_bg, frame)
 
             else:
                 print "Error reading video frame " + str(i) + " ..."
 
-            if i%100==0 and verbose:
+            if i%100==0 and self.opts.verbose:
                 print 'processed frame ' + str(i) + ' of ' + str(N-1)
 
-        return np.uint8(avg_bg)
+        return np.uint8(max_bg)
+
+    def maximum (self, A, B):
+        BisBigger = A-B
+        BisBigger = np.where(BisBigger < 0, 1, 0)
+        return A - A * BisBigger + B * BisBigger        
 
 def build_parser():
     parser = ArgumentParser()
     parser.add_argument('input_video', help='video to extract bacground from')
     parser.add_argument('output_image', help='file to save extracted background to')
     parser.add_argument('background_type', help='type of background extraction [running_avg, avg, maximum, mix, simple]')
-    parser.add_argument('-v', help='print verbose statements while executing', 
-                              action = 'store_true')
+    parser.add_argument('-v', "--verbose", help='print verbose statements while executing', action = 'store_true')
     return parser
 
 def main():
     parser = build_parser()
-    options = parser.parse_args()
-    if not os.path.isfile(options.input_video):
-        parser.error("Video file %s does not exist." % options.input_video)
+    opts = parser.parse_args()
+    if not os.path.isfile(opts.input_video):
+        parser.error("Video file %s does not exist." % opts.input_video)
     
-    if options.background_type == 'running_avg':
-        extractor = BackgroundExtractor(options.input_video)
-    elif options.background_type == 'avg':
-        extractor = AverageExtractor(options.input_video)
-    elif options.background_type == 'max':
-        extractor = MaximumExtractor(options.input_video)
-    elif options.background_type == 'mix':
-        extractor = MixedExtractor(options.input_video)
-    elif options.background_type == 'simple':
-        extractor = SimpleExtractor(options.input_video)
+    if opts.background_type == 'running_avg':
+        extractor = BackgroundExtractor(opts.input_video, opts)
+    elif opts.background_type == 'avg':
+        extractor = AverageExtractor(opts.input_video, opts)
+    elif opts.background_type == 'max':
+        extractor = MaximumExtractor(opts.input_video, opts)
+    elif opts.background_type == 'fastmax':
+        extractor = FastMaximumExtractor(opts.input_video, opts)
+    elif opts.background_type == 'mix':
+        extractor = MixedExtractor(opts.input_video, opts)
+    elif opts.background_type == 'simple':
+        extractor = SimpleExtractor(opts.input_video, opts)
 
-    bg = extractor.extract(verbose=options.v)
-    cv2.imwrite(options.output_image, bg)
+    bg = extractor.extract()
+    cv2.imwrite(opts.output_image, bg)
 
 if __name__ == '__main__':
     main()

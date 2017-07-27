@@ -9,6 +9,13 @@
       <option value={{query}} class="item">{{label}}</option>
       {{/each}}
     </select>
+
+    <select name="day" class="ui selection dropdown">
+      <option class="item" value="">Select an experiment day</option>
+      {{#each dayList}}
+      <option value={{this}} class="item">{{this}}</option>
+      {{/each}}
+    </select>    
     
     <select name="bag" class="ui selection dropdown">
       <option class="item" value="">Select a bag</option>

@@ -1,3 +1,4 @@
+import os
 
 from keras.models import Model, Sequential
 from keras.layers import Input, Activation, Flatten, Conv2D, Dense, MaxPooling2D, UpSampling2D, Concatenate, Dropout, AlphaDropout
@@ -6,11 +7,11 @@ from keras.layers.advanced_activations import LeakyReLU
 from keras.regularizers import l2
 
 
-class ClassyCoder:
+
+
+class ClassyCoder(object):
     
-    
-    
-    def __init__(self, input_shape=(256, 256, 1), num_categories=3 , verbose=False):
+    def __init__(self, input_shape=(64, 64, 1), num_categories=5 , verbose=False):
         """
         https://keras.io/getting-started/functional-api-guide/#multi-input-and-multi-output-models
         https://keras.io/getting-started/functional-api-guide/#shared-layers
@@ -146,4 +147,10 @@ class ClassyCoder:
         self.classycoder.save_weights(path)
     
     def load(self, path):
+        print "Loading weights", path
+        print self.classycoder.layers[3].get_weights()
         self.classycoder.load_weights(path)
+        print self.classycoder.layers[3].get_weights()
+
+    def path(self):
+        return os.path.dirname(os.path.realpath(__file__))

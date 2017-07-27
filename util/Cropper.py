@@ -18,8 +18,8 @@ USING:
     As a module:
     
         import Cropper from Cropper
-        cropper = Cropper(aDataBagObjectOrFilename, input_video)
-        crop = cropper.isolate(particle_id, frame_id)
+        cropper = Cropper(input_video, aDataBagObjectOrFilename)
+        crop = cropper.isolate(frame_id, particle_id)
         
 
 Author: Martin Humphreys
@@ -32,10 +32,18 @@ import cv2
 from argparse import ArgumentParser
 from math import floor, ceil
 import os
+import uuid
+
 from DataBag import DataBag
 from Query import Query
 import numpy as np
 from functions.to_precision import to_precision
+from functions.dotdict import dotdict
+
+from BackgroundExtractor import FastMaximumExtractor as BackgroundExtractor
+from Normalizer import Normalizer
+from FrameGrabber import FrameGrabber
+
 
 class Cropper(object):
     
@@ -43,16 +51,14 @@ class Cropper(object):
     def __init__(self, video, bag, opts):
         
         self.bag = DataBag.fromArg(bag)
+        if isinstance(bag, (str, unicode)):
+            self.bag_path = bag
+            
         self.q = Query(self.bag)
         
+        self.fgrabber = FrameGrabber(video)
         
-        if isinstance(video, (str, unicode)):
-            self.vc = cv2.VideoCapture(video)
-        else:
-            self.vc = video
-            
-            
-        self.frames = int(self.vc.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.frames = self.fgrabber.frames
         
         
         if isinstance(opts, dict):
@@ -64,6 +70,25 @@ class Cropper(object):
         self.size = self.opts.size or 64
         self.pad = self.opts.pad or 5
         
+        if self.opts.normalize or self.opts.background:
+            
+            if isinstance(self.opts.background, (str, unicode)):
+                self.bg = cv2.imread(self.opts.background, 0)
+            elif self.opts.background:
+                self.bg = self.opts.background
+            
+            
+            if not hasattr(self, "bg") and self.opts.normalize:
+                extractor = BackgroundExtractor(self.fgrabber.vc, self.opts)
+                if self.opts.verbose:
+                    print "Extracting background for normalization..."
+                self.bg = extractor.extract()
+                if self.opts.verbose:
+                    print "Background extraction complete."
+            
+            self.normalizer = Normalizer()
+            
+        # caching
         self.isolate_last_frame = None
         self.isolate_last_frame_id = -1
     
@@ -113,42 +138,50 @@ class Cropper(object):
             if frame_no == self.isolate_last_frame_id:
                 ret, frame = True, self.isolate_last_frame
             else:
-                self.vc.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
-                ret, frame = self.vc.read()
+                frame = self.fgrabber.frame(frame_no, True)
+                
+                if self.opts.normalize:
+                    frame = self.normalizer.normalizeFrame(self.bg, frame)
+                
                 self.isolate_last_frame = frame
                 self.isolate_last_frame_id = frame_no
+                
+                if self.opts.normalize or self.opts.background:
+                    frame = self.normalizer.normalizeFrame(self.bg, frame)
+                
+                self.isolate_last_frame = frame
+                self.isolate_last_frame_id = frame_no
+                
+                
 
-            if ret:
-                return self.crop(frame, x1, y1, d, d)
-            else:
-                return None
+            return self.crop(frame, x1, y1, d, d)
                 
         return None   
     
     def save(self, img, frame_no, particle_id, category=0):
-        c = "u"
-        if category == "bitumen" or category == 2:
-            c = 'd'
-        if category == "sand" or category == 3:
-            c = 's'
-        if category == "bubble" or category == 4:
-            c = 'b'
         
         s = to_precision(float(self.size) / float(img.shape[0]), 3)
         
         resized_image = cv2.resize(img, (self.size, self.size), interpolation = cv2.INTER_CUBIC) 
         
-        fname = "{}_{}_{}_{}.png".format(c, frame_no, particle_id, s)
+        if self.opts.uuid:
+            fname = "{}_{}.png".format(uuid.uuid4(), s)
+        else:
+            c = "x"
+            if category == "unknown" or category == 1:
+                c = 'u'
+            if category == "bitumen" or category == 2:
+                c = 'd'
+            if category == "sand" or category == 3:
+                c = 's'
+            if category == "bubble" or category == 4:
+                c = 'b'
+            fname = "{}_{}_{}_{}.png".format(c, frame_no, particle_id, s)
         
         cv2.imwrite(os.path.join(self.output_dir, fname), resized_image)
         
 
-class dotdict(dict):
-  """dot.notation access to dictionary attributes"""
-  # https://stackoverflow.com/a/23689767
-  __getattr__ = dict.get
-  __setattr__ = dict.__setitem__
-  __delattr__ = dict.__delitem__
+
   
   
 
@@ -163,12 +196,12 @@ def build_parser():
     parser.add_argument("-p", "--particle", help="particle_id to crop", type=int, nargs="?")
     parser.add_argument("-f", "--frame", help="frame to crop from", type=int, nargs="?")
     parser.add_argument("-s", "--size", help="Size of crop to generate", type=int, default=64)
-    parser.add_argument("-pad", "--pad", help="amount of padding to use", type=int, default=10)
+    parser.add_argument("-pad", "--pad", help="amount of padding to use", type=int, default=5)
     parser.add_argument("-l", "--limit", help="Maximum number of particles to crop", type=int, default=2**32)
-    
-    
-    parser.add_argument('-v', help='print verbose statements while executing', 
-                              action = 'store_true')    
+    parser.add_argument("-b", "--background", help="Normalize with background")
+    parser.add_argument("-n", "--normalize", help="Normalize video", action = 'store_true')
+    parser.add_argument('-u', "--uuid", help='Use UUIDs for filenames', action = 'store_true')    
+    parser.add_argument('-v', "--verbose", help='print verbose statements while executing', action = 'store_true')    
 
     return parser
 

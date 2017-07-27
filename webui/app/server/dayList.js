@@ -8,11 +8,13 @@ const fs = Npm.require('fs');
 const path = "/local/scratch/mot/data/bags/"
 
 Meteor.methods({
-    bagList: function bagList(dayName){
+    dayList: function dayList(file){
+        
         var future = new Future();
-        fs.readdir(path + dayName, function(err, res){                         //  *\|/*  only .db files
-            res = res.filter(function(file){ return file.match(/^.*\.(db)$/i) }).sort()
+        fs.readdir(path, function(err, res){                         //  *\|/*  only .db files
+            res = res.filter(function(file){ return fs.statSync(path+file).isDirectory() }).sort()
             err ? future.throw(err) : future.return(res);
+            console.info(err, res)
         })
         return future.wait();
     }

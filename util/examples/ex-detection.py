@@ -1,64 +1,79 @@
 #------------------------------------------------------------------------------#
 #                                                                              #
 #  A detection  example                                                        #
-#  In iPython: copy -> %paste the following in the interpreter                 #
+#  python ex-detection.py                                                      #
 #                                                                              #
 #------------------------------------------------------------------------------#
-
 import cv2
 import os
 
-from FrameGrabber import FrameGrabber
-from ForegroundExtractor import NormalizedForegroundExtractorV2 \
-                             as NormalizedForegroundExtractor
-from BinaryExtractor import BinaryExtractor
-from ComponentExtractor import ComponentExtractorV2 as ComponentExtractor
-from DataBag import DataBag
+from util.FrameGrabber import FrameGrabber
+from util.Normalizer import Normalizer
+from util.BinaryExtractor import BinaryExtractor
+from util.ComponentExtractor import ComponentExtractor
+from util.DataBag import DataBag
 
-# Destroy previous results if they exist
-if os.path.isfile("../data/bags/val1_detectionExample.db"):
-    os.remove("../data/bags/val1_detectionExample.db")
+def main():
+    # Destroy previous results if they exist
+    if os.path.isfile("/local/scratch/mot/data/bags/validation/val1_detectionExample.db"):
+        os.remove("/local/scratch/mot/data/bags/validation/val1_detectionExample.db")
 
-# Load in a pre-computed background (see ex-backgroundExtraction to compute)
-background = cv2.imread('../data/backgrounds/validation/val1_background.png', 
-                        cv2.IMREAD_GRAYSCALE)
+    # Load in a pre-computed background (see ex-backgroundExtraction to compute)
+    background = cv2.imread('/local/scratch/mot/data/backgrounds/validation/val1_background.png',
+                            cv2.IMREAD_GRAYSCALE)
 
-# Init a frame grabber with the video
-frameGrabber = FrameGrabber('../data/videos/validation/val1.avi')
+    # Init a frame grabber with the video
+    frameGrabber = FrameGrabber('/local/scratch/mot/data/videos/validation/val1.avi')
 
-# Init the foreground extractor with a background model
-fg_ext = NormalizedForegroundExtractor(background)
+    # Init the foreground extractor with a background model
+    normalizer = Normalizer()
 
-# Init the binary extractor, setting the threshold hyperparameter
-#  note that we invert the image s.t. the droplets are high-valued
-#  and the background is low-valued
-bin_ext = BinaryExtractor(invert=True, threshold=217)
+    # Init the binary extractor, setting the threshold hyperparameter
+    #  note that we invert the image s.t. the droplets are high-valued
+    #  and the background is low-valued
+    bin_ext = BinaryExtractor(invert=True, threshold=215)
 
-# Create a databag to store the detection results
-bag = DataBag("../data/bags/val1_detectionExample.db")
+    # Create a databag to store the detection results
+    bag = DataBag("/local/scratch/mot/data/bags/validation/val1_detectionExample.db")
 
-# Init a component extractor, passing in a databag.
-# Note that we can optionally save the computed binary image
-#  in the databag for later retreival
-comp_ext = ComponentExtractor(bag, save_binary=False)
+    # Init a component extractor, passing in a databag.
+    # Note that we can optionally save the computed binary image
+    #  in the databag for later retreival
+    comp_ext = ComponentExtractor(bag)
 
-N_frames = frameGrabber.frames
 
-for i in range(N_frames):
-    # Get the frame
-    frame = frameGrabber.frame(i)
+    # Manual inspection video
+    import numpy as np
+    shape = background.shape[1] * 3, background.shape[0]
+    vw = cv2.VideoWriter('/local/scratch/mot/data/videos/validation/val1_inspection.avi',
+                         frameGrabber.fourcc,
+                         frameGrabber.fps, 
+                         shape)
+    # End Manual inspection video
 
-    # Enhance foreground
-    fg = fg_ext.extract(frame)
 
-    # Extract binary foreground
-    fg_bin = bin_ext.extract(fg)
+    N_frames = frameGrabber.frames
 
-    # Extract component data
-    component_data = comp_ext.extract(i, fg_bin, fg)
+    for i in range(N_frames):
+        # Get the frame
+        frame = frameGrabber.frame(i, gray=True)
 
-# Commit our changes to the database ###
-bag.batchCommit()
+        # Enhance foreground
+        frame_normalized = normalizer.normalizeFrame(background, frame)
 
-# View the results
-bag.query('select * from assoc')
+        # Extract binary foreground
+        frame_binarized = bin_ext.extract(frame_normalized)
+        component_data = comp_ext.extract(i, frame_binarized, frame_normalized)
+        
+        # Save results to manual inspection video
+        vw.write(np.concatenate([frame_binarized, frame_normalized, frame], axis=1))
+
+    # Commit our changes to the database ###
+    bag.commit()
+    vw.release()
+
+    # View the results
+    print bag.query('select * from assoc LIMIT 10')
+
+if __name__ == '__main__':
+    main()
