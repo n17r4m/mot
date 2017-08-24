@@ -23,17 +23,22 @@ const about_source = {
   "Bag2Video.py": "Convert a DataBag into simulated video",
   "BinaryExtractor.py": "Seperate foreground from background",
   "BurstGrabber.py": "Returns a single burst from a video of many",
+  "Classify.py": "Classifies particles from either a video+bag pair, or a directory of crops",
   "ComponentExtractor.py": "Given an array of binary images, returns a dictionary of component information",
+  "Cropper.py": "Extracts crops of particles from a video+bag pair",
   "DataBag.m": "Database system for storing detection and tracking results (matlab)",
   "DataBag.py": "Database system for storing detection and tracking results",
   "DetectorValidator.py": "A utility to assign an error rate to a detector, while simultaneously building a ground truth set.",
   "Documentor.py": "Powers this page's ability to generate pydoc html files",
   "ForegroundExtractor.py": "Given a background image and an array of images (np.arrays), returns an array of images containing foregrounds.",
   "FrameGrabber.py": "Return a particular frame from a video file",
+  "Normalizer.py": "Constructs a normalized video (or frame) when provided a background and a video",
+  "Plotter.py": "Executes queries from Query.py and generates various plotly.js compatable JSON streams",
   "Query.py": "Useful tools when negotiating with a DataBag",
   "Simulation.py": "Create a DataBag via simulation",
   "Tracker.py": "Compress a DataBag of detections into a DataBag of tracks",
-  "TrackerValidator.py": "A utility to assign an error rate to a detector, while simultaneously building a ground truth set.",
+  "TrackerValidator.py": "A utility to assign an error rate to a detector, while simultaneously building a ground truth set."
+  
   
   
   

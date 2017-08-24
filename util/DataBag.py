@@ -120,9 +120,9 @@ class DataBag(object):
     def initDB(self):
         # Make sure tables and columns are as they should be.
         rev = self.revision()
-        if rev is 0:
-            self.migration_0()
+        if rev is 0: self.migration_0()
         if rev is 1: self.migration_1()
+        if rev is 2: self.migration_2()
         self.say("Database ready")
 
     
@@ -160,8 +160,6 @@ class DataBag(object):
             c.execute("INSERT INTO categories (id, name) VALUES (4, 'bubble')")
             self.commit()
         
-        
-        
         c.execute("ALTER TABLE particles ADD COLUMN radius REAL DEFAULT 0")
         c.execute("ALTER TABLE particles ADD COLUMN category INTEGER DEFAULT 0")
         
@@ -173,7 +171,15 @@ class DataBag(object):
         
         c.execute("UPDATE meta SET value='2' WHERE name='revision'");
         self.commit()
-        
+    
+    def migration_2(self):
+        self.say("Migrating to revision", 3)
+        c = self.cursor()
+        c.execute("ALTER TABLE assoc ADD COLUMN scale REAL")
+        c.execute("ALTER TABLE assoc ADD COLUMN crop BLOB")
+        c.execute("UPDATE meta SET value='3' WHERE name='revision'");
+        self.commit()
+    
     def tableExists(self, table):
         c = self.cursor()
         c.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name=?", (table,));

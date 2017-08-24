@@ -79,11 +79,11 @@ class Normalizer:
         
         
         a = frame.astype('float')
-        a = self.transformRange(a, 0, 255, 5, 255)
+        a = self.transformRange(a, 0, 255, 1, 255)
         
         
         b = bg.astype('float')
-        a = self.transformRange(a, 0, 255, 5, 255)
+        b = self.transformRange(b, 0, 255, 1, 255)
         
         
         c = a/((b+1)/256)

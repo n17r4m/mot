@@ -2,11 +2,11 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Queries } from '../queries'
 
-import './analyse.html';
+import './compare.html';
 
 
 
-Template.analyse.onCreated(function makeVars(){
+Template.compare.onCreated(function makeVars(){
     this.queries = new ReactiveVar([])
     this.bagList = new ReactiveVar([])
     this.bagName = new ReactiveVar()
@@ -17,22 +17,17 @@ Template.analyse.onCreated(function makeVars(){
     //this.plot = new ReactiveVar("<p>Select a Query</p>")
 })
 
-Template.analyse.onRendered(function updateBagList(){
-    this.$("select.dropdown").dropdown()
-    
-    
-})
 
-Template.analyse.onRendered(function updateDayList(){
+Template.compare.onRendered(function updateDayList(){
     this.$("select.dropdown").dropdown()
-    this.queries.set(Queries.filter((q) => q.type == "analyse"))
+    this.queries.set(Queries.filter((q) => q.type == "compare"))
     Meteor.call("dayList", (err, list) => {
         return err ? this.dayList.set("Error") : this.dayList.set(list)
     })
     
 })
 
-Template.analyse.helpers({
+Template.compare.helpers({
     queries() { return Template.instance().queries.get() },
     dayList() { return Template.instance().dayList.get() },
     bagList() { return Template.instance().bagList.get() },
@@ -43,7 +38,7 @@ Template.analyse.helpers({
     }
 });
 
-Template.analyse.events({
+Template.compare.events({
     "change select[name=query]": function bagSelect(event, instance){
         instance.query.set(event.currentTarget.value)
         updateChart(instance)
@@ -73,9 +68,9 @@ function updateChart(instance){
             
             
             
-            Plotly.newPlot($('#analysis_plot')[0], res.data, res.layout).then((plt) => {
+            Plotly.newPlot($('#compare_plot')[0], res.data, res.layout).then((plt) => {
                 
-                $('#analysis_plot a[data-title="Autoscale"]')[0].click() // hack
+                $('#compare_plot a[data-title="Autoscale"]')[0].click() // hack
                 plt.on("plotly_click", (data) => {
                     
                     $("#crop_loader").addClass("active")

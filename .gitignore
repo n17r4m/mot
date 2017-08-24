@@ -66,3 +66,7 @@ typings/
 
 # cloud9
 .c9
+c9
+
+# temp python files
+.pyc

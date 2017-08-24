@@ -16,6 +16,9 @@ class MetaCropper(object):
 		self.training_crops_info = []
 		self.validation_crops_info = []
 
+		self.training_props_info = []
+		self.validation_props_info = []
+
 		self.frames = None
 
 		self.validation_step = 0
@@ -26,12 +29,19 @@ class MetaCropper(object):
 
 		self.batch_size = batch_size
 		self.max_crops = max_crops
+		
+		self.extras = None
 
 	def save(self, filename, n):
 
 		all_opts = []
 		for c in self.croppers:
-			all_opts.append(c.opts)
+				for k,v in c.opts.iteritems():
+					if isinstance(v, np.ndarray):
+						c.opts[k] = v.tolist()
+					
+				all_opts.append(c.opts)
+				
 
 		save = {'cropper_opts': all_opts,
 				'video_paths': self.video_paths,
@@ -43,7 +53,9 @@ class MetaCropper(object):
 				'validation_steps': self.validation_steps,
 				'validation_step': self.validation_step,
 				'batch_size': self.batch_size,
-				'max_crops': self.max_crops}
+				'max_crops': self.max_crops,
+				'extras': self.extras
+		}
 
 		with open(filename, 'w') as fp:
 			json.dump(save, fp)
@@ -69,6 +81,7 @@ class MetaCropper(object):
 		self.batch_size = save['batch_size']
 		self.max_crops = save['max_crops']
 
+		self.extras = save['extras']
 
 	def addCropper(self, cropper):
 		self.video_paths.append(cropper.fgrabber.video_path)
@@ -148,6 +161,70 @@ class MetaCropper(object):
 		
 		self.validation_crops_info = self.validation_crops_info[:m]
 		self.validation_steps = len(self.validation_crops_info) / self.batch_size
+
+	def getAllPropsInfo(self):
+		self.getPropsInfo('training')
+		self.getPropsInfo('validation')
+		
+		n = len(self.training_props_info)
+		m = len(self.validation_props_info)
+		
+		total_crops = n + m
+
+		if total_crops > self.max_crops:
+			proportion = float(self.max_crops) / total_crops
+			n = int(proportion * n)
+
+			m = int(proportion * m)
+
+
+		n = (n/self.batch_size) * self.batch_size
+		m = (m/self.batch_size) * self.batch_size
+
+		self.training_props_info = self.training_props_info[:n]
+		self.validation_props_info = self.validation_props_info[:m]
+
+	def getPropsInfo(self, frame_set):
+		'''
+		arguments:
+		frame_set can be 'training' or 'validation'
+
+		returns:
+		info is of the form [(cropper_index, frame_index, particle_index),...]
+		'''
+		info = []
+		
+		if frame_set == 'training':
+			frames = self.training_frames
+		elif frame_set == 'validation':
+			frames = self.validation_frames
+
+		for j in range(len(frames)):
+			cropper_index = frames[j][1]
+			frame = frames[j][0]
+			buf = self.getPropsInfoInFrame(self.croppers[cropper_index], frame)
+			indexes = np.full((buf.shape[0], 2), (cropper_index, frame))
+			buf = np.concatenate((indexes, buf), 1)
+			info.extend(buf)
+			j += 1
+
+		info = np.array(info)
+
+		if frame_set == 'training':
+			self.training_props_info = info
+			
+		elif frame_set == 'validation':
+			self.validation_props_info = info
+		
+		return info
+
+	def getPropsInfoInFrame(self, cropper, frame):
+		info = []
+		res = cropper.bag.query('SELECT area, intensity FROM assoc a, particles p WHERE p.id == a.particle and frame=='+str(frame))
+		info = np.array([[i[0], i[1]]for i in res], dtype=int)
+		
+		return info.reshape(info.shape[0],2)
+
 
 	def getCropsInfo(self, frame_set):
 		'''

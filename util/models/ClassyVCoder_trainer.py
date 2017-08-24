@@ -1,4 +1,4 @@
-from ClassyCoder import ClassyCoder
+from ClassyVCoder import ClassyVCoder as ClassyCoder
 from keras.datasets import mnist
 from keras.utils import to_categorical
 import matplotlib.pyplot as plt
@@ -10,8 +10,13 @@ from dataset_generator import dataset_generator
 
 
 CATEGORIES = 5
+BATCH_SIZE = 64
+EPOCH_SIZE = BATCH_SIZE*32 #must be a multiple of BATCH_SIZE ?!
+EPOCHS = 20
 
 DG = dataset_generator()
+
+
 
 CC = ClassyCoder((64, 64, 1), CATEGORIES, True)
 
@@ -21,7 +26,6 @@ def fetch_data(training=True, samples = 128):
     X = X.astype('float32') / 255.
     X = X.reshape((len(X), 64, 64, 1))
     Y = [X, to_categorical(Y, CATEGORIES)]
-    X[:] -= np.mean(X, axis=0)
     return (X, Y)
 
 def fetch_data_generator(training=True, samples = 128):
@@ -32,14 +36,18 @@ def fetch_data_generator(training=True, samples = 128):
 
 #(x_train, y_train) = fetch_data(1024, True)
 
-CC.classycoder.fit_generator(fetch_data_generator(True, 64), 3000,
-    epochs=5,
-    validation_data=fetch_data_generator(False, 256),
-    validation_steps=5 )
+print "Training begins."
 
-        
 
-(x_test, y_test) = fetch_data(False, 1000)
+CC.classycoder.fit_generator(fetch_data_generator(True, BATCH_SIZE), EPOCH_SIZE,
+    epochs=EPOCHS,
+    use_multiprocessing=True,
+    validation_data=fetch_data_generator(False, BATCH_SIZE),
+    validation_steps=20 )
+
+print "Training ends, testing begins."
+
+(x_test, y_test) = fetch_data(False, 100)
 
 # encode and decode some crops
 # note that we take them from the *validation* set
@@ -48,10 +56,10 @@ decoded_imgs = CC.decoder.predict(encoded_imgs)
 classif_imgs = CC.featureclassifier.predict(encoded_imgs)
 
 score = CC.featureclassifier.evaluate(encoded_imgs, y_test[1], verbose=0)
-print('Classifier Accuracy:', score[1])
+print('Classifier Accuracy:', score)
 
 
-CC.save(os.path.join(CC.path(), "ClassyCoder.h5"))
+CC.save(os.path.join(CC.path(), "ClassyVCoder.h5"))
 
 print("weights saved")
 
@@ -110,7 +118,7 @@ n = 20
 plt.figure(figsize=(20, 8))
 for i in range(n):
     ax = plt.subplot(1, n, i + 1)
-    plt.imshow(encoded_imgs[i].reshape(8,64).T)
+    plt.imshow(encoded_imgs[i].reshape(8,4).T)
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)

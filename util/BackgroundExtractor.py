@@ -164,21 +164,19 @@ class FastMaximumExtractor(BackgroundExtractor):
 class MixedExtractor(BackgroundExtractor):
     
     def extract(self, ratio=0.5):
-        avg_ex = AverageExtractor(self.vc)
-        max_ex = MaximumExtractor(self.vc)
+        avg_ex = AverageExtractor(self.vc, self.opts)
+        max_ex = MaximumExtractor(self.vc, self.opts)
         return (avg_ex.extract() * ratio) + (max_ex.extract() * (1-ratio))
 
 
 
 class SimpleExtractor(BackgroundExtractor):
-    # The only difference between this and Average is that
-    # we only average the first N frames...
     def extract(self):
         shape = (self.height, self.width)
 
         max_bg = np.zeros(shape)
 
-        N = 100
+        N = 200
         self.vc.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
         for i in range(N):

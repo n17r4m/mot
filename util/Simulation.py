@@ -95,7 +95,7 @@ class Particle:
         return fy1, fy2, fx1, fx2, oy1, oy2, ox1, ox2
     
     def paint(self, frame):
-        # Working withing "transmission space" allows the
+        # Working within "transmission space" allows the
         #  blending to be performed as an attenuation of  
         #  any intensity values behind the object being painted.
 

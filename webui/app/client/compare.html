@@ -1,4 +1,57 @@
+
 <template name="compare">
+  <div class="section">
   <h1>Compare</h1>
-  <div id="tester" style="width:600px;height:400px;"></div>
+    
+    <select name="query" class="ui selection dropdown">
+      <option class="item" value="">Select a visualization</option>
+      {{#each queries}}
+      <option value={{query}} class="item">{{label}}</option>
+      {{/each}}
+    </select>
+
+    <select name="day" class="ui selection dropdown">
+      <option class="item" value="">Select an experiment day</option>
+      {{#each dayList}}
+      <option value={{this}} class="item">{{this}}</option>
+      {{/each}}
+    </select>    
+    
+    <select name="bag" class="ui selection dropdown">
+      <option class="item" value="">Select a bag</option>
+      {{#each bagList}}
+      <option value={{this}} class="item">{{this}}</option>
+      {{/each}}
+    </select>
+    
+    <br>
+    
+    {{#each arg}}
+      <label>{{this.label}}:</label>
+      <input {{this}}>
+    {{/each}}
+    
+    <hr>
+    
+    <div id="compare_plot"></div>
+    
+    <div class="ui vertical segment">
+      <div id="crop_loader" class="ui loader"></div>
+      <p></p>
+    </div>
+    
+    <div id="crops">
+      {{#each crops}}
+        <h3>{{name}}</h3>
+        {{#each list}}
+        <div style="position: relative; display: inline-block;">
+          <img src={{png}}>
+          <span style="display: inline-block; position: absolute; left: 0; bottom:0;">{{id}}</span>
+        </div>
+        {{/each}}
+      {{/each}}
+    </div>
+    
+    
+  </div>
 </template>

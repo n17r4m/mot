@@ -5,7 +5,7 @@ from keras.layers import Input, Activation, Flatten, Conv2D, Dense, MaxPooling2D
 from keras.layers.normalization import BatchNormalization
 from keras.layers.advanced_activations import LeakyReLU
 from keras.regularizers import l2
-from make_parallel import make_parallel
+
 
 
 

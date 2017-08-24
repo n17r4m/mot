@@ -24,18 +24,34 @@
       {{/each}}
     </select>
     
+    <br>
+    
+    {{#each arg}}
+      <label>{{this.label}}:</label>
+      <input {{this}}>
+    {{/each}}
+    
     <hr>
     
-    <div id="analysis_chart" style="width:100%;height: 100%;"></div>
+    <div id="analysis_plot"></div>
     
-    <ul>
-      <li>Scatterplot: area / frame (mean + quartiles lines) (tranformation? log, etc, switcher</li>
-      <li>Line: Total counts / frame</li>
-      <li>Horizontal bias chart (by area / by count /  by intensity?)</li>
-      <li>Irregularity: perimeter / area (deviation from pi)</li>
-    </ul>
+    <div class="ui vertical segment">
+      <div id="crop_loader" class="ui loader"></div>
+      <p></p>
+    </div>
+    
+    <div id="crops">
+      {{#each crops}}
+        <h3>{{name}}</h3>
+        {{#each list}}
+        <div style="position: relative; display: inline-block;">
+          <img src={{png}}>
+          <span style="display: inline-block; position: absolute; left: 0; bottom:0;">{{id}}</span>
+        </div>
+        {{/each}}
+      {{/each}}
+    </div>
     
     
-    <!-- <iframe src="http://threegraphs.com/charts/preview/6514/embed/" width="500" height="400" scrolling="no" frameborder="0" style="border:none;"></iframe> -->
   </div>
 </template>

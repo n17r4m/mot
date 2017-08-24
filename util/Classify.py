@@ -9,7 +9,7 @@ USING:
 
     As a command line utility:
     
-        $ Classify.py crop_dir output_dir
+        $ Classify.py copy crop_dir output_dir
         
         
     As a module:
@@ -32,30 +32,37 @@ import numpy as np
 from argparse import ArgumentParser
 import shutil
 
-from models.ClassyCoder import ClassyCoder
-
+from models.ClassyVCoder import ClassyVCoder
+from DataBag import DataBag
+from Cropper import Cropper
+from Query import Query
 
 
 
 class Classify(object):
     
-    def __init__(self, weight_file = "ClassyCoder.h5"):
+    def __init__(self, weight_file = "ClassyVCoder.h5", verbose = False):
         
-        self.CC = ClassyCoder()
+        self.verbose = verbose
+        self.CC = ClassyVCoder()
         self.CC.load(os.path.join(self.CC.path(), weight_file))
     
     def cropTensorFromArg(self, crops):
         if isinstance(crops, (str, unicode)):
-            print "single file"
+            if self.verbose:
+                print "single file"
             crops = numpy.array([cv2.imread(crop, 0).reshape(64, 64, 1)])
         elif isinstance(crops[0], (str, unicode)):
-            print "multiple file"
+            if self.verbose:
+                print "multiple file"
             crops = np.array(map(lambda f: cv2.imread(f, 0).reshape(64, 64, 1), crops))
         elif len(crops.shape) == 3:
-            print "single crop (numpy image or feature vector)"
+            if self.verbose:
+                print "single crop (numpy image or feature vector)"
             crops = numpy.array([crops])
         else:
-            print "# 4d tensor of images / feature vectors"
+            if self.verbose:
+                print "# 4d tensor of images / feature vectors"
             pass
         return crops.astype("float32") / 255
         
@@ -64,12 +71,14 @@ class Classify(object):
         print crops.shape
         classifier = self.CC.featureclassifier if using_features else self.CC.imageclassifier
         
+        # this needs a looksie at... [1]
         return self.CC.classycoder.predict(crops)
         
         return classifier.predict(crops)
         
     def classify(self, crops, using_features = False, named = False):
         predictions = self.predict(crops)
+        # relies on above behavior... discuss. [1]
         categories = np.argmax(predictions[1], axis=-1)
         if named:
             return map(self.category_name, categories)
@@ -87,10 +96,11 @@ def build_parser():
     parser = ArgumentParser()
     
     parser.add_argument('mode', help='mode [move, copy, bag]')
-    parser.add_argument('source', help='source_dir or bag')
-    parser.add_argument('target', help='target_dir', nargs="?")
+    parser.add_argument('source', help='source_dir or video')
+    parser.add_argument('target', help='target_dir or bag')
     
-    parser.add_argument('-w', "--weights", help='use custom weights file for model', default="ClassyCoder.h5")
+    parser.add_argument('-w', "--weights", help='use custom weights file for model', default="ClassyVCoder.h5")
+    parser.add_argument('-n', "--normalize", help='video requires normalization', action="store_true")
     parser.add_argument('-v', "--verbose", help='print verbose statements while executing', action = 'store_true')    
 
     return parser
@@ -98,9 +108,60 @@ def build_parser():
 
 def main(opts):
     
-    classifier = Classify(opts.weights)
+    classifier = Classify(opts.weights, opts.verbose)
     
-    if opts.mode is "bag":
+    if opts.mode == "bag":
+        
+        if not os.path.isfile(opts.source):
+            raise TypeError("Source video %s does not exist." % opts.source)
+        
+        if not os.path.isfile(opts.target):
+            raise TypeError("Target bag to classify %s does not exist." % opts.target)
+        
+        
+        if opts.verbose:
+            print "Loading data bag"
+        bag = DataBag(opts.target)
+        
+        
+        if opts.verbose:
+            print "Loading source video"
+        crp = Cropper(opts.source, bag, {"normalize": opts.normalize, "verbose": opts.verbose})
+        
+        
+        if opts.verbose:
+            print "Querying particle list"
+        q = Query(bag)
+        particles = q.particle_list()
+        
+    
+        c = bag.cursor()
+    
+        for p in particles:
+            
+            if opts.verbose:
+                print "Classifying particle", p.id
+            
+            f = q.particle_instances(p.id)
+            crops = []
+            for i in f:
+                crop, s = crp.get(i.frame, p.id)
+                crops.append(crop)
+            crops = np.array(crops)
+            shape = crops.shape
+            
+            crops = np.array(crops).reshape(shape[0], shape[1], shape[2], 1)
+            
+            cat = classifier.classify(crops)
+            if opts.verbose:
+                print cat
+            cat_vote = np.argmax(np.bincount(cat))    
+            if opts.verbose:
+                print "Choosing category", cat_vote
+            
+            c.execute("UPDATE particles SET category = ? where id=?", (cat_vote, p.id))
+            bag.commit()
+            
         # TODO - inplace classification of particles in a databag
         # TODO - thoughts: why not store the crop in the bag?
         pass

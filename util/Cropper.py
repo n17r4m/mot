@@ -40,9 +40,10 @@ import numpy as np
 from functions.to_precision import to_precision
 from functions.dotdict import dotdict
 
-from BackgroundExtractor import FastMaximumExtractor as BackgroundExtractor
+from BackgroundExtractor import SimpleExtractor as BackgroundExtractor
 from Normalizer import Normalizer
 from FrameGrabber import FrameGrabber
+import base64
 
 
 class Cropper(object):
@@ -74,7 +75,7 @@ class Cropper(object):
             
             if isinstance(self.opts.background, (str, unicode)):
                 self.bg = cv2.imread(self.opts.background, 0)
-            elif self.opts.background:
+            elif isinstance(self.opts.background, np.ndarray):
                 self.bg = self.opts.background
             
             
@@ -140,9 +141,6 @@ class Cropper(object):
             else:
                 frame = self.fgrabber.frame(frame_no, True)
                 
-                if self.opts.normalize:
-                    frame = self.normalizer.normalizeFrame(self.bg, frame)
-                
                 self.isolate_last_frame = frame
                 self.isolate_last_frame_id = frame_no
                 
@@ -158,11 +156,16 @@ class Cropper(object):
                 
         return None   
     
+    def resize(self, img):
+        s = to_precision(float(self.size) / float(img.shape[0]), 3)
+        return cv2.resize(img, (self.size, self.size), interpolation = cv2.INTER_CUBIC), s
+    
+    def get(self, frame_no, particle_id):
+        return self.resize(self.isolate(frame_no, particle_id))
+    
     def save(self, img, frame_no, particle_id, category=0):
         
-        s = to_precision(float(self.size) / float(img.shape[0]), 3)
-        
-        resized_image = cv2.resize(img, (self.size, self.size), interpolation = cv2.INTER_CUBIC) 
+        resized_image, s = self.resize(img)
         
         if self.opts.uuid:
             fname = "{}_{}.png".format(uuid.uuid4(), s)
@@ -178,7 +181,11 @@ class Cropper(object):
                 c = 'b'
             fname = "{}_{}_{}_{}.png".format(c, frame_no, particle_id, s)
         
-        cv2.imwrite(os.path.join(self.output_dir, fname), resized_image)
+        if self.output_dir == "-":
+            ret, data = cv2.imencode(".png", resized_image)
+            print base64.b64encode(data.tobytes())
+        else:
+            cv2.imwrite(os.path.join(self.output_dir, fname), resized_image)
         
 
 
@@ -212,7 +219,9 @@ def main(opts):
     if not os.path.isfile(opts.bag):
         parser.error("DataBag file %s does not exist." % opts.bag)
     
-    if not os.path.exists(opts.output_dir):
+    if opts.output_dir == '-':
+        opts.limit = 1
+    elif not os.path.exists(opts.output_dir):
         os.makedirs(opts.output_dir)
         
         
