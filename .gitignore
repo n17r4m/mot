@@ -70,3 +70,6 @@ c9
 
 # temp python files
 .pyc
+
+# large h5 model files
+util/models/*.h5
