@@ -31,10 +31,12 @@ Martin Humphreys
 
 from argparse import ArgumentParser
 import numpy as np
+import cv2
 import sys
 import os
 import sqlite3
 import json
+import base64
 from DataBag import DataBag
 
 
@@ -143,7 +145,8 @@ class Query(object):
         c = self.cursor()
         fields = "id, area, intensity, category, x, y, radius, frame"
         if category is None:
-            c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ?", (frame,))
+            c.execute("SELECT " + fields + " FROM assoc, particles WHERE assoc.particle = particles.id and frame = ?", (frame,))
+            # c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ?", (frame,))
         else:    
             c.execute("SELECT " + fields + " FROM assoc LEFT JOIN particles ON assoc.particle = particles.id WHERE frame = ? and category = ?", (frame, category))
         return self.fieldmap(fields, c.fetchall())
@@ -266,22 +269,33 @@ class Query(object):
 
     def particles_by_category_with_flow_near(self, flow, category = None, limit = 10):
         c = self.cursor()
-        fields = "id, dv"
+        fields = "particle, frame, dv"
         if category is None:
-            c.execute("SELECT a2.particle AS id, AVG(ABS(-(a2.y-a1.y)*p.area - ?)) AS dv FROM assoc a1, assoc a2, particles p WHERE p.id==a1.particle AND a1.particle==a2.particle AND a1.frame == a2.frame - 1 GROUP BY id ORDER BY dv ASC LIMIT ?", (flow, limit))
+            c.execute("SELECT a2.particle AS id, MAX(a2.frame), AVG(ABS(-(a2.y-a1.y)*p.area - ?)) AS dv FROM assoc a1, assoc a2, particles p WHERE p.id==a1.particle AND a1.particle==a2.particle AND a1.frame == a2.frame - 1 GROUP BY id ORDER BY dv ASC LIMIT ?", (flow, limit))
         else:
-            c.execute("SELECT a2.particle AS id, AVG(ABS(-(a2.y-a1.y)*p.area - ?)) AS dv FROM assoc a1, assoc a2, particles p WHERE category = ? AND p.id==a1.particle AND a1.particle==a2.particle AND a1.frame == a2.frame - 1 GROUP BY id ORDER BY dv ASC LIMIT ?", (flow, category, limit))
+            c.execute("SELECT a2.particle AS id, MAX(a2.frame), AVG(ABS(-(a2.y-a1.y)*p.area - ?)) AS dv FROM assoc a1, assoc a2, particles p WHERE category = ? AND p.id==a1.particle AND a1.particle==a2.particle AND a1.frame == a2.frame - 1 GROUP BY id ORDER BY dv ASC LIMIT ?", (flow, category, limit))
         return self.fieldmap(fields, c.fetchall())
     
     
     def particles_by_intensity_with_flow_near(self, flow, take="Light", intensity = 110, limit = 10):
         c = self.cursor()
-        fields = "id, dv"
+        fields = "particle, frame, dv"
         op = ">=" if take =="Light" else "<"
-        c.execute("SELECT a2.particle AS id, AVG(ABS(-(a2.y-a1.y)*p.area - ?)) AS dv FROM assoc a1, assoc a2, particles p WHERE p.id==a1.particle AND a1.particle==a2.particle AND a1.frame == a2.frame - 1 AND intensity " + op + " ? GROUP BY id ORDER BY dv ASC LIMIT ?", (flow, intensity, limit))
+        c.execute("SELECT a2.particle AS id, MAX(a2.frame), AVG(ABS(-(a2.y-a1.y)*p.area - ?)) AS dv FROM assoc a1, assoc a2, particles p WHERE p.id==a1.particle AND a1.particle==a2.particle AND a1.frame == a2.frame - 1 AND intensity " + op + " ? GROUP BY id ORDER BY dv ASC LIMIT ?", (flow, intensity, limit))
         return self.fieldmap(fields, c.fetchall())
     
-        
+    def crops(self, *args):
+        fp_pairs = [(int(f), int(p)) for f, p in [fp.split(",") for fp in args]]
+        results = []
+        for fp in fp_pairs:
+            crop, s = self.bag.getCrop(fp[0], fp[1])
+            ok, png = cv2.imencode(".png", crop)
+            results.append({
+                "frame": fp[0], "particle": fp[1], "scale": s,
+                "crop": "data:image/png;base64," + base64.b64encode(png.tobytes()) })
+        return results
+            
+            
     def compare(self, db_file):
         
         c = self.cursor()

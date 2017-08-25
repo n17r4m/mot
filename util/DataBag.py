@@ -173,10 +173,10 @@ class DataBag(object):
         self.commit()
     
     def migration_2(self):
-        self.say("Migrating to revision", 3)
+        self.say("Migrating to revision", 2)
         c = self.cursor()
         c.execute("ALTER TABLE assoc ADD COLUMN scale REAL")
-        c.execute("ALTER TABLE assoc ADD COLUMN crop BLOB")
+        c.execute("ALTER TABLE assoc ADD COLUMN crop BLOB DEFAULT NULL")
         c.execute("UPDATE meta SET value='3' WHERE name='revision'");
         self.commit()
     
@@ -330,7 +330,15 @@ class DataBag(object):
     def getBitmap(self, frame_no):
         res = self.query("SELECT bitmap FROM frames WHERE frame == " + str(frame_no))
         return self.fromPng(res[0][0])
-
+    
+    
+    def getCrop(self, frame, particle):
+        c = self.cursor()
+        c.execute("SELECT crop, scale FROM assoc WHERE frame = ? AND particle = ?", (frame, particle))
+        row = c.fetchone()
+        if row:
+            return np.frombuffer(row[0], dtype="uint8").reshape(64, 64), row[1]
+    
     def li_import(self, file_name):
         with open(file_name) as file:
             l = 0

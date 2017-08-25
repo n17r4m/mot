@@ -72,7 +72,6 @@ function updateChart(instance){
             var query = Queries[q]
             
             
-            
             Plotly.newPlot($('#analysis_plot')[0], res.data, res.layout).then((plt) => {
                 
                 $('#analysis_plot a[data-title="Autoscale"]')[0].click() // hack

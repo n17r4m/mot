@@ -67,7 +67,7 @@ class Crop(object):
             self.opts = opts
         
         
-        if self.opts.background:
+        if self.opts.background is not None:
             
             if isinstance(self.opts.background, (str, unicode)):
                 self.bg = cv2.imread(self.opts.background, 0)
@@ -124,7 +124,8 @@ class Crop(object):
 
     def isolate(self, frame_no, particle_id):
         props = self.query.particle_properties(frame_no, particle_id)
-        
+        if props is None:
+            print frame_no, particle_id
         x, y, a, r = int(round(props.x)), int(round(props.y)), float(props.area), float(props.radius)
         
         r = int(max(r, np.sqrt(a/np.pi)))
@@ -153,6 +154,8 @@ class Crop(object):
         c = self.bag.cursor()
         c.execute("UPDATE assoc SET crop = ?, scale = ? WHERE frame = ? AND particle = ?", (crop, s, frame_no, particle_id))
 
+    
+
 def build_parser():
     parser = ArgumentParser()
     
@@ -160,6 +163,7 @@ def build_parser():
     parser.add_argument('bag', help='The databag file with stored detection or tracking results')
     parser.add_argument("-b", "--background", help="Normalize with given background")
     parser.add_argument('-v', "--verbose", help='print verbose statements while executing', action = 'store_true')    
+    
 
     return parser
 

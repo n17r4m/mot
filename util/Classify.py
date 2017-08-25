@@ -64,11 +64,10 @@ class Classify(object):
             if self.verbose:
                 print "# 4d tensor of images / feature vectors"
             pass
-        return crops.astype("float32") / 255
+        return crops.astype("float32") / 255.0
         
     def predict(self, crops, using_features = False):
         crops = self.cropTensorFromArg(crops)
-        print crops.shape
         classifier = self.CC.featureclassifier if using_features else self.CC.imageclassifier
         
         # this needs a looksie at... [1]
@@ -96,11 +95,10 @@ def build_parser():
     parser = ArgumentParser()
     
     parser.add_argument('mode', help='mode [move, copy, bag]')
-    parser.add_argument('source', help='source_dir or video')
-    parser.add_argument('target', help='target_dir or bag')
+    parser.add_argument('source', help='source_dir or bag')
+    parser.add_argument('target', help='target_dir', nargs="?")
     
     parser.add_argument('-w', "--weights", help='use custom weights file for model', default="ClassyVCoder.h5")
-    parser.add_argument('-n', "--normalize", help='video requires normalization', action="store_true")
     parser.add_argument('-v', "--verbose", help='print verbose statements while executing', action = 'store_true')    
 
     return parser
@@ -113,28 +111,18 @@ def main(opts):
     if opts.mode == "bag":
         
         if not os.path.isfile(opts.source):
-            raise TypeError("Source video %s does not exist." % opts.source)
-        
-        if not os.path.isfile(opts.target):
             raise TypeError("Target bag to classify %s does not exist." % opts.target)
         
         
         if opts.verbose:
             print "Loading data bag"
-        bag = DataBag(opts.target)
-        
-        
-        if opts.verbose:
-            print "Loading source video"
-        crp = Cropper(opts.source, bag, {"normalize": opts.normalize, "verbose": opts.verbose})
-        
+        bag = DataBag(opts.source)
         
         if opts.verbose:
             print "Querying particle list"
         q = Query(bag)
         particles = q.particle_list()
         
-    
         c = bag.cursor()
     
         for p in particles:
@@ -145,7 +133,10 @@ def main(opts):
             f = q.particle_instances(p.id)
             crops = []
             for i in f:
-                crop, s = crp.get(i.frame, p.id)
+                crop, s = bag.getCrop(i.frame, p.id)
+                if opts.verbose:
+                    cv2.imshow("out", crop)
+                    cv2.waitKey(1)
                 crops.append(crop)
             crops = np.array(crops)
             shape = crops.shape
@@ -160,7 +151,7 @@ def main(opts):
                 print "Choosing category", cat_vote
             
             c.execute("UPDATE particles SET category = ? where id=?", (cat_vote, p.id))
-            bag.commit()
+        bag.commit()
             
         # TODO - inplace classification of particles in a databag
         # TODO - thoughts: why not store the crop in the bag?

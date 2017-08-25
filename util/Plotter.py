@@ -93,6 +93,7 @@ class Plotter:
     def flow_vs_category_distribution(self):
         labels = ["Undefined", "Unknown", "Bitumen", "Sand", "Bubble"]
         data = self.qs[0].flow_vs_category_distribution()
+        #data = map(lambda d: [-1, 0, 1] if len(d) == 0 else d, data)
         #TODO 
         fig = ff.create_distplot(data, labels, bin_size=50, show_rug=False)
         return self.to_json(fig)
