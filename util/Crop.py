@@ -183,7 +183,8 @@ def main(opts):
             print "Extracting crops from frame", f.frame
         for p in cropper.query.particles_in_frame(f.frame):
             cropper.update(p.frame, p.id)
-        cropper.bag.commit()
+    cropper.bag.commit()
+    
 if __name__ == '__main__':
     main(build_parser().parse_args())
  

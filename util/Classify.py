@@ -33,6 +33,7 @@ from argparse import ArgumentParser
 import shutil
 
 from models.ClassyVCoder import ClassyVCoder
+from models.make_parallel import make_parallel
 from DataBag import DataBag
 from Cropper import Cropper
 from Query import Query
@@ -45,7 +46,14 @@ class Classify(object):
         
         self.verbose = verbose
         self.CC = ClassyVCoder()
+        
+        self.CC.featureclassifier = make_parallel(self.CC.featureclassifier, 2)
+        self.CC.imageclassifier = make_parallel(self.CC.imageclassifier, 2)
+        
         self.CC.load(os.path.join(self.CC.path(), weight_file))
+        
+        
+        
     
     def cropTensorFromArg(self, crops):
         if isinstance(crops, (str, unicode)):
@@ -69,6 +77,7 @@ class Classify(object):
     def predict(self, crops, using_features = False):
         crops = self.cropTensorFromArg(crops)
         classifier = self.CC.featureclassifier if using_features else self.CC.imageclassifier
+        
         
         # this needs a looksie at... [1]
         return self.CC.classycoder.predict(crops)

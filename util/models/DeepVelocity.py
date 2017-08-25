@@ -18,9 +18,8 @@ class DeepVelocity(object):
         if verbose:
             print "Network input shape is", input_features.get_shape()
 
-        x = Dense(128, activation='selu')(input_features)
-        x = Dense(256, activation='selu')(x)
-        x = Dense(512, activation='selu')(x)
+        x = Dense(64, activation='selu')(input_features)
+        x = Dense(128, activation='selu')(x)
         output_map = Dense(2,activation='softmax')(x)
 
         output_map_shape = output_map.get_shape()
@@ -34,9 +33,9 @@ class DeepVelocity(object):
         deep_velocity = Model(inputs=[input_features], outputs=[output_map])
         deep_velocity.compile(
             optimizer='adam', 
-            loss=['categorical_crossentropy'],
+            loss=['binary_crossentropy'],
             metrics=['mae', 'acc'])    
-        
+        print 'binary!!'
         #helpful to know this
         self.output_map_dims = output_map_dims
         self.output_map_shape = output_map_shape        

@@ -20,6 +20,7 @@ Author: Martin Humphreys / Kevin Gordon
 from argparse import ArgumentParser
 import os
 import cv2
+import pims
 import numpy as np
 
 
@@ -27,20 +28,18 @@ class FrameGrabber:
   
     def __init__(self, in_video):
         self.vc = self.videoReaderFromArg(in_video)
-        self.frames = int(self.vc.get(cv2.CAP_PROP_FRAME_COUNT))
-        self.fps = float(self.vc.get(cv2.CAP_PROP_FPS)) 
-        if self.fps == float('inf'):
-            self.fps = 300
-        self.width = int(self.vc.get(cv2.CAP_PROP_FRAME_WIDTH))
-        self.height = int(self.vc.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        self.fourcc = int(self.vc.get(cv2.CAP_PROP_FOURCC))
-        self.shape = (self.width, self.height)
+        self.frames = len(self.vc)
+        self.height, self.width, _ = self.vc[0].shape
+        self.shape = (self.height, self.width)
+    
+    def __len__(self):
+        return self.frames
 
-    def frame(self, frame_no=0, gray=False):
-        self.vc.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
-        ret, frame = self.vc.read()
-
-        if not ret:
+    def frame(self, frame_no=0, gray=True):
+        
+        frame = self.vc[frame_no]
+        
+        if not len(frame):
             print "Error reading video frame " + str(frame_no) + " ..."
         else:
             if gray:
@@ -50,7 +49,7 @@ class FrameGrabber:
 
     def videoReaderFromArg(self, video):
         if isinstance(video, (str, unicode)):
-            vc = cv2.VideoCapture(video)
+            vc = pims.open(video)
             self.video_path = video
         else:
             vc = video

@@ -242,8 +242,8 @@ class Bag2Video:
         
         for f in self.query.frame_list():
             if self.verbose:
-                print "frame ", f[0], ' ...'
-            frame = self.frame(f[0])            
+                print "frame ", f.frame, ' ...'
+            frame = self.frame(f.frame)            
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             frame = self.fines(frame)       
             frame = np.uint8(frame)

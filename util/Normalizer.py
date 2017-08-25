@@ -53,7 +53,7 @@ class Normalizer:
         width = int(vc.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(vc.get(cv2.CAP_PROP_FRAME_HEIGHT))
         fourcc = int(vc.get(cv2.CAP_PROP_FOURCC))
-        vw = cv2.VideoWriter(out_video, fourcc, fps, (width, height))
+        vw = cv2.VideoWriter(out_video, fourcc, fps, (width, height), False)
         
         self.normalizeVideo(background, vc, vw)
         
@@ -62,8 +62,11 @@ class Normalizer:
         f = 1
         while(True):
             ret, frame = video_reader.read()
+            
             if not ret:
                 break;
+            else:
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             f += 1
             normal_frame = self.normalizeFrame(background, frame)
             video_writer.write(normal_frame)

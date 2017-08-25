@@ -26,130 +26,58 @@ from argparse import ArgumentParser
 import numpy as np
 import os
 import cv2
-
+from FrameGrabber import FrameGrabber
 
 class BackgroundExtractor(object):
 
     def __init__(self, video, opts):
         
-        if isinstance(video, (str, unicode)):
-            self.vc = cv2.VideoCapture(video)
-        else:
-            self.vc = video
-        
+        self.grabber = FrameGrabber(video)
         self.opts = opts
-        self.frames = int(self.vc.get(cv2.CAP_PROP_FRAME_COUNT))
-        self.width = int(self.vc.get(cv2.CAP_PROP_FRAME_WIDTH))
-        self.height = int(self.vc.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        
         if self.opts.verbose:
-            print "Extracting from", self.frames, "frames"
+            print "Extracting from", self.grabber.frames, "frames"
             print "size:", (self.width, self.height)
         
     def extract(self):  
-        ret, frame = self.vc.read()
-        bg = np.float32(frame)
-        f = 1
-        while(True):
-            ret, frame = self.vc.read()
-            a = 1 / self.frames
-            if not ret:
-                break;
-            if f is 1:
-                bg = np.float32(frame)
-            else:
-                cv2.accumulateWeighted(frame, bg, a)
-            
-            f += 1
-        return cv2.convertScaleAbs(bg)
+        pass
   
 
 class AverageExtractor(BackgroundExtractor):
 
     def extract(self):
-        
-        shape = (self.height, self.width)
-        
-        
-
-        avg_bg = np.zeros(shape)
-
-        N = int(self.frames)
-        self.vc.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        avg_bg = np.zeros(self.grabber.shape)
+        N = self.grabber.frames
         count = 0
         for i in range(N):
-            self.vc.set(cv2.CAP_PROP_POS_FRAMES, i)
-                        
-            ret, frame = self.vc.read()
+                       
+            frame = self.grabber.frame(i)
             
-            if ret:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            if len(frame):
                 avg_bg += frame * 1.0 / N
-
             else:
                 count +=1
                 print "Error reading video frame " + str(i) + " ..."
 
             if i%100==0 and self.opts.verbose:
                 print 'processed frame ' + str(i) + ' of ' + str(N-1)
-
         print "error reading", count, 'frames'
         return np.uint8(avg_bg)
 
 class MaximumExtractor(BackgroundExtractor):
-
     def extract(self):
-        shape = (self.height, self.width)
 
-        max_bg = np.zeros(shape)
-
-        N = int(self.frames)
-        self.vc.set(cv2.CAP_PROP_POS_FRAMES, 0)
-
-        for i in range(N):
-            self.vc.set(cv2.CAP_PROP_POS_FRAMES, i)
-            ret, frame = self.vc.read()
-
-            if ret:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                max_bg = self.maximum(max_bg, frame)
-
-            else:
-                print "Error reading video frame " + str(i) + " ..."
-
-            if i%100==0 and self.opts.verbose:
-                print 'processed frame ' + str(i) + ' of ' + str(N-1)
-
-        return np.uint8(max_bg)
-
-    def maximum (self, A, B):
-        BisBigger = A-B
-        BisBigger = np.where(BisBigger < 0, 1, 0)
-        return A - A * BisBigger + B * BisBigger
-
-
-class FastMaximumExtractor(BackgroundExtractor):
-
-    def extract(self):
-        shape = (self.height, self.width)
-
-        max_bg = np.zeros(shape)
-
-        N = int(self.frames)
-        self.vc.set(cv2.CAP_PROP_POS_FRAMES, 0)
-
+        max_bg = np.zeros(self.grabber.shape)
+        N = self.grabber.frames
+        
         for i in range(N):
             
-            # 19 times faster!
-            if i % 19 == 0:
-                self.vc.set(cv2.CAP_PROP_POS_FRAMES, i)
-                ret, frame = self.vc.read()
-    
-                if ret:
-                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                    max_bg = self.maximum(max_bg, frame)
-                else:
-                    print "Error reading video frame " + str(i) + " ..."
+            frame = self.grabber.frame(i)
 
+            if len(frame):
+                max_bg = self.maximum(max_bg, frame)
+            else:
+                print "Error reading video frame " + str(i) + " ..."
             if i%100==0 and self.opts.verbose:
                 print 'processed frame ' + str(i) + ' of ' + str(N-1)
 
@@ -172,25 +100,21 @@ class MixedExtractor(BackgroundExtractor):
 
 class SimpleExtractor(BackgroundExtractor):
     def extract(self):
-        shape = (self.height, self.width)
 
-        max_bg = np.zeros(shape)
+        max_bg = np.zeros(self.grabber.shape)
 
-        N = 200
-        self.vc.set(cv2.CAP_PROP_POS_FRAMES, 0)
-
+        N = 101
+        
         for i in range(N):
-            self.vc.set(cv2.CAP_PROP_POS_FRAMES, i)
-            ret, frame = self.vc.read()
+            
+            frame = self.grabber.frame(i)
 
-            if ret:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            if len(frame):
                 max_bg = self.maximum(max_bg, frame)
-
             else:
                 print "Error reading video frame " + str(i) + " ..."
 
-            if i%100==0 and self.opts.verbose:
+            if i%20==0 and self.opts.verbose:
                 print 'processed frame ' + str(i) + ' of ' + str(N-1)
 
         return np.uint8(max_bg)
@@ -213,15 +137,12 @@ def main():
     opts = parser.parse_args()
     if not os.path.isfile(opts.input_video):
         parser.error("Video file %s does not exist." % opts.input_video)
-    
-    if opts.background_type == 'running_avg':
-        extractor = BackgroundExtractor(opts.input_video, opts)
+
+
     elif opts.background_type == 'avg':
         extractor = AverageExtractor(opts.input_video, opts)
     elif opts.background_type == 'max':
         extractor = MaximumExtractor(opts.input_video, opts)
-    elif opts.background_type == 'fastmax':
-        extractor = FastMaximumExtractor(opts.input_video, opts)
     elif opts.background_type == 'mix':
         extractor = MixedExtractor(opts.input_video, opts)
     elif opts.background_type == 'simple':
