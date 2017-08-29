@@ -266,6 +266,13 @@ class Query(object):
     def flow_vs_category_violin(self):
         return self.flow_vs_category_histogram()
 
+    def compare_flow_vs_category_violin2(self):
+        bitu = self.bag.query('select AVG(-(a2.y-a1.y)*p.area) from assoc a1, assoc a2, particles p where category = 2 and p.id==a1.particle and a1.particle==a2.particle and a1.frame == a2.frame - 1 GROUP BY p.id')
+        sand = self.bag.query('select AVG(-(a2.y-a1.y)*p.area) from assoc a1, assoc a2, particles p where category = 3 and p.id==a1.particle and a1.particle==a2.particle and a1.frame == a2.frame - 1 GROUP BY p.id')
+        bitu = np.array([i[0] for i in bitu])
+        sand = np.array([i[0] for i in sand])
+        return [bitu.tolist(), sand.tolist()]
+        
 
     def particles_by_category_with_flow_near(self, flow, category = None, limit = 10):
         c = self.cursor()

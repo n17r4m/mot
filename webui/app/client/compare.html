@@ -31,21 +31,29 @@
       <input {{this}}>
     {{/each}}
     
+    <br>
+    
+    <div class="ui segments">
+    {{#each experiment}}
+      <div class="ui segment">
+        {{day}}/{{bag}} 
+        <a class="remove button" data-index={{@index}}><i class="remove icon"></i></a>
+      </div>
+    {{/each}}
+    </div>
+    
     <hr>
     
     <div id="compare_plot"></div>
     
-    <div class="ui vertical segment">
-      <div id="crop_loader" class="ui loader"></div>
-      <p></p>
-    </div>
     
+    <div id="crop_loader" class="ui loader"></div>
     <div id="crops">
       {{#each crops}}
         <h3>{{name}}</h3>
         {{#each list}}
         <div style="position: relative; display: inline-block;">
-          <img src={{png}}>
+          <img src={{crop}}>
           <span style="display: inline-block; position: absolute; left: 0; bottom:0;">{{id}}</span>
         </div>
         {{/each}}

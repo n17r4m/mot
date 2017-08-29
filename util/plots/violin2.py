@@ -92,6 +92,36 @@ def make_quartiles(s, q1, q3):
         hoverinfo='text'
     )
 
+def make_diff(m1, m2):
+    """
+    Makes the difference of medians for a violin plot.
+    """
+    return graph_objs.Scatter(
+        x=[0, 0],
+        y=[m1, m2],
+        text=['median 1: ' + '{:0.2f}'.format(m1),
+              'median 2: ' + '{:0.2f}'.format(m2)],
+        mode='lines',
+        line=graph_objs.Line(
+            width=2,
+            color='rgb(0,0,0)'
+        ),
+        hoverinfo='text'
+    )
+
+def make_delta(m1, m2):
+    """
+    Formats the 'delta of medians' hovertext for a violin plot.
+    """
+    return graph_objs.Scatter(
+        x=[0],
+        y=[(m1 + m2) / 2.0],
+        text=['delta: ' + '{:0.2f}'.format(abs(m1 - m2))],
+        mode='markers',
+        marker=dict(symbol='square',
+                    color='rgb(255,255,255)'),
+        hoverinfo='text'
+    )
 
 def make_median(s, q2):
     """
@@ -106,6 +136,7 @@ def make_median(s, q2):
                     color='rgb(255,255,255)'),
         hoverinfo='text'
     )
+    
 
 
 def make_XAxis(xaxis_title, xaxis_range):
@@ -133,7 +164,7 @@ def make_YAxis(yaxis_title):
                              ticklen=4,
                              showline=True,
                              zeroline=False,
-                             showgrid=False,
+                             showgrid=True,
                              mirror=False)
     return yaxis
 
@@ -160,17 +191,22 @@ def violinplot(vals, colors=None):
     max_pdf = np.max([np.max(yy) for yy in yys])
     min_pdf = np.min([np.min(yy) for yy in yys])
     
+    
+    s_pos = max_pdf / 4.0
+    
     # TODO consider min_pdf here
     plot_xrange = [min_pdf - 0.1, max_pdf + 0.1]
     
     plot_data = [make_half_violin(-yys[0], xxs[0], fillcolor=colors[0]),
                  make_half_violin(yys[1], xxs[1], fillcolor=colors[1]),
-                 make_non_outlier_interval(-0.025, stats[0]['d1'], stats[0]['d2']),
-                 make_non_outlier_interval( 0.025, stats[1]['d1'], stats[1]['d2']),
-                 make_quartiles(-0.025, stats[0]['q1'], stats[0]['q3']),
-                 make_quartiles( 0.025, stats[1]['q1'], stats[1]['q3']),
-                 make_median(-0.025, stats[0]['q2']),
-                 make_median( 0.025, stats[1]['q2'])]
+                 make_non_outlier_interval(-s_pos, stats[0]['d1'], stats[0]['d2']),
+                 make_non_outlier_interval( s_pos, stats[1]['d1'], stats[1]['d2']),
+                 make_quartiles(-s_pos, stats[0]['q1'], stats[0]['q3']),
+                 make_quartiles( s_pos, stats[1]['q1'], stats[1]['q3']),
+                 make_median(-s_pos, stats[0]['q2']),
+                 make_median( s_pos, stats[1]['q2']),
+                 make_diff(stats[0]['q2'], stats[1]['q2']),
+                 make_delta(stats[0]['q2'], stats[1]['q2'])]
     
     return plot_data, plot_xrange
     

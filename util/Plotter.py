@@ -105,20 +105,12 @@ class Plotter:
         fig = ff.create_violin(df, data_header="Flow", group_header="Category", title=None, rugplot=False)
         return self.to_json(fig)
 
-    def compare_flow_violin_test(self):
-        n = 400
-        v1l = np.random.randn(n) + 1
-        v1r = np.random.randn(n) - 1
         
-        v2l = np.random.randn(n) + 2
-        v2r = np.random.randn(n) - 0
-        
-        data = [[v1l, v1r], [v2l, v2r]]
-        labels = ["Exp 1", "Exp 2"]
-        
+    def compare_flow_vs_category_violin2(self):
+        data = [q.compare_flow_vs_category_violin2() for q in self.qs]
+        labels = [q.bag.name.split("/")[-1].split("_")[0] for q in self.qs]
         fig = violin2(data, labels)
         return self.to_json(fig)
-        
   
   
   

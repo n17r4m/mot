@@ -1,0 +1,11 @@
+.ui.dropdown {
+    z-index: 9999;
+}
+
+.menu.transition.visible {
+    z-index: 9999;
+}
+
+.js-plotly-plot .plotly .modebar {
+    z-index: 2 !important;
+}

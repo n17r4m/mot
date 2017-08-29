@@ -7,7 +7,7 @@ from keras.layers import activations
 
 class DeepVelocity(object):
     
-    def __init__(self, input_shape=(3,), verbose=False):
+    def __init__(self, input_shape=(18,), verbose=False):
         """
         https://keras.io/getting-started/functional-api-guide/#multi-input-and-multi-output-models
         https://keras.io/getting-started/functional-api-guide/#shared-layers
@@ -20,6 +20,7 @@ class DeepVelocity(object):
 
         x = Dense(64, activation='selu')(input_features)
         x = Dense(128, activation='selu')(x)
+        x = Dense(256, activation='selu')(x)
         output_map = Dense(2,activation='softmax')(x)
 
         output_map_shape = output_map.get_shape()

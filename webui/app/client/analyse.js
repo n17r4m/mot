@@ -17,19 +17,12 @@ Template.analyse.onCreated(function makeVars(){
     //this.plot = new ReactiveVar("<p>Select a Query</p>")
 })
 
-Template.analyse.onRendered(function updateBagList(){
-    this.$("select.dropdown").dropdown()
-    
-    
-})
-
 Template.analyse.onRendered(function updateDayList(){
     this.$("select.dropdown").dropdown()
     this.queries.set(Queries.filter((q) => q.type == "analyse"))
     Meteor.call("dayList", (err, list) => {
         return err ? this.dayList.set("Error") : this.dayList.set(list)
     })
-    
 })
 
 Template.analyse.helpers({

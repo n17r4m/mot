@@ -44,9 +44,9 @@ export const Queries = {
             type: "analyse", 
             label: "Flow vs. Category (violin)" 
         },
-        compare_flow_violin_test: {
+        compare_flow_vs_category_violin2: {
             type: "compare",
-            label: "Test split violin"
+            label: "Compare Flow"
         }
         /// ... 
     },
@@ -94,6 +94,10 @@ var isolateParticleMaps = {
     violin: function(p){ return {
         flow: p.y,
         trace: Math.floor(p.curveNumber/(this.length / 5)) 
+    }},
+    violin2: function(p){ return {
+        flow: p.y,
+        trace: Math.floor(p.curveNumber/10) 
     }}
 }
 
