@@ -149,7 +149,7 @@ def main(opts):
                 crops.append(crop)
             crops = np.array(crops)
             shape = crops.shape
-            
+            print shape
             crops = np.array(crops).reshape(shape[0], shape[1], shape[2], 1)
             
             cat = classifier.classify(crops)

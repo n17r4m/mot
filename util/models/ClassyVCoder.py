@@ -10,9 +10,10 @@ from keras.layers import Activation, Concatenate, Dropout, AlphaDropout, Reshape
 from keras.layers.normalization import BatchNormalization
 from keras.layers.advanced_activations import LeakyReLU
 from keras.regularizers import l2
+from keras.optimizers import Nadam
 from keras.objectives import binary_crossentropy
 
-
+from make_parallel import make_parallel
 
 
 class ClassyVCoder(object):
@@ -111,7 +112,7 @@ class ClassyVCoder(object):
         n +=1; ae = Conv2D(filters, (3, 3), padding='same')(ae)
         n +=1; ae = LeakyReLU(alpha=0.05)(ae)
         n +=1; ae = UpSampling2D((2, 2))(ae)
-        n +=1; decoded = Conv2D(1, (3, 3), activation='sigmoid', padding='same')(ae)
+        n +=1; decoded = Conv2D(1, (3, 3), padding='same')(ae) # activation='sigmoid',
         
         if verbose:
             print "Decoder output shape is", decoded.get_shape()
@@ -168,8 +169,13 @@ class ClassyVCoder(object):
 
 
         classycoder = Model(inputs=[input_img], outputs=[decoded, classified])
+        
+        #classycoder = make_parallel(classycoder, 2)
+        
+        optimizer = Nadam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004, clipnorm=1.0)
+        
         classycoder.compile(
-            optimizer='adam', 
+            optimizer=optimizer,
             loss=[vae_objective, 'categorical_crossentropy'],
             loss_weights=[0.66, 0.33],
             metrics=['acc'])

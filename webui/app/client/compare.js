@@ -78,7 +78,7 @@ function addExperiment(instance){
           bag = instance.bagName.get(),
           q  = instance.query.get()
     if(day && bag && q){
-        es = instance.experiments.get()
+        var es = instance.experiments.get()
         if (!es.some((ex) => ex.day == day && ex.bag == bag)){
             es.push({day: day, bag: bag})
             es.sort(fieldSorter(["day", "bag"]))

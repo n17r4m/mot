@@ -13,6 +13,7 @@ pids
 
 # Data
 data
+database
 
 # Temporary data
 tmp

@@ -326,7 +326,11 @@ class Query(object):
         res = self.query("SELECT bitmap FROM frames WHERE frame == " + str(frame_no))
         return self.bag.fromPng(res[0][0])
 
-    
+    def top_particles_by_area(self, frame_no, N):
+        c = self.cursor()
+        fields = "particle, frame, area, intensity, x, y"
+        c.execute("SELECT id, frame, area, intensity, x, y FROM particles, assoc WHERE particles.id == assoc.particle AND frame == ? ORDER BY area DESC LIMIT ?", (frame_no, N))
+        return self.fieldmap(fields, c.fetchall())
 
 def build_parser():
     parser = ArgumentParser()

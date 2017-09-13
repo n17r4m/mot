@@ -51,10 +51,11 @@ class DataBag(object):
         if isinstance(bag, DataBag):
             return bag
         if isinstance(bag, (str, unicode)):
-            if not os.path.isfile(bag):
-                raise OSError(2, 'No such data bag file', bag)
-            else:
+            if os.path.isfile(bag) or bag == ":memory:":
                 return DataBag(bag)
+            else:
+                raise OSError(2, 'No such data bag file', bag)
+                
         raise TypeError('Invalid bag.')
     
     def __init__(self, db_file = ":memory:", verbose = False):
@@ -171,6 +172,7 @@ class DataBag(object):
         
         c.execute("UPDATE meta SET value='2' WHERE name='revision'");
         self.commit()
+        self.migration_2()
     
     def migration_2(self):
         self.say("Migrating to revision", 2)
@@ -338,6 +340,13 @@ class DataBag(object):
         row = c.fetchone()
         if row:
             return np.frombuffer(row[0], dtype="uint8").reshape(64, 64), row[1]
+    
+    def getScreenFeatures(self, frame):
+        c = self.cursor()
+        c.execute("SELECT bitmap FROM frames WHERE frame = ?", (frame,))
+        row = c.fetchone()
+        if row:
+            return np.frombuffer(row[0], dtype=np.uint8).reshape(64, 64)
     
     def li_import(self, file_name):
         with open(file_name) as file:

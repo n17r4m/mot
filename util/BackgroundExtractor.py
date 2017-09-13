@@ -37,7 +37,6 @@ class BackgroundExtractor(object):
         
         if self.opts.verbose:
             print "Extracting from", self.grabber.frames, "frames"
-            print "size:", (self.width, self.height)
         
     def extract(self):  
         pass

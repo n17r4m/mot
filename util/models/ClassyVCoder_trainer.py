@@ -118,7 +118,7 @@ n = 20
 plt.figure(figsize=(20, 8))
 for i in range(n):
     ax = plt.subplot(1, n, i + 1)
-    plt.imshow(encoded_imgs[i].reshape(8,4).T)
+    plt.imshow(encoded_imgs[i].reshape(4,4).T)
     plt.gray()
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
