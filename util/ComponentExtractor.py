@@ -30,9 +30,10 @@ from FrameGrabber import FrameGrabber
 
 class ComponentExtractor(object):
 
-    def __init__(self, bag = None, save_binary=False):
+    def __init__(self, bag = None, save_binary=False, lineScan=False):
         self.bag = bag
         self.save_binary = save_binary
+        self.lineScan = lineScan
 
     def extract(self, frame_no, binary_image, intensity_image):
         label_image = cv2.connectedComponents(binary_image)[1]
@@ -46,13 +47,34 @@ class ComponentExtractor(object):
             return props
 
         for prop in props:
-            if self.filterByArea(prop.area):
+                
+            if self.filterByArea(prop.filled_area, 50):
                 continue
 
-            particle_props = {'area': float(prop.area), 
+            particle_props = {'area': float(prop.filled_area), 
                               'perimeter': prop.perimeter, 
                               'intensity': prop.mean_intensity,
                               'radius': prop.major_axis_length}
+            
+            # Linescan data is experimental at this time,
+            #  an approximate speed can be calculated
+            #  using the ratio of the width to height
+            #  multiplied by the line scan rate.
+            #  The database would require fairly extensive
+            #  modification to accomodate this data,
+            #  and so we will temporarily perform the computation
+            #  here and store the resulting speed in the "perimeter"
+            #  field, as it is quite useless.
+            #  Note: we cannot determine direction of particle,
+            #        thus we compute speed and not velocity.
+            if self.lineScan:
+                # bbox (min_row, min_col, max_row, max_col)
+                SCAN_RATE = 5000
+                bbox = prop.bbox
+                width = float(bbox[3] - bbox[1])
+                height = float(bbox[2] - bbox[0])
+                approx_speed = SCAN_RATE * (width / height)
+                particle_props['perimeter'] = approx_speed
 
             pid = self.bag.batchInsertParticle(particle_props)
 

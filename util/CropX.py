@@ -172,11 +172,14 @@ def main(opts):
     
     cropper = Crop(opts.input_video, opts.bag, opts)
     
-    for f in cropper.query.frame_list():
-        if opts.verbose:
-            print "Extracting crops from frame", f.frame
-        for p in cropper.query.particles_in_frame(f.frame):
-            cropper.update(p.frame, p.id)
+    try:
+        for f in cropper.query.frame_list():
+            if opts.verbose:
+                print "Extracting crops from frame", f.frame
+            for p in cropper.query.particles_in_frame(f.frame):
+                cropper.update(p.frame, p.id)
+    except IndexError:
+        print 'probably a last frame issue'
     cropper.bag.commit()
     
 if __name__ == '__main__':

@@ -19,10 +19,10 @@ Author: Martin Humphreys / Kevin Gordon
 
 from argparse import ArgumentParser
 import os
-import cv2
+# import cv2
 import pims
 import numpy as np
-
+from skimage.color import rgb2gray
 
 class FrameGrabber:
   
@@ -40,15 +40,15 @@ class FrameGrabber:
         frame = self.vc[frame_no]
         
         if not len(frame):
-            print "Error reading video frame " + str(frame_no) + " ..."
+            print("Error reading video frame " + str(frame_no) + " ...")
         else:
             if gray:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                frame =rgb2gray(frame)
             
         return frame
 
     def videoReaderFromArg(self, video):
-        if isinstance(video, (str, unicode)):
+        if isinstance(video, str):
             vc = pims.open(video)
             self.video_path = video
         else:

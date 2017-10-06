@@ -31,6 +31,8 @@ function getParticleCrops(day, bagName, fp_pairs, cb){
           query = "crops " + fp_pairs.map((fp) => fp.join(",")).join(" "),
           cmd = util_path + "Query.py " + bag + " " + query
     exec(cmd, {cwd: util_path, maxBuffer: Infinity}, (err, stdout, stderr) => {
+        str = stdout.toString()
+        // console.info(str)
         cb(err, JSON.parse(stdout.toString()))
     })
 }
@@ -74,16 +76,17 @@ Meteor.methods({
             return fut
         }).map((future) => future.wait())
         
-        
         var crops = particlesGroups.map((pg) => {
             
             var fut = new Future()
             var resolve = fut.resolver()
             
             fp_pairs = pg.particles.map((fp) => [fp.frame, fp.particle])
+            
             getParticleCrops(day, bagName, fp_pairs, (err, crops) => {
                 resolve(err, {name: pg.name, list: crops})
             })
+
             return fut
             
         }).map((future) => future.wait())

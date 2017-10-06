@@ -37,8 +37,8 @@ import re
 import sys
 import sqlite3
 import json
-import png
-import StringIO
+# import png
+# import StringIO
 import readline
 import itertools
 import time
@@ -50,7 +50,7 @@ class DataBag(object):
     def fromArg(bag):
         if isinstance(bag, DataBag):
             return bag
-        if isinstance(bag, (str, unicode)):
+        if isinstance(bag, str):
             if os.path.isfile(bag) or bag == ":memory:":
                 return DataBag(bag)
             else:
@@ -63,8 +63,8 @@ class DataBag(object):
         self.verbose = verbose
         self.name = db_file
         self.db = sqlite3.connect(db_file, isolation_level="DEFERRED")
-        self.db.enable_load_extension(True)
-        self.db.load_extension(os.path.dirname(os.path.realpath(__file__)) + "/libsqlitefunctions.so")
+        # self.db.enable_load_extension(True)
+        # self.db.load_extension(os.path.dirname(os.path.realpath(__file__)) + "/libsqlitefunctions.so")
         
         self.say("Connected to database", db_file)
         self.initDB()
@@ -85,10 +85,10 @@ class DataBag(object):
                 c = self.db.cursor()
                 c.execute(cmd.strip())
                 if cmd.lstrip().upper().startswith("SELECT"):
-                    print c.fetchall()
+                    print(c.fetchall())
                 self.db.commit()
-            except sqlite3.Error, e:
-               print "An error occurred:", e.args[0]
+            except sqlite3.Error as e:
+               print("An error occurred:", e.args[0])
     
     def cursor(self):
         # for doing some raw SQL
@@ -151,8 +151,8 @@ class DataBag(object):
     
     def migration_1(self):
         self.say("Migrating to revision", 2)
+        c = self.cursor()
         if not self.tableExists("categories"):
-            c = self.cursor()
             c.execute("CREATE TABLE categories (id INTEGER PRIMARY KEY, name TEXT)")
             c.execute("INSERT INTO categories (id, name) VALUES (0, 'undefined')")
             c.execute("INSERT INTO categories (id, name) VALUES (1, 'unknown')")
@@ -203,7 +203,8 @@ class DataBag(object):
             if bitmap is None:
                 c.execute("INSERT INTO frames (frame) VALUES (?)", (number,))
             else:
-                c.execute("INSERT INTO frames (frame, bitmap) VALUES (?, ?)", (number, self.toPng(bitmap)))
+                print('deprecated')
+                # c.execute("INSERT INTO frames (frame, bitmap) VALUES (?, ?)", (number, self.toPng(bitmap)))
     
     
     def insertFrame(self, props):
@@ -236,8 +237,11 @@ class DataBag(object):
         particle = props.get("particle", 0)
         x = props.get("x", 0)
         y = props.get("y", 0)
+        crop = props.get("crop", None)
+        if crop is not None:
+            crop = sqlite3.Binary(crop.tobytes())
         c = self.cursor()
-        c.execute("INSERT INTO assoc (frame, particle, x, y) VALUES (?, ?, ?, ?)", (frame, particle, x, y))
+        c.execute("INSERT INTO assoc (frame, particle, x, y, crop) VALUES (?, ?, ?, ?, ?)", (frame, particle, x, y, crop))
 
     def insertAssoc(self, frame, particle, x, y):
         self.batchInsertAssoc(frame, particle, x, y)
@@ -317,21 +321,21 @@ class DataBag(object):
         return stats
 
     
-    def toPng(self, bitmap):
-        data = png.from_array(bitmap, mode='L;1').save('tmp.png')
-        data = open('tmp.png').read()
-        data = buffer(data)
-        return data
+    # def toPng(self, bitmap):
+    #     data = png.from_array(bitmap, mode='L;1').save('tmp.png')
+    #     data = open('tmp.png').read()
+    #     data = buffer(data)
+    #     return data
 
     
-    def fromPng(self, data):
-        im = png.Reader(bytes=data).asDirect()
-        return np.vstack(itertools.imap(np.uint8, im[2]))
+    # def fromPng(self, data):
+    #     im = png.Reader(bytes=data).asDirect()
+    #     return np.vstack(itertools.imap(np.uint8, im[2]))
 
     
-    def getBitmap(self, frame_no):
-        res = self.query("SELECT bitmap FROM frames WHERE frame == " + str(frame_no))
-        return self.fromPng(res[0][0])
+    # def getBitmap(self, frame_no):
+    #     res = self.query("SELECT bitmap FROM frames WHERE frame == " + str(frame_no))
+    #     return self.fromPng(res[0][0])
     
     
     def getCrop(self, frame, particle):
@@ -402,7 +406,7 @@ if __name__ == '__main__':
             parser.error("Comparision file %s does not exist." % options.query)
         else:
             stats = bag.compare(options.query)
-            print stats
+            print(stats)
         
         
     if options.action == "import":
@@ -412,8 +416,8 @@ if __name__ == '__main__':
             bag.li_import(options.query)
             
     if options.action == "debug":
-        print bag.particlePoints(1)
-        print bag.particleMeanVelocity(1)
-        print bag.frameMeanVelocity(41)
-        print bag.frameMeanVelocity(42)
-        print bag.frameMeanVelocity(43)
+        print(bag.particlePoints(1))
+        print(bag.particleMeanVelocity(1))
+        print(bag.frameMeanVelocity(41))
+        print(bag.frameMeanVelocity(42))
+        print(bag.frameMeanVelocity(43))

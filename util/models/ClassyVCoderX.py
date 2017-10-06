@@ -223,7 +223,7 @@ class ClassyVCoder(object):
         x /= np.max(x)
         x = x * cx + cx
         
-        f = interp2d(np.arange(w), np.arange(h), im, kind="cubic")
+        f = interp2d(np.arange(w), np.arange(w), im, kind="cubic")
         return (f(x, x) * 255.0).reshape(w,w).astype("uint8")
         
         

@@ -17,6 +17,7 @@ import cv2
 import numpy as np
 from argparse import ArgumentParser
 from DataBag import DataBag
+from Query import Query
 import networkx as nx
 from networkx.drawing.nx_agraph import graphviz_layout
 import time
@@ -228,7 +229,12 @@ class Tracker(object):
             self.bag.insertFrame(i+1)            
             self.ground_truth[0]["frames"].append({'timestamp':i, 'num': i, 'class':'frame', 'hypotheses':[]})
 
-        pid = 0
+        last_pid = self.bag.query('select max(particle) from assoc')[0][0]
+        if last_pid is None:
+            pid = 0
+        else:
+            pid = last_pid + 1
+            
         for path in self.paths:
             mean_area = 0
 
@@ -379,8 +385,11 @@ class TrackerV2(object):
         self.G = nx.DiGraph()
         self.verbose = verbose
         self.bag = bag
-        self.new_pid = 0
         self.areas = []
+
+        # for debugging
+        self.total_edges_considered = 0
+        self.pruned_edges = 0
 
     def build(self, start_frame, end_frame):
         self.G.clear()
@@ -488,8 +497,10 @@ class TrackerV2(object):
                     v = 'v_' + str(j[0])
                     u = 'u_' + str(k[0])
 
-                    # Pruning step, returns True to prune (skip adding)                
+                    # Pruning step, returns True to prune (skip adding) 
+                    self.total_edges_considered += 1            
                     if self.prune(u, v):
+                        self.pruned_edges += 1
                         continue
 
                     #  create edge (v_i, u_j)
@@ -565,6 +576,12 @@ class TrackerV2(object):
     def save_paths(self, filename):
         self.out_bag = DataBag(filename, verbose=True)
         # used to test a hypothesis regarding particle areas over time/ camera problems
+    
+        last_pid = self.out_bag.query('select max(particle) from assoc')[0][0]
+        if last_pid is None:
+            pid = 0
+        else:
+            pid = last_pid + 1
 
         for i in range(self.start_frame, self.end_frame):
             d = {'number':i}
@@ -610,7 +627,7 @@ class TrackerV2(object):
                 mean_area += area / len(path)
                 mean_intensity += intensity / len(path)
                 mean_perimeter += perimeter / len(path)
-                d = {'frame': frame, 'particle': self.new_pid, 'x': x, 'y': y}
+                d = {'frame': frame, 'particle': pid, 'x': x, 'y': y}
                 self.out_bag.batchInsertAssoc(d)
 
             # Debug area deltas, remove eventually
@@ -620,14 +637,14 @@ class TrackerV2(object):
             # end debug area deltas
 
             ## END NEW ###
-            d = {'id': self.new_pid, 
+            d = {'id': pid, 
                  'area': mean_area, 
                  'perimeter': mean_perimeter, 
                  'intensity': mean_intensity
                 }
 
             self.out_bag.batchInsertParticle(d)
-            self.new_pid += 1
+            pid += 1
 
         self.out_bag.commit()
 
@@ -742,12 +759,14 @@ class TrackerV2(object):
 ##
 class TrackerV3(object):
 
-    def __init__(self, bag, model, verbose=False):
+    def __init__(self, bag, DV, CC, verbose=False):
         self.G = nx.DiGraph()
         self.verbose = verbose
         self.bag = bag
+        self.q = Query(self.bag)
         self.new_pid = 0
-        self.model = model
+        self.DV = DV
+        self.CC = CC
         
         # For debugging only
         self.sim_appearance = []
@@ -755,8 +774,10 @@ class TrackerV3(object):
         self.deltas = []
         self.motion_probs = []
         self.appearance_probs = []
+        self.total_edges_considered = 0
+        self.pruned_edges = 0
 
-    def build(self, start_frame, end_frame, no_tracks):
+    def build(self, start_frame, end_frame):
         self.G.clear()
         self.G.add_node('s')
         self.G.add_node('t')
@@ -768,97 +789,108 @@ class TrackerV3(object):
 
         start = time.time()
 
-        ### Get TOP N particles in a bag by: area desc
-        n = 200
 
         # Detector error rate
         #  Cost for an object to go from frame i to frame i+1
         C_i = np.int32(100 * np.log(0.40))
 
+
+        ### Notes: should be low entry cost for first frame
+        ###        low exit cost for last frame.
+        ###        Might play with these later...
+        ###        For now it's ~#tracks/(#det*#frames)
         # Cost for object entering frame
         # C_en = -np.log(eps)
-        C_en_factor = np.int32(-100 * np.log(no_tracks / (n*10.0)))
+        C_en_factor = np.int32(-100 * np.log(150 / (200*10.0)))
         # Cost for object exiting frame
         # C_ex = -np.log(eps)
-        C_ex_factor = np.int32(-100 * np.log(no_tracks / (n*10.0)))
-
-        ### Get ALL particles
-        # particles = self.bag.query('select id, frame, area, intensity, x, y \
-        #     from particles, assoc where particles.id == assoc.particle and \
-        #     frame >= ' + str(start_frame) + ' and frame < ' + str(end_frame))
-        # all_particles = particles
-
-
+        C_ex_factor = np.int32(-100 * np.log(150 / (200*10.0)))
 
 
         # Store the results frame-wise, as list of lists
         particles = []
-
+        
         for i in range(start_frame, end_frame):
-            buf = self.bag.query('select id, frame, area, intensity, x, y \
-            from particles, assoc where particles.id == assoc.particle and \
-            frame == ' + str(i) + ' order by area desc limit ' + str(n))
-
+            buf = self.q.deepTrackingNodeData(i)
             particles.append(buf)
 
-        # Get the single list of all particles
-        # all_particles = [item for sublist in particles for item in sublist]
-        all_particles = []
+        crops = []
+        for ps in particles:
+            for p in ps:
+                crop = np.frombuffer(p.crop, dtype="uint8").reshape(64, 64)
+                crop = self.CC.preproc(crop)
+                crops.append(crop)
 
-        for l in particles:
-            all_particles.extend(l)
+        crops = np.array(crops)
+        shape = crops.shape
+        crops = crops.reshape(shape[0], shape[1], shape[2], 1)
+        lats = self.CC.encoder.predict(crops)
 
-        ### Get the heatmaps
-        n_particles = len(all_particles)
-        start = time.time()
-        x_data = zip(*all_particles)
-        x_data = np.array([x_data[1], x_data[3], x_data[2]]).T
+        buf = self.q.getScreenFeatures()
+        screenFeatures = dict()
+        for r in buf:
+            screenFeature = np.float64(np.frombuffer(r.screen_feature, dtype='uint8').reshape(64,64))
+            screenFeatures[int(r.frame)] = screenFeature / 255.0
 
-        # Get the heatmaps
-        self.heatmaps = self.model.predict(x_data)
-        # Normalize them
-        # self.heatmaps /= np.sqrt((self.heatmaps ** 2).sum(-1))[..., np.newaxis]
-        self.heatmaps /= np.amax(self.heatmaps,1)[..., np.newaxis] 
-        # Reshape from vectors to matrices
-        self.heatmaps = self.heatmaps.reshape((n_particles, 256, 256))
-
-        print "heatmaps computed ...", time.time()-start
+        print "latent vectors computed ...", time.time()-start
         start = time.time()
 
         count = 0
         # For every detected object x_i
-        for particle in all_particles:
-            pid, frame, area, intensity, x, y = particle
-            centre = (x, y)
+        for ps in particles:
+            for p in ps:
+                pid = p.particle
+                frame = int(p.frame)
+                area = p.area
+                intensity = p.intensity
+                lat = lats[count]
+                x = p.x
+                y = p.y
 
-            u = 'u_' + str(pid)
-            v = 'v_' + str(pid)
+                u = 'u_' + str(pid)
+                v = 'v_' + str(pid)
 
-            #  create two nodes u_i v_i
-            self.G.add_node(u, area=float(area), centre=centre, intensity=intensity, heatmap=self.heatmaps[count])
-            self.G.add_node(v, area=float(area), centre=centre, intensity=intensity, heatmap=self.heatmaps[count])
+                screenFeature = screenFeatures[frame]
 
-            #  create edge (u_i, v_i)
-            #   with cost c(u_i, v_i) = C_i
-            #   and flow f(u_i, v_i) = f_i
-            self.G.add_edge(u, v, weight=C_i, capacity=1)
+                #  create two nodes u_i v_i
+                self.G.add_node(u,
+                                id=u,
+                                area=float(area), 
+                                x=x,
+                                y=y,
+                                intensity=intensity, 
+                                enc=lat,
+                                screenFeature=screenFeature)
+                self.G.add_node(v,
+                                id=v,
+                                area=float(area), 
+                                x=x,
+                                y=y, 
+                                intensity=intensity, 
+                                enc=lat,
+                                screenFeature=screenFeature)
 
-            #  create edge (s, u_i)
-            #   with cost c(s, u_i) = C_en,_i
-            #   and flow f(s, u_i) = f_en,_i
-            # C_en = (frame - start_frame + 1) * C_en_factor 
-            C_en = C_en_factor
-            self.G.add_edge('s', u, weight=C_en, capacity=1)
+                #  create edge (u_i, v_i)
+                #   with cost c(u_i, v_i) = C_i
+                #   and flow f(u_i, v_i) = f_i
+                self.G.add_edge(u, v, weight=C_i, capacity=1)
 
-            #  create and edge (v_i, t)            
-            #   with cost c(v_i, t) = C_ex,_i
-            #   and flow f(v_i, t) = f_ex,_i
-            # C_ex = (self.no_frames - (frame - start_frame)) * C_ex_factor
-            C_ex = C_ex_factor
-            self.G.add_edge(v, 't', weight=C_ex, capacity=1)
-            # G.add_edge(u, 't', weight=C_ex, capacity=1)
+                #  create edge (s, u_i)
+                #   with cost c(s, u_i) = C_en,_i
+                #   and flow f(s, u_i) = f_en,_i
+                # C_en = (frame - start_frame + 1) * C_en_factor 
+                C_en = C_en_factor
+                self.G.add_edge('s', u, weight=C_en, capacity=1)
 
-            count += 1
+                #  create and edge (v_i, t)            
+                #   with cost c(v_i, t) = C_ex,_i
+                #   and flow f(v_i, t) = f_ex,_i
+                # C_ex = (self.no_frames - (frame - start_frame)) * C_ex_factor
+                C_ex = C_ex_factor
+                self.G.add_edge(v, 't', weight=C_ex, capacity=1)
+                # G.add_edge(u, 't', weight=C_ex, capacity=1)
+
+                count += 1
  
         if self.verbose:
             print "graph nodes created ..."
@@ -868,7 +900,7 @@ class TrackerV3(object):
         # For every transition P_link(x_j|x_i) != 0
         for i in range(0, end_frame - start_frame - 1):
             ### Get ALL particles in a particular frame            
-            # v_ids = self.bag.query('select id from particles, assoc \
+            # v_ids = self.bag.query('select id from particles, asn_particlessoc \
             #     where particles.id == assoc.particle \
             #     and frame == ' + str(i))
             # u_ids = self.bag.query('select id from particles, assoc \
@@ -876,16 +908,21 @@ class TrackerV3(object):
             #     and frame == ' + str(i+1))
 
             ### Get TOP N particles in a frame, using our earlier query
-            v_ids = particles[i]
-            u_ids = particles[i+1]
+            v_particles = particles[i]
+            u_particles = particles[i+1]
 
-            for j in v_ids:
-                for k in u_ids:
-                    v = 'v_' + str(j[0])
-                    u = 'u_' + str(k[0])
+            for j in v_particles:
+                for k in u_particles:
+                    v_id = 'v_' + str(j.particle)
+                    u_id = 'u_' + str(k.particle)
 
-                    # Pruning step, returns True to prune (skip adding)                
+                    v = self.G.node[v_id]
+                    u = self.G.node[u_id]
+
+                    # Pruning step, returns True to prune (skip adding)    
+                    self.total_edges_considered += 1            
                     if self.prune(u, v):
+                        self.pruned_edges += 1
                         continue
 
                     #  create edge (v_i, u_j)
@@ -901,7 +938,7 @@ class TrackerV3(object):
 
                     self.hyp_costs.append(C_i_j)
 
-                    self.G.add_edge(v, u, weight=C_i_j, capacity=1)
+                    self.G.add_edge(v['id'], u['id'], weight=C_i_j, capacity=1)
 
         if self.verbose:
             print "graph construction complete ...", str(time.time()-start), ' seconds'
@@ -969,35 +1006,72 @@ class TrackerV3(object):
 
     def save_paths(self, filename):
         self.out_bag = DataBag(filename, verbose=True)
+        # used to test a hypothesis regarding particle areas over time/ camera problems
 
         for i in range(self.start_frame, self.end_frame):
-            self.out_bag.insertFrame(i)        
+            d = {'number':i}
+            self.out_bag.batchInsertFrame(d)        
 
         for path in self.paths:
             mean_area = 0.0
             mean_intensity = 0.0
             mean_perimeter = 0.0
 
+            # ### BEGIN OLD ###
+            # # I think this loop can be optimized with an "IN" query and 
+            # #  vector computation of the means
+            # for pid in path:
+            #     pid = pid.split('_')[1]
+            #     res = self.bag.query('select frame, x, y, area, intensity, perimeter\
+            #                               from assoc, particles\
+            #                               where assoc.particle == particles.id\
+            #                               and particles.id == ' + str(pid) \
+            #                               + ' and assoc.frame < ' + str(self.end_frame) \
+            #                               + ' and assoc.frame >= ' + str(self.start_frame))[0]
+
+            #     frame, x, y, area, intensity, perimeter = res
+
+            #     mean_area += area / len(path)
+            #     mean_intensity += intensity / len(path)
+            #     mean_perimeter += perimeter / len(path)
+
+            #     self.out_bag.batchInsertAssoc(frame, self.new_pid, x, y)
+
+            # ### END OLD ###
+            ## BEGIN NEW ###
             pids = [i.split('_')[1] for i in path]
             res = self.bag.query('select frame, x, y, area, intensity, perimeter\
                                           from assoc, particles\
                                           where assoc.particle == particles.id\
                                           and particles.id in ' + str(tuple(pids)) \
                                           + ' and assoc.frame < ' + str(self.end_frame) \
-                                          + ' and assoc.frame >= ' + str(self.start_frame))
+                                          + ' and assoc.frame >= ' + str(self.start_frame)\
+                                          + ' order by frame')
 
             for frame, x, y, area, intensity, perimeter in res:
                 mean_area += area / len(path)
                 mean_intensity += intensity / len(path)
                 mean_perimeter += perimeter / len(path)
+                d = {'frame': frame, 'particle': self.new_pid, 'x': x, 'y': y}
+                self.out_bag.batchInsertAssoc(d)
 
-                self.out_bag.batchInsertAssoc(frame, self.new_pid, x, y)
+            # Debug area deltas, remove eventually
+            # res = zip(*res)
+            # if len(path) == 10:
+            #     self.areas.append(res[3])
+            # end debug area deltas
 
+            ## END NEW ###
+            d = {'id': self.new_pid, 
+                 'area': mean_area, 
+                 'perimeter': mean_perimeter, 
+                 'intensity': mean_intensity
+                }
+
+            self.out_bag.batchInsertParticle(d)
             self.new_pid += 1
 
-            self.out_bag.batchInsertParticle(mean_area, mean_intensity, mean_perimeter, self.new_pid)
-
-        self.out_bag.batchCommit()
+        self.out_bag.commit()
 
     def gkern(self, l=5, sig=1.):
         """
@@ -1082,7 +1156,7 @@ class TrackerV3(object):
         #  the position of a node, and prunes nodes outside
         #  a defined radius. This should be based on some statistics...
         threshold = 42
-        if self.euclidD(self.G.node[u]['centre'], self.G.node[v]['centre']) > threshold:
+        if self.euclidD([u['x'], u['y']], [v['x'], v['y']]) > threshold:
             return True
         else:
             return False
@@ -1117,42 +1191,15 @@ class TrackerV3(object):
             return probability
 
     def probability_motion(self, u, v):
-        shape = (256, 256)
-        origin = (np.array(shape) - 1) / 2.0
+        dx = np.array([v['x'] - u['x']])
+        dy = np.array([v['y'] - u['y']])
+        enc = u['enc']
+        f1 = u['screenFeature']
+        f2 = v['screenFeature']
+        structured_data = np.array([np.concatenate([enc, dx, dy])])
+        screen_data = np.array([np.array([f1,f2]).T])
 
-        delta = np.array(self.G.node[v]['centre']) - np.array(self.G.node[u]['centre'])
-        
-        eud = self.euclidD(self.G.node[v]['centre'], self.G.node[u]['centre'])        
-
-        # Transform for large range+ good sensitivity about origin
-        dx = 127 * np.tanh(delta[0]/np.pi)
-        dy = 127 * np.tanh(delta[1]/np.pi)
-
-        # Transform for increased sensitivity about origin
-        dx = delta[0] * 3.0
-        dy = delta[1] * 3.0
-
-        x = int(round(origin[1] + dx))
-        y = int(round(origin[0] + dy))
-        
-        heatmap = self.G.node[u]['heatmap']        
-        probability = heatmap[y][x]
-
-        self.deltas.append(eud)
-        self.motion_probs.append(probability)
-
-        # MIN=0
-        # MAX=255
-        # print (y, x), probability
-        # img = np.uint8(255*cv2.cvtColor(heatmap, cv2.COLOR_GRAY2RGB))
-        # img[y,x,0:2] = 0
-        # img[y,x,2] = 255
-
-        # _ = plt.imshow(img, interpolation='nearest',
-        #                   vmin=MIN, vmax=MAX)
-
-        # while(plt.waitforbuttonpress()!=True):
-        #     pass
+        probability = self.DV.deep_velocity.predict([structured_data, screen_data])[:,0][0]
 
         return probability
 

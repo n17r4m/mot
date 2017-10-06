@@ -31,7 +31,9 @@ Martin Humphreys
 
 from argparse import ArgumentParser
 import numpy as np
-import cv2
+# import cv2
+from skimage.io import imsave
+import io
 import sys
 import os
 import sqlite3
@@ -296,10 +298,15 @@ class Query(object):
         results = []
         for fp in fp_pairs:
             crop, s = self.bag.getCrop(fp[0], fp[1])
-            ok, png = cv2.imencode(".png", crop)
+
+            bytesBuffer = io.BytesIO()
+            imsave(bytesBuffer, crop)
+            b64PNG = base64.b64encode(bytesBuffer.getvalue()).decode()
+            
             results.append({
                 "frame": fp[0], "particle": fp[1], "scale": s,
-                "crop": "data:image/png;base64," + base64.b64encode(png.tobytes()) })
+                "crop": "data:image/png;base64," +  b64PNG})
+        
         return results
             
             
@@ -330,6 +337,18 @@ class Query(object):
         c = self.cursor()
         fields = "particle, frame, area, intensity, x, y"
         c.execute("SELECT id, frame, area, intensity, x, y FROM particles, assoc WHERE particles.id == assoc.particle AND frame == ? ORDER BY area DESC LIMIT ?", (frame_no, N))
+        return self.fieldmap(fields, c.fetchall())
+
+    def deepTrackingNodeData(self, frame_no):
+        c = self.cursor()
+        fields = "particle, frame, area, intensity, crop, x, y"
+        c.execute("SELECT id, frame, area, intensity, crop, x, y FROM particles, assoc WHERE particles.id == assoc.particle and frame == ?", (frame_no, ))
+        return self.fieldmap(fields, c.fetchall())
+
+    def getScreenFeatures(self):
+        c = self.cursor()
+        fields = "frame, screen_feature"
+        c.execute('SELECT frame, bitmap from frames')
         return self.fieldmap(fields, c.fetchall())
 
 def build_parser():

@@ -95,7 +95,7 @@ class Particle:
         #  any intensity values behind the object being painted.
         
         p = self.particle
-        print p
+        # print p
         if p.id is not None:
             radius = np.sqrt(p.area / np.pi)
             

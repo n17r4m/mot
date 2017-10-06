@@ -83,7 +83,7 @@ def fetch_data(bag, CC):
             x_prob = norm.pdf(x_buf, loc=x, scale=std_dev) / norm.pdf(x, loc=x, scale=std_dev)
             y_prob = norm.pdf(y_buf, loc=y, scale=std_dev) / norm.pdf(y, loc=y, scale=std_dev)
             
-            structured_data.append(np.concatenate([lat, np.array([x_buf]), np.array([y_buf])]))
+            structured_data.append(np.concatenate([lat, np.array([x_buf]), np.array([y_buf])]))            
             screen_data.append(np.array([f1,f2]).T)
             y_data.append([x_prob * y_prob, 1.0 - x_prob * y_prob])
             crop_data.append(crop)
@@ -144,7 +144,7 @@ def fetch_data_old(bag, CC):
     return np.concatenate((pos, neg))
 
 
-bags = ['/mnt/SIA/Experiments/bags/Curated/T02669_tracking_1.db',
+bags = ['/local/scratch/mot/data/bags/Experimental/T02660_tracking.db',
         '/mnt/SIA/Experiments/bags/Curated/T02406_tracking_1.db']
 
 # bags = ['/mnt/SIA/Experiments/bags/Curated/T02404_tracking20_300.db']

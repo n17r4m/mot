@@ -51,20 +51,43 @@ class LinePipe(object):
     def transformRange(self, value, oldmin, oldmax, newmin, newmax):
         return (((value - oldmin) * (newmax - newmin)) / (oldmax - oldmin)) + newmin
     
-    def bg(self, method="median"):
-        if self.bg_cache[method] != None:
+    def bg(self, method="max"):
+        if self.bg_cache[method] is not None:
             return self.bg_cache[method]
-        sample = self.transformRange(self.random(100), 0.0, 1.0, 1.0, 256.0)
+        sample = self.transformRange(self.random(1000), 0.0, 1.0, 1.0, 256.0)
         if   method == "max":    self.bg_cache["max"]    = np.max(sample, axis=0)
         elif method == "mean":   self.bg_cache["mean"]   = np.mean(sample, axis=0)
         elif method == "median": self.bg_cache["median"] = np.median(sample, axis=0)
         return self.bg_cache[method]
     
     def random(self, n=1000):
-        return self.data[np.random.choice(len(self), n, replace=False), :]
+        return self.data[np.random.choice(len(self)/10, n, replace=False), :]
     
     def bgdivide(self, line_start=0, nlines=100):
-        return self.transformRange(self.lines(line_start, nlines), 0.0, 1.0, 1.0, 256.0) / self.bg()
+        self.preProc = self.lines(line_start, nlines)
+        return self.transformRange(self.preProc, 0.0, 1.0, 1.0, 256.0) / self.bg()
+    
+    def binarize(self, line_start=0, nlines=100, threshold=127):
+        buf = self.bgdivide(line_start, nlines)
+        self.normalized = buf
+        
+        buf[buf>1] = 1
+        buf = np.uint8(buf*255)
+        buf = 255 - buf
+        buf[buf>=threshold] = 255
+        buf[buf<threshold] = 0
+        
+        buf = buf[:,self.width/5:4*self.width/5]
+        
+        self.preProc = np.uint8(self.preProc*255)
+        self.preProc = self.preProc[:,self.width/5:4*self.width/5]
+        
+        self.normalized[self.normalized>1] = 1
+        self.normalized = np.uint8(self.normalized*255)
+        self.normalized = self.normalized[:,self.width/5:4*self.width/5]
+        
+        return buf
+    
     
         
 
@@ -74,6 +97,7 @@ def build_parser():
     parser.add_argument('action', help='action', default="none")
     parser.add_argument('-s', help='start', type=int, default=10)
     parser.add_argument('-n', help='nlines', type=int, default=1000)
+    parser.add_argument('-t', help='binary threshold', type=int, default=127)
     return parser
 
 
@@ -141,6 +165,9 @@ def main():
     
     elif opts.action == "bgdivide":
         out = pipe.bgdivide(opts.s, opts.n)
+        
+    elif opts.action == "binarize":
+        out = pipe.binarize(opts.s, opts.n, opts.t)
     
     elif opts.action == "segment":
         bg = np.mean(pipe.transformRange(pipe.lines(10, 10), 0.0, 1.0, 1.0, 256.0), axis=0)
@@ -181,14 +208,18 @@ def main():
     
     if opts.action == "view":
         for i in xrange(0, len(pipe), opts.s):
-            print i
+            print(i)
             lines = pipe.lines(i, opts.n)
             cv2.imshow("view", lines)
             cv2.waitKey(10)
         out = None
     else:
-        cv2.imshow("out", out)
-        cv2.waitKey(0)
+        out = cv2.resize(out, dsize=(0,0), fx=0.5, fy=0.5)
+        preProc = cv2.resize(pipe.preProc, dsize=(0,0), fx=0.5, fy=0.5)
+        cv2.imwrite('../data/linescan/raw.png', preProc)
+        cv2.imwrite('../data/linescan/proc.png', out)
+        # cv2.imshow("out", out)
+        # cv2.waitKey(0)
 
 if __name__ == '__main__':
     main()
