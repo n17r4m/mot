@@ -41,7 +41,7 @@ import numpy as np
 # This will be system specific, depending on OpenCV config
 # ... Maybe not actually, I need 0 for .avi, and 33 for .mp4
 #     may have always been a codec difference ...
-FOURCC = 0
+FOURCC = 33
 
 
 class dotdict(dict):

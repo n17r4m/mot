@@ -17,7 +17,7 @@ from keras.regularizers import l2
 from keras.optimizers import Adam, Nadam
 from keras.objectives import binary_crossentropy
 
-from make_parallel import make_parallel
+# from make_parallel import make_parallel
 
 
 class ClassyVCoder(object):
@@ -48,7 +48,7 @@ class ClassyVCoder(object):
         input_img = Input(shape=input_shape, name="main_input")
         
         if verbose:
-            print "Network input shape is", input_img.get_shape()
+            print("Network input shape is", input_img.get_shape())
         
         
         x = Conv2D(filters, (3, 3), padding='same', activity_regularizer=l2(10e-8))(input_img)
@@ -70,7 +70,7 @@ class ClassyVCoder(object):
         intermediate_dim = conv_output_shape[1] * conv_output_shape[2] * conv_output_shape[3]
         
         if verbose:
-            print "Convolution output shape is", conv_output_shape
+            print("Convolution output shape is", conv_output_shape)
         
         x = Flatten()(x)
         
@@ -89,7 +89,7 @@ class ClassyVCoder(object):
         encoding_shape = K.int_shape(z)
         
         if verbose:
-            print "Encoding shape is", encoding_shape, "(", latent_dim, "dimensions )"
+            print("Encoding shape is", encoding_shape, "(", latent_dim, "dimensions )")
         
         
         
@@ -117,7 +117,7 @@ class ClassyVCoder(object):
         n +=1; decoded = Conv2D(1, (2, 2), padding='same')(ae) # activation='sigmoid',
         
         if verbose:
-            print "Decoder output shape is", decoded.get_shape()
+            print("Decoder output shape is", decoded.get_shape())
         
         # this is a pipe from the input image to the reconstructed output
         autoencoder = Model(input_img, decoded)
@@ -143,7 +143,7 @@ class ClassyVCoder(object):
         n +=1; classified = Dense(num_categories, activation='softmax')(cl)
         
         if verbose:
-            print "Classifier output shape is", classified.get_shape()
+            print("Classifier output shape is", classified.get_shape())
         
         # provide classification on images
         imageclassifier = Model(input_img, classified)
@@ -231,7 +231,7 @@ class ClassyVCoder(object):
         self.classycoder.save_weights(path)
     
     def load(self, path):
-        print "Loading weights", path
+        print("Loading weights", path)
         self.classycoder.load_weights(path)
 
     def path(self):
