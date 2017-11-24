@@ -1,6 +1,29 @@
 <template name="upload">
-  <h1>Add video to library</h1>
+  <h1>Add Experiment</h1>
   <p>Select a video file to use</p>
   <hr>
   <input type="file">
+  
+  
+  <h1>Current Experiments</h1>
+  <table class="ui selectable celled experiments table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Method</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each experiments}}
+        <tr data-experiment={{_id}}>
+          <td>{{day}}</td>
+          <td>{{name}}</td>
+          <td>{{method}}</td>
+          <td>{{notes}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
 </template>

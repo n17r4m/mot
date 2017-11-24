@@ -74,3 +74,4 @@ c9
 
 # large h5 model files
 util/models/*.h5
+py/lib/models/*.h5

@@ -21,16 +21,21 @@ class Video:
         self.bg = None
         self.frames = len(self.reader)
         self.height, self.width, self.channels = self.reader[0].shape
+        
+        self.correct_shape=True
+
         self.shape = (self.height, self.width, 1 if gray else self.channels)
         self.e = sys.float_info.min
+        
     
+        
     def __len__(self):
         return self.frames
 
     def frame(self, frame_no=0):
         
         frame = self.reader[frame_no]
-        
+            
         if not len(frame):
             print("Error reading video frame " + str(frame_no))
             return None
@@ -58,7 +63,7 @@ class Video:
         div = self.frame(frame_no) / self.extract_background()
         return (255.0 * np.clip(div, 0, 1)).astype("uint8")
     
-    
+
     @staticmethod
     def getVideoReader(video):
         if isinstance(video, str):

@@ -11,8 +11,8 @@ from Bag2PymotJson import Bag2PymotJson
 from pymot.pymot import MOTEvaluation
 from DataBag import DataBag
 
-gt = DataBag("../data/bags/validation/val1.db")
-hyp = DataBag("../data/bags/validation/val1_tracking.db")
+gt = DataBag("../data/bags/deepVelocity/tmp8.db")
+hyp = DataBag("../data/bags/deepVelocity/tmp8_tracking.db")
 
 gt_converter = Bag2PymotJson(gt, ground_truth=True)
 hyp_converter = Bag2PymotJson(hyp, ground_truth=False)

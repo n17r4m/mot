@@ -588,6 +588,7 @@ class TrackerV2(object):
             self.out_bag.insertFrame(d)        
 
         for path in self.paths:
+            # print "---------------------  new path  ---------------------"
             mean_area = 0.0
             mean_intensity = 0.0
             mean_perimeter = 0.0
@@ -615,6 +616,7 @@ class TrackerV2(object):
             # ### END OLD ###
             ## BEGIN NEW ###
             pids = [i.split('_')[1] for i in path]
+            # print "------", pids, '------' 
             res = self.bag.query('select frame, x, y, area, intensity, perimeter\
                                           from assoc, particles\
                                           where assoc.particle == particles.id\
@@ -627,6 +629,7 @@ class TrackerV2(object):
                 mean_area += area / len(path)
                 mean_intensity += intensity / len(path)
                 mean_perimeter += perimeter / len(path)
+                # print frame, pid    
                 d = {'frame': frame, 'particle': pid, 'x': x, 'y': y}
                 self.out_bag.batchInsertAssoc(d)
 

@@ -17,7 +17,7 @@
     <p>Insofar much as possible, the python modules found in this project are 
     also stand-alone command line utilities.</p>
     
-    <p>As an example, the <a href="/source/Query.py">Query.py</a> module has
+    <p>As an example, the <a href={{pathFor "/source/Query.py"}}>Query.py</a> module has
     a command line interface of:</p>
     
     {{> pyhelp data="Query.py"}}
@@ -40,7 +40,7 @@
     manipulating the data.</p>
     
     <h3>Schema</h3>
-    <img src="/schema.svg" width="100%">
+    <img src={{pathFor "/schema.svg"}} width="100%">
     
     <p>All values are in absolute pixel values. That is, (x, y) are pixel positions,
     area is sum of pixels, perimeter is the manhattan sum around the object boundry, 
@@ -66,9 +66,9 @@
             {{#each list}}    
                 <tr>
                     <td>{{this}}</td>
-                    <td><a href="/pydoc/{{this}}">Doc</a></td>
-                    <td><a href="/pyhelp/{{this}}">Help</a></td>
-                    <td><a href="/source/{{this}}">Src</a></td>
+                    <td><a href="{{pathFor '/pydoc/'}}/{{this}}">Doc</a></td>
+                    <td><a href="{{pathFor '/pyhelp/'}}/{{this}}">Help</a></td>
+                    <td><a href="{{pathFor '/source/'}}/{{this}}">Src</a></td>
                     <td>{{about this}}</td>
                 </tr>
             {{/each}}

@@ -1,30 +1,41 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 
 FlowRouter.route('/app', {
-    action: function(params) {
+    action(params) {
         BlazeLayout.render("app", {main: "app_index"});
     }
 });
 
 FlowRouter.route('/app/analyse', {
-    action: function(params) {
+    action(params) {
         BlazeLayout.render("app", {main: "analyse"});
     }
 });
 
 FlowRouter.route('/app/compare', {
-    action: function(params) {
+    action(params) {
         BlazeLayout.render("app", {main: "compare"});
     }
 });
 
 FlowRouter.route('/app/simulate', {
-    action: function(params) {
+    action(params) {
         BlazeLayout.render("app", {main: "simulate"});
     }
 });
 
 FlowRouter.route('/app/upload', {
-    action: function(params) {
+    action(params) {
         BlazeLayout.render("app", {main: "upload"});
+    }
+});
+
+FlowRouter.route('/app/experiment/:experiment', {
+    waitOn(params, queryParams) {
+        return Meteor.subscribe("experiments")
+    },
+    action(params) {
+        Session.set("experiment", params.experiment)
+        BlazeLayout.render("app", {main: "experiment"});
     }
 });

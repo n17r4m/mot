@@ -23,7 +23,7 @@ from lib.models.util.make_parallel import make_parallel
 
 class Classifier(object):
     
-    def __init__(self, input_shape=(64, 64, 1), num_categories=5, verbose=False):
+    def __init__(self, input_shape=(64, 64, 1), num_categories=5, parallel_mode = False, verbose=False):
         """
         https://keras.io/getting-started/functional-api-guide/#multi-input-and-multi-output-models
         https://keras.io/getting-started/functional-api-guide/#shared-layers
@@ -158,20 +158,17 @@ class Classifier(object):
         featureclassifier = Model(encoded_input, fc)
         featureclassifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
         
-        
-        # complete model (1 input, 2 outputs)
-
+        # Some KL loss
         def vae_objective(x, x_decoded):
             kl_loss = -0.5 * K.sum(1 + z_log_var - K.square(z_mean) - K.exp(z_log_var), axis=-1)
             base_loss = tf.reduce_sum(metrics.binary_crossentropy(x, x_decoded), axis=[-1, -2])
             return base_loss + kl_loss
             
+        # Finally, compile the full model (1 input, 2 outputs)
         classycoder = Model(inputs=[input_img], outputs=[decoded, classified])
-        
-        #classycoder = make_parallel(classycoder, 2)
-        
+        #           = make_parallel(classycoder, 2) # Todo?
         optimizer = Nadam(lr=0.0002, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004, clipnorm=0.618)
-        #optimizer = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, clipnorm=1.0)
+        #         = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, clipnorm=1.0)
         
         classycoder.compile(
             optimizer=optimizer,
@@ -181,25 +178,30 @@ class Classifier(object):
         
         
         
-        #helpful to know this
+        # API mapping
         
         self.encoding_dims = latent_dim
         self.encoding_shape = encoding_shape
         
+        
+        
         # Recieve a image and encode it into its latent space representation
-        self.encoder = make_parallel(encoder, config.GPUs)
+        if parallel_mode: self.encoder = make_parallel(encoder, config.GPUs)
+        else: self.encoder = encoder
         
         # reconstructs an image from its encoded representation
-        self.decoder = decoder
+        if parallel_mode: self.decoder = make_parallel(decoder, config.GPUs)
+        else: self.decoder = decoder
         
         # direct pipe from input_image to its classification
-        self.imageclassifier = imageclassifier
+        if parallel_mode: self.imageclassifier = make_parallel(imageclassifier, config.GPUs)
+        else: self.imageclassifier = imageclassifier
         
         # direct pipe from encoded representation to classification
-        self.featureclassifier = make_parallel(featureclassifier, config.GPUs)
-        #self.featureclassifier = featureclassifier
+        if parallel_mode: self.featureclassifier = make_parallel(featureclassifier, config.GPUs)
+        else: self.featureclassifier = featureclassifier
         
-        # multiple output model, train this for the rest to work.
+        # multiple output model, train this for the rest to work. # todo: make_parallel
         self.classycoder = classycoder
         
     def preproc(self, im):
@@ -233,11 +235,13 @@ class Classifier(object):
         loc = os.path.join(self.path(), path)
         print("Saving weights to", loc)
         self.classycoder.save_weights(loc)
+        return self
     
     def load(self, path = "Classifier.h5"):
         loc = os.path.join(self.path(), path)
         print("Loading weights", loc)
         self.classycoder.load_weights(loc)
+        return self
 
     def path(self):
         return os.path.dirname(os.path.realpath(__file__))

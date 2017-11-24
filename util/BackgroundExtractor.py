@@ -115,7 +115,7 @@ class SimpleExtractor(BackgroundExtractor):
 
             if i%20==0 and self.opts.verbose:
                 print 'processed frame ' + str(i) + ' of ' + str(N-1)
-
+        print ('max is', np.max(max_bg))
         return np.uint8(max_bg)
 
     def maximum (self, A, B):

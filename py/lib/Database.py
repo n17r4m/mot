@@ -80,23 +80,36 @@ class Database(object):
             
             CREATE TABLE Experiment (
                 experiment UUID NOT NULL DEFAULT gen_random_uuid(),
-                name text,
                 day date NOT NULL  DEFAULT CURRENT_DATE,
+                name text,
+                method text,
                 notes text
             );
             ALTER TABLE Experiment ADD CONSTRAINT experiment_pk PRIMARY KEY (experiment);
-            ALTER TABLE Experiment ADD CONSTRAINT experiment_day_and_name_unique UNIQUE (name,day);
-            CREATE INDEX Experiment_day_index  ON Experiment(day);
+            ALTER TABLE Experiment ADD CONSTRAINT experiment_day_and_name_unique UNIQUE (name,day,method);
+            CREATE INDEX Experiment_day_index ON Experiment(day);
             
+            CREATE TABLE Segment (
+                segment UUID NOT NULL DEFAULT gen_random_uuid(),
+                experiment UUID NOT NULL,
+                number integer NOT NULL
+            );
+            ALTER TABLE Segment ADD CONSTRAINT segment_pk PRIMARY KEY (segment);
+            ALTER TABLE Segment ADD CONSTRAINT segment_experiment_fk FOREIGN KEY (experiment) REFERENCES Experiment(experiment) ON UPDATE CASCADE ON DELETE CASCADE;
+            CREATE INDEX segment_experiment_index ON Segment(experiment);
             
             CREATE TABLE Frame (
                 frame UUID NOT NULL DEFAULT gen_random_uuid(),
-                experiment UUID NOT NULL ,
+                experiment UUID NOT NULL,
+                segment UUID,
                 number integer NOT NULL 
             );
             ALTER TABLE Frame ADD CONSTRAINT frame_pk PRIMARY KEY (frame);
             ALTER TABLE Frame ADD CONSTRAINT frame_experiment_fk FOREIGN KEY (experiment) REFERENCES Experiment(experiment) ON UPDATE CASCADE ON DELETE CASCADE;
-            CREATE INDEX Frame_experiment_number_index  ON Frame(experiment, number);
+            ALTER TABLE Frame ADD CONSTRAINT frame_segment_fk FOREIGN KEY (segment) REFERENCES Segment(segment) ON UPDATE CASCADE ON DELETE SET NULL;
+            CREATE INDEX Frame_experiment_index ON Frame(experiment);
+            CREATE INDEX Frame_segment_index ON Frame(segment);
+            CREATE INDEX Frame_frame_number_index ON Frame(frame, number);
             
             
             CREATE TABLE Particle (
@@ -111,23 +124,28 @@ class Database(object):
             ALTER TABLE Particle ADD CONSTRAINT particle_pk PRIMARY KEY (particle);
             ALTER TABLE Particle ADD CONSTRAINT particle_experiment_fk FOREIGN KEY (experiment) REFERENCES Experiment(experiment) ON UPDATE CASCADE ON DELETE CASCADE;
             ALTER TABLE Particle ADD CONSTRAINT particle_category_fk FOREIGN KEY (category) REFERENCES Category(category) ON UPDATE CASCADE ON DELETE SET NULL;
-            CREATE INDEX Particle_experiment_index  ON Particle(experiment);
-            CREATE INDEX Particle_category_index  ON Particle(category);
+            CREATE INDEX Particle_experiment_index ON Particle(experiment);
+            CREATE INDEX Particle_category_index ON Particle(category);
             
             
             CREATE TABLE Track (
                 track UUID NOT NULL DEFAULT gen_random_uuid(),
-                frame UUID NOT NULL ,
-                particle UUID NOT NULL ,
-                location POINT NOT NULL ,
+                frame UUID NOT NULL,
+                particle UUID NOT NULL,
+                location POINT NOT NULL,
                 bbox BOX,
                 latent CUBE
             );
             ALTER TABLE Track ADD CONSTRAINT track_pk PRIMARY KEY (frame,particle);
             ALTER TABLE Track ADD CONSTRAINT track_frame_fk FOREIGN KEY (frame) REFERENCES Frame(frame) ON UPDATE CASCADE ON DELETE CASCADE;
             ALTER TABLE Track ADD CONSTRAINT track_particle_fk FOREIGN KEY (particle) REFERENCES Particle(particle) ON UPDATE CASCADE ON DELETE CASCADE;
+            CREATE INDEX Track_track_index  ON Track(track);
+            CREATE INDEX Track_frame_index  ON Track(frame);
+            CREATE INDEX Track_particle_index  ON Track(particle);
+            CREATE INDEX Track_frame_particle_index  ON Track(frame, particle);
             CREATE INDEX Track_location_index  ON Track USING gist(location);
             CREATE INDEX Track_latent_index  ON Track USING gist(latent);
+            
         """)
     
     async def insertFixtures(self):

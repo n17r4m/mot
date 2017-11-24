@@ -23,6 +23,8 @@ MAX_DELTA = 25.0
 FRAME_WIDTH = 2336.0
 FRAME_HEIGHT = 1729.0
 
+import cv2
+
 class DV_trainer(object): 
 
     def __init__(self, bag, CC, std_dev=3.0, verbose=True):
@@ -497,6 +499,92 @@ class DV_trainer(object):
                        self.y_data_test, 
                        self.crop_data_test)
 
+    def view_screen_feature_effect(self):
+        global MOTION_SCALE
+        global MAX_DELTA
+        global FRAME_HEIGHT
+        global FRAME_WIDTH
+        
+        # Retreive positive examples
+        pos = self.bag.query('SELECT a1.crop, f1.bitmap, f2.bitmap, (a2.x - a1.x), (a2.y - a1.y), a1.x, a1.y FROM particles p, assoc a1, assoc a2, frames f1, frames f2 WHERE a1.frame == a2.frame - 1 AND a1.particle == a2.particle AND p.id == a1.particle AND f1.frame == a1.frame AND f2.frame == a2.frame ORDER BY a1.frame limit 1')
+        print('dataset',len(pos))
+
+        pos = zip(*pos)
+
+        crops, f1s, f2s, dxs, dys, xs, ys = pos
+        
+        pos = self.bag.query('SELECT f1.bitmap, f2.bitmap FROM frames f1, frames f2 WHERE f1.frame == f2.frame-1  ORDER BY f1.frame ')
+        pos = zip(*pos)
+        f1s, f2s = pos
+        
+        dxs = np.array(dxs)
+        dxs /= MOTION_SCALE
+        
+        dys = np.array(dys)
+        dys /= MOTION_SCALE
+        
+        xs = np.array(xs)
+        xs /= FRAME_WIDTH
+        ys = np.array(ys)
+        ys /= FRAME_HEIGHT
+
+        f1s = np.array([np.frombuffer(f1, dtype='uint8').reshape(64,64) for f1 in f1s], dtype='float64')
+        f2s = np.array([np.frombuffer(f2, dtype='uint8').reshape(64,64) for f2 in f2s], dtype='float64')
+        f1s /= 255.0
+        f2s /= 255.0
+
+        crops = np.array([self.CC.preproc(np.frombuffer(crop, dtype="uint8").reshape(64, 64)) for crop in crops])
+        
+        crops = crops.reshape(len(crops), 64, 64, 1).astype('float64')
+        lats = self.CC.encoder.predict(crops)
+    
+
+        
+        vw = cv2.VideoWriter('/local/scratch/mot/data/videos/deepVelocity/tmp5_local_hyp.avi', 0 , 24, (101, 101), False)
+
+        for frame in range(499):
+            if not frame % 10:
+                print 'frame', frame
+            structured_data_vis = []
+            screen_data_vis = []
+            
+            for i in range(101):
+                for j in range(101):
+                    dx = (i-50) / MOTION_SCALE
+                    dy = (j-50) / MOTION_SCALE
+                    structured_vec = np.concatenate([lats[0], np.array([dx]), np.array([dy]), np.array([xs[0]]), np.array([ys[0]])])
+                    screen_vec = np.array([f1s[frame] ,f2s[frame]]).T
+                    structured_data_vis.append(structured_vec)
+                    screen_data_vis.append(screen_vec)
+
+            # print('vis data generated')
+            structured_data_vis = np.array(structured_data_vis)
+            screen_data_vis = np.array(screen_data_vis)
+    
+            probs = self.DV.deep_velocity.predict([structured_data_vis, screen_data_vis])[:,0]
+            # print('vis data predicted')
+    
+            buf = np.zeros((101,101))
+            count = 0
+            for i in range(101):
+                for j in range(101):
+                    buf[j,i] = probs[count]
+                    count += 1
+            vw.write(np.uint8(255*buf/np.max(buf)))
+        vw.release()
+                
+    def gkern(self, l=5, sig=1.):
+        """
+        creates gaussian kernel with side length l and a sigma of sig
+        """
+    
+        ax = np.arange(-l // 2 + 1., l // 2 + 1.)
+        xx, yy = np.meshgrid(ax, ax)
+    
+        kernel = np.exp(-(xx**2 + yy**2) / (2. * sig**2))
+    
+        return kernel / np.sum(kernel) 
+
     def fetch_data(self, n=None):
         global MOTION_SCALE
         global MAX_DELTA
@@ -518,9 +606,9 @@ class DV_trainer(object):
         dys /= MOTION_SCALE
         
         xs = np.array(xs)
-        xs /= FRAME_WIDTH
+        xs /= FRAME_WIDTH 
         ys = np.array(ys)
-        ys /= FRAME_HEIGHT
+        ys /= FRAME_HEIGHT 
 
         f1s = np.array([np.frombuffer(f1, dtype='uint8').reshape(64,64) for f1 in f1s], dtype='float64')
         f2s = np.array([np.frombuffer(f2, dtype='uint8').reshape(64,64) for f2 in f2s], dtype='float64')
@@ -657,7 +745,8 @@ class DV_trainer(object):
 
             x = structured_data_single[66]
             y = structured_data_single[67]
-
+            print('x:', x * FRAME_WIDTH)
+            print('y:', y * FRAME_HEIGHT)
             for i in range(101):
                 for j in range(101):
                     dx = (i-50) / (MOTION_SCALE * scale)
@@ -685,8 +774,10 @@ class DV_trainer(object):
                     
             xbar, ybar, cov = self.intertial_axis(buf)
             print((xbar-50)/scale, (ybar-50)/scale, np.sqrt(cov[0][0]/scale), np.sqrt(cov[1,1]/scale))
+            
+            print('local min:', np.min(buf), 'local max:', np.max(buf))
+            
             gt = np.zeros((101,101))
-
             try:
                 for i in [-1,0,1]:
                     for j in [-1,0,1]:

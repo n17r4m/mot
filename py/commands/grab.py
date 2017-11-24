@@ -8,6 +8,7 @@ async def main(args):
         
     else:
         if   args[0] == "frame":      grab_frame(args[1:])
+        if   args[0] == "extraction": grab_extraction(args[1:])
         elif args[0] == "background": grab_background(args[1:])
         else:                         print("Invalid grab sub-command")
 
@@ -22,7 +23,15 @@ def grab_frame(args):
         frame = video.frame(int(args[1]))
         io.imsave(args[2], frame.squeeze())
 
-
+def grab_extraction(args):
+    
+    from lib.Video import Video
+    
+    if len(args) < 3: print("Please supply \"video frame_number image_file\"")
+    else:
+        video = Video(args[0])
+        frame = video.normal_frame(int(args[1]))
+        io.imsave(args[2], frame.squeeze())
 
 def grab_background(args):
 

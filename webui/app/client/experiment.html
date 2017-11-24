@@ -1,0 +1,32 @@
+<template name="experiment">
+    {{#with experiment}}
+        <h1>{{day}} {{name}} {{method}}</h1>
+        <p>{{_id}}</p>
+        <p>{{notes}}</p>
+        
+        <video id="video" controls loop autoplay style="width:100%;" src="/mot/data/experiments/{{_id}}/detection.mp4"></video>
+        
+        <select id="video_select">
+            <option value="detection.mp4">Detection</option>
+            {{#if startsWith method "tracking"}}
+            <option value="tracking.mp4">Tracking</option>
+            {{/if}}
+            <option value="extraction.mp4">Extraction</option>
+            <option value="mask.mp4">Mask</option>
+            <option value="raw.mp4">Raw</option>
+        </select>
+        
+        
+        Rate:
+        <select id="rate_select">
+            <option>0.25</option>
+            <option>0.5</option>
+            <option selected>1.0</option>
+            <option>1.5</option>
+        </select>
+        
+    {{/with}}
+    
+    
+    
+</template>

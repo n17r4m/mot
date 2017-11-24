@@ -1,3 +1,5 @@
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
+
 FlowRouter.route('/help/architecture', {
     action: function(params) {
         BlazeLayout.render("help", {main: "help_architecture"});

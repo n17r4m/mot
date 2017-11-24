@@ -33,7 +33,7 @@ async def main():
         
         print("Unknown command specified", command, e)
         print("Known commands are:")
-        print("grab, insert, show, dump, simulate")
+        print("grab, insert, show, dump, simulate, import")
         
 
 

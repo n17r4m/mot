@@ -172,8 +172,23 @@ class DeepVelocityV3(object):
         
         state_network = Model(inputs=[structured_input, lat_input, screen_input], outputs=[state_output])
         
+        # Create the two state encoding legs
+        structured_input_a = Input(shape=structured_input_shape, name='structured input')
+        lat_input_a = Input(shape=lat_input_shape, name='latent vector input')
+        screen_input_a = Input(shape=screen_input_shape, name='screen input')
+        
+        structured_input_b = Input(shape=structured_input_shape, name='structured input')
+        lat_input_b = Input(shape=lat_input_shape, name='latent vector input')
+        screen_input_b = Input(shape=screen_input_shape, name='screen input')
+        
+        eng_state_a = concatenate([screen_input_a, lat_input_a, structured_input_a])
+        eng_state_b = concatenate([screen_input_b, lat_input_b, structured_input_b])
+
+        enc_state_a = state_network(eng_state_a)
+        enc_state_b = state_network(eng_state_b)
+        
         # Create the probability network
-        prob_input = concatenate([state_output, state_output])
+        prob_input = concatenate([enc_state_a, enc_state_b])
         x = Dense(32)(x)
         x = BatchNormalization()(x)
         x = Activation('selu')(x)
@@ -186,7 +201,7 @@ class DeepVelocityV3(object):
         x = Activation('selu')(x)
         prob_output = Dense(2, activation='softmax')(x)
 
-        prob_network = Model(inputs=[structured_input, lat_input, screen_input], outputs=[prob_output])
+        prob_network = Model(inputs=[eng_state_a, eng_state_b], outputs=[prob_output])
         
         # Compile the model
         optimizer = Nadam(lr=lr, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004)
