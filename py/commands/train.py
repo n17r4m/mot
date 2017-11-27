@@ -57,7 +57,7 @@ async def train_DeepVelocity(args):
     
     try:
         if args[1] == "view":
-            await DVViewer(model=model,
+            await DVViewer(model=DV,
                            dataGenerator=dataGenerator)
         else:
             await trainer(args[1:], 
@@ -72,7 +72,8 @@ async def DVViewer(model, dataGenerator):
     dataGenerator = dataGenerator
     await dataGenerator.setup()
     
-    model.load_weights('DVProbNetwork.h5')
+    DV = model 
+    model = DV.probabilityNetwork
     
     dataBatch = await dataGenerator.trainBatch()
     
@@ -83,12 +84,14 @@ async def DVViewer(model, dataGenerator):
                           dataGenerator.locationMean, 
                           dataGenerator.locationStd)  
                         
-    scale = 0.001
+    
+    weightFile = "/local/scratch/mot/py/lib/models/weights/DVexp1-epoch{epoch}.h5"
+    
     negCount = 0
     posCount = 0
-    l = []
+    outputData = []
+    screenCount = 0
     for dataInput, dataOutput in dataBatch:
-        
         if dataOutput[0][0] == 0.0:
             label='neg'
             print("negative example found...")
@@ -96,14 +99,14 @@ async def DVViewer(model, dataGenerator):
                 continue
         else:
             label='pos'
-            print("negative example found...")
+            print("positive example found...")
             if posCount:
                 continue
             
         loc1, lat1, f1, loc2, lat2, f2 = dataInput
         
-        
         SIZE = 101
+        scaleData = []
         for scale in [0.001,0.01,0.1,1.0]:
             visData = DataBatch()
             for i in range(SIZE):
@@ -126,20 +129,25 @@ async def DVViewer(model, dataGenerator):
             visData.normalize("location", 
                               dataGenerator.locationMean, 
                               dataGenerator.locationStd)
+            epochData = []
             
-            probs = model.predict(visData.getInput())[:,0]
-            
-            screenBuf = np.zeros((SIZE, SIZE))
-            count = 0
-            
-            for i in range(SIZE):
-                for j in range(SIZE):
-                    screenBuf[j,i] = probs[count]
-                    count += 1
-            
-            io.imsave('screenBuf{label}{scale}.png'.format(label=label,scale=scale), screenBuf)
-            l.append(screenBuf)
-            
+            for epoch in range(17):
+                DV.load_model(weightFile.format(epoch=epoch+1))
+                model = DV.probabilityNetwork
+                probs = model.predict(visData.getInput())[:,0]
+                
+                screenBuf = np.zeros((SIZE, SIZE))
+                count = 0
+                
+                for i in range(SIZE):
+                    for j in range(SIZE):
+                        screenBuf[j,i] = probs[count]
+                        count += 1
+                screenCount += 1
+                print("screen count", screenCount)
+                epochData.append(screenBuf)
+            scaleData.append(epochData)
+        outputData.append(scaleData)
         
         if label=='pos':
             posCount+=1
@@ -147,7 +155,7 @@ async def DVViewer(model, dataGenerator):
             negCount+=1
         if posCount and negCount:
             break
-    np.save('screenBuf', np.array(l))
+    np.save('screenBuf', np.array(outputData))
         
 async def trainer(args, model, dataGenerator):
     '''
@@ -188,13 +196,18 @@ async def trainer(args, model, dataGenerator):
             batchStart = time.time()
             batchLoss = model.train_on_batch(dataBatch.getInput(), dataBatch.getOutput())
             batchLosses.append(batchLoss)
+            sys.stdout.write("Training epoch progress: %d%% %ds   \r" % (100*float(batchNum+1)/dataGenerator.numTrainBatch, time.time()-epochStart) )
+            sys.stdout.flush()
             # print(batchNum, batchLoss, time.time()-batchStart)
             
         epochLoss = np.mean(batchLosses, axis=0)
         trainingLosses.append(epochLoss)
         
         weightFile = "DVProbNetwork.h5"
-        model.save(weightFile)
+        model.save_weights(weightFile)
+        
+        modelFile = "/local/scratch/mot/py/lib/models/weights/DVexp1-epoch{epoch}.h5".format(epoch=epoch+1)
+        model.save(modelFile)
         
         # Printing section
         trainTime = time.time() - epochStart
@@ -280,39 +293,54 @@ class DataBatch():
         self.mask["location"] = {"A": [], "B": []}
         self.mask["output"] = []        
         
-        # Probability of a feature remaining unchanged
-        frameProb = 1.0
-        latentProb = 1.0
-        locationProb = 0.1
+        # Probability of a feature remaining unchanged... sort of
+        # we'll take the complement for A B state pairs probability
+        # to guarantee only either A or B are randomized
+        probs = {"frame": 0.5,
+                 "latent": 0.5,
+                 "location": 0.5}
         
-        # split = len(self) // 2
+        keys = ["frame", "latent", "location"]
         
-        self.mask["frame"]["A"] = np.random.random(len(self.data["frame"]["A"]))
-        self.mask["frame"]["B"] = np.random.random(len(self.data["frame"]["B"]))
-        self.mask["latent"]["A"] = np.random.random(len(self.data["latent"]["A"]))
-        self.mask["latent"]["B"] = np.random.random(len(self.data["latent"]["B"]))
-        self.mask["location"]["A"] = np.random.random(len(self.data["location"]["A"]))
-        self.mask["location"]["B"] = np.random.random(len(self.data["location"]["B"]))
+        selectedKeys = np.random.choice(keys, size=1, replace=False)
         
-        self.mask["frame"]["A"][self.mask["frame"]["A"]>=frameProb] = 1
-        self.mask["frame"]["A"][self.mask["frame"]["A"]<frameProb] = 0
-        self.mask["frame"]["B"][self.mask["frame"]["B"]>=frameProb] = 1
-        self.mask["frame"]["B"][self.mask["frame"]["B"]<frameProb] = 0
-        self.mask["latent"]["A"][self.mask["latent"]["A"]>=latentProb] = 1
-        self.mask["latent"]["A"][self.mask["latent"]["A"]<latentProb] = 0
-        self.mask["latent"]["B"][self.mask["latent"]["B"]>=latentProb] = 1
-        self.mask["latent"]["B"][self.mask["latent"]["B"]<latentProb] = 0
-        self.mask["location"]["A"][self.mask["location"]["A"]>=locationProb] = 1
-        self.mask["location"]["A"][self.mask["location"]["A"]<locationProb] = 0
-        self.mask["location"]["B"][self.mask["location"]["B"]>=locationProb] = 1
-        self.mask["location"]["B"][self.mask["location"]["B"]<locationProb] = 0
+        for key in selectedKeys:
+            prob = probs[key]
+            self.mask[key]["A"] = np.random.random(len(self.data[key]["A"]))
+            self.mask[key]["B"] = 1.0 - self.mask[key]["A"]
+            self.mask[key]["A"][self.mask[key]["A"]>=prob] = 1
+            self.mask[key]["A"][self.mask[key]["A"]<prob] = 0
+            self.mask[key]["B"][self.mask[key]["B"]>=prob] = 1
+            self.mask[key]["B"][self.mask[key]["B"]<prob] = 0
+            self.mask[key]["A"] = np.array(self.mask[key]["A"], dtype=bool)
+            self.mask[key]["B"] = np.array(self.mask[key]["B"], dtype=bool)
+            
+        # self.mask["frame"]["A"] = np.random.random(len(self.data["frame"]["A"]))
+        # self.mask["frame"]["B"] = 1.0 - self.mask["frame"]["A"]
+        # self.mask["latent"]["A"] = np.random.random(len(self.data["latent"]["A"]))
+        # self.mask["latent"]["B"] = 1.0 - self.mask["latent"]["A"]
+        # self.mask["location"]["A"] = np.random.random(len(self.data["location"]["A"]))
+        # self.mask["location"]["B"] = 1.0 - self.mask["location"]["A"]
         
-        self.mask["frame"]["A"] = np.array(self.mask["frame"]["A"], dtype=bool)
-        self.mask["frame"]["B"] = np.array(self.mask["frame"]["B"], dtype=bool)
-        self.mask["latent"]["A"] = np.array(self.mask["latent"]["A"], dtype=bool)
-        self.mask["latent"]["B"] = np.array(self.mask["latent"]["B"], dtype=bool)
-        self.mask["location"]["A"] = np.array(self.mask["location"]["A"], dtype=bool)
-        self.mask["location"]["B"] = np.array(self.mask["location"]["B"], dtype=bool)
+        # self.mask["frame"]["A"][self.mask["frame"]["A"]>=frameProb] = 1
+        # self.mask["frame"]["A"][self.mask["frame"]["A"]<frameProb] = 0
+        # self.mask["frame"]["B"][self.mask["frame"]["B"]>=frameProb] = 1
+        # self.mask["frame"]["B"][self.mask["frame"]["B"]<frameProb] = 0
+        # self.mask["latent"]["A"][self.mask["latent"]["A"]>=latentProb] = 1
+        # self.mask["latent"]["A"][self.mask["latent"]["A"]<latentProb] = 0
+        # self.mask["latent"]["B"][self.mask["latent"]["B"]>=latentProb] = 1
+        # self.mask["latent"]["B"][self.mask["latent"]["B"]<latentProb] = 0
+        # self.mask["location"]["A"][self.mask["location"]["A"]>=locationProb] = 1
+        # self.mask["location"]["A"][self.mask["location"]["A"]<locationProb] = 0
+        # self.mask["location"]["B"][self.mask["location"]["B"]>=locationProb] = 1
+        # self.mask["location"]["B"][self.mask["location"]["B"]<locationProb] = 0
+        
+        # self.mask["frame"]["A"] = np.array(self.mask["frame"]["A"], dtype=bool)
+        # self.mask["frame"]["B"] = np.array(self.mask["frame"]["B"], dtype=bool)
+        # self.mask["latent"]["A"] = np.array(self.mask["latent"]["A"], dtype=bool)
+        # self.mask["latent"]["B"] = np.array(self.mask["latent"]["B"], dtype=bool)
+        # self.mask["location"]["A"] = np.array(self.mask["location"]["A"], dtype=bool)
+        # self.mask["location"]["B"] = np.array(self.mask["location"]["B"], dtype=bool)
         
         # self.mask["frame"]["A"][:split] = False
         # self.mask["frame"]["B"][:split] = False
@@ -665,7 +693,7 @@ class DVDataGen(object):
             - location means
         '''
         
-                
+           
         self.frameMean = 172.2
         self.frameStd = 21.8
         self.locationMean = 1000.0
@@ -902,6 +930,7 @@ class DVNegativeProcessor(multiprocessing.Process):
             print("DVNegativeProcessor ready.")
             os.environ["CUDA_VISIBLE_DEVICES"]="0"
             print('Child CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
+
             model = DeepVelocity().probabilityNetwork
             
             while True:
@@ -935,7 +964,7 @@ class DVNegativeProcessor(multiprocessing.Process):
                         # loc2 = np.random.uniform((0,0),(2336,1729))
                         dataBatch.addLocation(d["loc1"], d["loc2"])
                         # print(d['loc1'], d['loc2'], loc1, loc2)
-                        dataBatch.addLocation(loc2, loc2)
+                        # dataBatch.addLocation(loc1, loc2)
                         dataBatch.addOutput([0.0, 1.0])
                 
                 dataBatch.toNumpy()
