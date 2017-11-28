@@ -7,7 +7,7 @@ import time
 import traceback
 import random
 import traceback
-
+import types
 
 
 class Zueue(mp.Process):
@@ -118,13 +118,16 @@ class Zueue(mp.Process):
                     return e
             self.sleep()
     
-    # Override me
-    def do(self, data):
-        self.push(data)
     
     # Override me
     def setup(self, *args, **kwargs):
         pass
+    
+    # Override me
+    def do(self, data):
+        self.push(data)
+    
+    
     
     # Override me
     def teardown(self): 
@@ -165,10 +168,13 @@ class Zueue(mp.Process):
         return data
     
     def warp(self, wrapping):
+        
         current_wrap = self.wrap
         def new_wrap(self, data):
-            return wrapping(current_wrap(data))
-        self.wrap = new_warp
+            #https://stackoverflow.com/questions/972/adding-a-method-to-an-existing-object-instance
+            return wrapping(self, current_wrap(data))
+        next_wrap = types.MethodType(new_wrap, self)
+        self.wrap = next_wrap
 
 
 class ZueueList(list):
@@ -189,8 +195,9 @@ class ZueueList(list):
 class Split(Zueue):
     def setup(self):
         self.seq_id = 0
-        #def wrap(self, p_data): -> data
-        #self.warp(wrap)
+        def wrap(self, data): 
+            return data
+        self.warp(wrap)
     def do(self, data):
         self.push((self.seq_id, data))
         self.seq_id += 1
