@@ -53,7 +53,7 @@ async def train_DeepVelocity(args):
     DV = DeepVelocity(lr=0.0003)
 
     model = DV.probabilityNetwork
-    dataGenerator = DVDataGen()
+    dataGenerator = DVDataGen(debug=True)
     
     try:
         if args[1] == "view":
@@ -180,11 +180,13 @@ async def trainer(args, model, dataGenerator):
     modelMetrics = model.metrics_names
     numMetrics = len(modelMetrics)
     print("Begin Training...")
+    dataGenerator.epochBegin()
     for epoch in range(epochs):
         # Train Section
         batchLosses = []
         epochStart = time.time()
         
+        dataGenerator.trainBegin()
         for batchNum in range(dataGenerator.numTrainBatch):
             if not epoch and batchNum==1:
                 print("First batch", time.time()-epochStart)
@@ -199,14 +201,14 @@ async def trainer(args, model, dataGenerator):
             sys.stdout.write("Training epoch progress: %d%% %ds   \r" % (100*float(batchNum+1)/dataGenerator.numTrainBatch, time.time()-epochStart) )
             sys.stdout.flush()
             # print(batchNum, batchLoss, time.time()-batchStart)
-            
+        
         epochLoss = np.mean(batchLosses, axis=0)
         trainingLosses.append(epochLoss)
         
         weightFile = "DVProbNetwork.h5"
         model.save_weights(weightFile)
         
-        modelFile = "/local/scratch/mot/py/lib/models/weights/DVexp1-epoch{epoch}.h5".format(epoch=epoch+1)
+        modelFile = "/local/scratch/mot/py/lib/models/weights/DVexp2-epoch{epoch}.h5".format(epoch=epoch+1)
         model.save(modelFile)
         
         # Printing section
@@ -223,7 +225,7 @@ async def trainer(args, model, dataGenerator):
         # Test Section
         batchLosses = []
         epochStart = time.time()
-        
+        dataGenerator.testBegin()
         for batchNum in range(dataGenerator.numTestBatch):
             dataBatch = await dataGenerator.testBatch()
             batchLoss = model.test_on_batch(dataBatch.getInput(), dataBatch.getOutput())
@@ -243,7 +245,8 @@ async def trainer(args, model, dataGenerator):
                                      time=testTime,
                                      metrics=metrics))
                                      
-        dataGenerator.weightsQueue.put(weightFile)
+        dataGenerator.epochEnd()
+        dataGenerator.changeWeights(weightFile)
         
     print("Done")
     
@@ -382,17 +385,21 @@ class DataBatch():
                 np.random.shuffle(v)
                 np.random.set_state(rng_state)
             
-    def normalize(self, feature, mean, std):
-        self.data[feature]["A"] -= mean
-        self.data[feature]["A"] /= std
-        self.data[feature]["B"] -= mean
-        self.data[feature]["B"] /= std
+    def normalize(self, params):
+        for feature, stats in params.items():
+            mean, std = stats
+            self.data[feature]["A"] -= mean
+            self.data[feature]["A"] /= std
+            self.data[feature]["B"] -= mean
+            self.data[feature]["B"] /= std
         
-    def denormalize(self, feature, mean, std):
-        self.data[feature]["A"] *= std
-        self.data[feature]["A"] += mean
-        self.data[feature]["B"] *= std
-        self.data[feature]["B"] += mean
+    def denormalize(self, params):
+        for feature, stats in params.items():
+            mean, std = stats        
+            self.data[feature]["A"] *= std
+            self.data[feature]["A"] += mean
+            self.data[feature]["B"] *= std
+            self.data[feature]["B"] += mean
                 
     def addInput(self, A):
         '''
@@ -403,13 +410,21 @@ class DataBatch():
         self.addLatent(A[1], A[4])
         self.addFrame(A[2], A[5])
     
+    def addDataPoint(self, d):
+        self.addLocation(d["loc1"], d["loc2"])
+        self.addLatent(d["lat1"], d["lat2"])
+        self.addFrame(d["frame1"], d["frame2"])
+        self.addOutput(d["output"])
+        
     def getDataPoint(self, i):
         r = {"frame1": self.data["frame"]["A"][i],
              "frame2": self.data["frame"]["B"][i],
              "lat1": self.data["latent"]["A"][i],
              "lat2": self.data["latent"]["B"][i],
              "loc1": self.data["location"]["A"][i],
-             "loc2": self.data["location"]["B"][i]}
+             "loc2": self.data["location"]["B"][i],
+             "output": self.data["output"][i]
+            }
         return r
                              
     def getInput(self, start=None, end=None):
@@ -464,18 +479,17 @@ class DataBatch():
         
 class DVDataGen(object):
     
-    def __init__(self):
+    def __init__(self, debug=False):
         self.numDataPoints = None
         self.numTrainBatch = None
         self.numTestBatch = None
         self.splitPercent = 0.8
         self.method =  "Tracking_heuristicCi"
-        
+        self.debug = debug
         self.db = Database()
     
         self.processors = []
-        self.queues = []
-    
+
     def _split(self):
         '''
         Convert a percentage split into a uuid split.Convert
@@ -507,68 +521,51 @@ class DVDataGen(object):
         print("num test batches computed", self.numTestBatch)
         print("fitting dataset sample")
         
-        await self._fit()
-        print("frame mean/std", self.frameMean, self.frameStd)
-        print("loc mean/std", self.locationMean, self.locationStd)
-        
-        self.dbTrainQueryQueue = multiprocessing.Queue()
-        self.queues.append(self.dbTrainQueryQueue)
-        
-        self.dbPosTrainDataQueue = multiprocessing.Queue(20000)
-        self.queues.append(self.dbPosTrainDataQueue)
-        
-        self.dbNegTrainDataQueue = multiprocessing.Queue(2000)
-        self.queues.append(self.dbNegTrainDataQueue)
-        
-        self.dbTestQueryQueue = multiprocessing.Queue()
-        self.queues.append(self.dbTestQueryQueue)
-        
-        self.dbPosTestDataQueue = multiprocessing.Queue(20000)
-        self.queues.append(self.dbPosTrainDataQueue)
-        
-        self.dbNegTestDataQueue = multiprocessing.Queue(2000)
-        self.queues.append(self.dbNegTrainDataQueue)
-        
-        self.weightsQueue = multiprocessing.Queue(2000)
-        self.queues.append(self.weightsQueue)
-    
-        for _ in range(epochs*3):
-            q = self._trainBatchQuery()
-            self.dbTrainQueryQueue.put(q)
-            q = self._testBatchQuery()
-            self.dbTestQueryQueue.put(q)
-            
-        self.dbTrainQueryQueue.put(None)
-        self.dbTestQueryQueue.put(None)
+        self.normalizeParams = await self._fit()
+        for feature, stats in self.normalizeParams.items():
+            print("{feature} mean/std {stats}".format(feature=feature,
+                                                      stats=stats))
 
-        self.trainQueryProcessor = DVQueryProcessor(self.dbTrainQueryQueue,
-                                                    self.dbPosTrainDataQueue)
-                                               
-        self.trainQueryProcessor.daemon=True
-        self.trainQueryProcessor.start()
-        self.processors.append(self.trainQueryProcessor)
+        trainQueryQueue = multiprocessing.Queue()
+        trainDataQueue = multiprocessing.Queue(2000)
+        self.trainBatchQueue = multiprocessing.Queue(5)
+
+        testQueryQueue = multiprocessing.Queue()
+        testDataQueue = multiprocessing.Queue(2000)
+        self.testBatchQueue = multiprocessing.Queue(5)
+    
+        for _ in range(epochs*2):
+            q = self._trainBatchQuery()
+            trainQueryQueue.put(q)
+            q = self._testBatchQuery()
+            testQueryQueue.put(q)
+            
+        trainQueryQueue.put(None)
+        testQueryQueue.put(None)
+
+        trainQueryProcessor = DVQueryProcessor(trainQueryQueue,
+                                               trainDataQueue)
+        trainQueryProcessor.daemon=True
+        trainQueryProcessor.start()
+        self.processors.append(trainQueryProcessor)
         
-        self.negTrainQueryProcessor = DVNegativeProcessor(self.weightsQueue,
-                                                          self.dbPosTrainDataQueue,
-                                                          self.dbNegTrainDataQueue,
-                                                          256)
-        self.negTrainQueryProcessor.daemon=True
-        self.negTrainQueryProcessor.start()
-        self.processors.append(self.negTrainQueryProcessor)
-        
-        self.testQueryProcessor = DVQueryProcessor(self.dbTestQueryQueue,
-                                                   self.dbPosTestDataQueue)
-                                               
-        self.testQueryProcessor.daemon=True
-        self.testQueryProcessor.start()
-        self.processors.append(self.testQueryProcessor)
+        testQueryProcessor = DVQueryProcessor(testQueryQueue,
+                                              testDataQueue)
+        testQueryProcessor.daemon=True
+        testQueryProcessor.start()
+        self.processors.append(testQueryProcessor)
          
-        # self.negTestQueryProcessor = DVNegativeProcessor(self.weightsQueue,
-        #                                                  self.dbPosTestDataQueue,
-        #                                                  self.dbNegTestDataQueue,
-        #                                                  10000)
-        # self.negTestQueryProcessor.start()
-        # self.processors.append(self.negTestQueryProcessor)
+        batchProcessor = DVBatchProcessor(batchSize=self.batchSize,
+                                          normalizeParams=self.normalizeParams,
+                                          trainInputQueue=trainDataQueue,
+                                          trainOutputQueue=self.trainBatchQueue,
+                                          testInputQueue=testDataQueue,
+                                          testOutputQueue=self.testBatchQueue)
+            
+        batchProcessor.daemon=True
+        batchProcessor.start()
+        self.batchProcessor = batchProcessor
+        self.processors.append(batchProcessor)
         
     def _trainNegBatchQuery(self):
         q = """
@@ -693,69 +690,75 @@ class DVDataGen(object):
             - location means
         '''
         
-           
-        self.frameMean = 172.2
-        self.frameStd = 21.8
-        self.locationMean = 1000.0
-        self.locationStd = 585
-        return 
-    
-        sampleSize = 10000
-        frames = []
-        locations = []
+        if self.debug:
+            frameMean = 172.2
+            frameStd = 21.8
+            locationMean = 1000.0
+            locationStd = 585
+        else:
+            sampleSize = 10000
+            frames = []
+            locations = []
+            
+            async for result in self.db.query("""
+                                              SELECT f1.experiment,
+                                                     f1.frame as frame1, 
+                                                     f2.frame as frame2, 
+                                                     t1.track as track1,
+                                                     t2.track as track2,
+                                                     t1.latent as lat1,
+                                                     t2.latent as lat2,
+                                                     t1.location as loc1,
+                                                     t2.location as loc2
+                                              FROM track t1, track t2, frame f1, frame f2, experiment
+                                              WHERE t1.particle = t2.particle
+                                              AND t1.frame = f1.frame
+                                              AND t2.frame = f2.frame
+                                              AND f1.number = f2.number-1
+                                              AND t1.track < $2
+                                              AND f1.experiment = experiment.experiment
+                                              AND UPPER(experiment.method) LIKE  UPPER($3)
+                                              ORDER BY random()
+                                              limit $1
+                                              """,
+                                              sampleSize,
+                                              self.split,
+                                              self.method):
+                
+                frameFile1 = os.path.join(config.experiment_dir, 
+                                          str(result["experiment"]),
+                                          str(result["frame1"]),
+                                          '64x64.png')
+                                         
+                frameFile2 = os.path.join(config.experiment_dir, 
+                                          str(result["experiment"]),
+                                          str(result["frame2"]),
+                                          '64x64.png')
+                                          
+                frame1 = io.imread(frameFile1, as_grey=True)
+                frame2 = io.imread(frameFile2, as_grey=True)
+                
+                frames.append(frame1)
+                frames.append(frame2)
+                
+                locations.append(result["loc1"])
+                locations.append(result["loc2"])
+            
+            frameMean = np.mean(frames)
+            frameStd = np.std(frames)
+            locationMean = np.mean(locations)
+            locationStd = np.std(locations)
         
-        async for result in self.db.query("""
-                                          SELECT f1.experiment,
-                                                 f1.frame as frame1, 
-                                                 f2.frame as frame2, 
-                                                 t1.track as track1,
-                                                 t2.track as track2,
-                                                 t1.latent as lat1,
-                                                 t2.latent as lat2,
-                                                 t1.location as loc1,
-                                                 t2.location as loc2
-                                          FROM track t1, track t2, frame f1, frame f2, experiment
-                                          WHERE t1.particle = t2.particle
-                                          AND t1.frame = f1.frame
-                                          AND t2.frame = f2.frame
-                                          AND f1.number = f2.number-1
-                                          AND t1.track < $2
-                                          AND f1.experiment = experiment.experiment
-                                          AND UPPER(experiment.method) LIKE  UPPER($3)
-                                          ORDER BY random()
-                                          limit $1
-                                          """,
-                                          sampleSize,
-                                          self.split,
-                                          self.method):
-            
-            frameFile1 = os.path.join(config.experiment_dir, 
-                                      str(result["experiment"]),
-                                      str(result["frame1"]),
-                                      '64x64.png')
-                                     
-            frameFile2 = os.path.join(config.experiment_dir, 
-                                      str(result["experiment"]),
-                                      str(result["frame2"]),
-                                      '64x64.png')
-                                      
-            frame1 = io.imread(frameFile1, as_grey=True)
-            frame2 = io.imread(frameFile2, as_grey=True)
-            
-            frames.append(frame1)
-            frames.append(frame2)
-            
-            locations.append(result["loc1"])
-            locations.append(result["loc2"])
+        d = {"frame": None, "location": None}
+        d["frame"] = (frameMean, frameStd)
+        d["location"] = (locationMean, locationStd)
         
-        self.frameMean = np.mean(frames)
-        self.frameStd = np.std(frames)
-        self.locationMean = np.mean(locations)
-        self.locationStd = np.std(locations)
+        return d
             
     async def _numDataPoints(self):
-        self.numDataPoints = 10000
-        return
+        if self.debug:
+            self.numDataPoints = 10000
+            return
     
         q = """
             SELECT COUNT(t1.particle) as numdatapoints
@@ -770,73 +773,41 @@ class DVDataGen(object):
         s = q.format(method=self.method)
         async for result in self.db.query(s):
             self.numDataPoints = result['numdatapoints']
-    
-    async def _batch(self, queue, label, batchSize):
-        dataBatch = DataBatch()
-        for _ in range(batchSize):
-            d = queue.get()
-            dataBatch.addFrame(d["frame1"], d["frame2"])
-            dataBatch.addLatent(d["lat1"], d["lat2"])
-            dataBatch.addLocation(d["loc1"], d["loc2"])
-            dataBatch.addOutput(label)
-
-        return dataBatch
         
     async def trainBatch(self):
-        queue = self.dbPosTrainDataQueue
-        dataBatch = await self._batch(queue, [1.0, 0.0], int(self.batchSize/2))
-        
-        negQueue = self.dbNegTrainDataQueue
-        dataBatchNeg =  await self._batch(negQueue, [0.0, 1.0], int(self.batchSize/2))
-
-        dataBatch.join(dataBatchNeg)
-        
-        dataBatch.toNumpy()
-        
-        dataBatch.normalize("frame", 
-                            self.frameMean, 
-                            self.frameStd)
-        dataBatch.normalize("location", 
-                            self.locationMean, 
-                            self.locationStd)
-                            
-        dataBatch.shuffle()
-        
-        return dataBatch
+        return self.trainBatchQueue.get()
 
     async def testBatch(self):
-        queue = self.dbPosTestDataQueue
-        dataBatch = await self._batch(queue, [1.0, 0.0], int(self.batchSize/2))
-        
-        negQueue = self.dbNegTrainDataQueue
-        dataBatchNeg =  await self._batch(negQueue, [0.0, 1.0], int(self.batchSize/2))
+        return self.testBatchQueue.get()
 
-        dataBatch.join(dataBatchNeg)
-        
-        dataBatch.toNumpy()
-        
-        dataBatch.normalize("frame", 
-                            self.frameMean, 
-                            self.frameStd)
-        dataBatch.normalize("location", 
-                            self.locationMean, 
-                            self.locationStd)
-                            
-        dataBatch.shuffle()
-        
-        return dataBatch
+    def epochBegin(self):
+        pass
+    def epochEnd(self):
+        pass
+    def trainBegin(self):
+        self.batchProcessor.train()
+    def trainEnd(self):
+        pass
+    def testBegin(self):
+        self.batchProcessor.test()
+    def testEnd(self):
+        pass
+    
+    def changeWeights(self, weightFile):
+        self.batchProcessor.changeWeights(weightFile)
 
     def close(self):
         for p in self.processors:
             p.terminate()
         print('All datagen processes terminated')
         
-        for q in self.queues:
-            while not q.empty():
-                q.get()
-        print('All datagen queues emptied')
-        
 class DVQueryProcessor(multiprocessing.Process):
+    '''
+    Input:  database sql queries
+    Output: dictionary containing a single row from the
+            query results, processed to include assets
+            loaded from the filesystem.
+    '''
     def __init__(self, inputQueue, outputQueue):
         super(DVQueryProcessor, self).__init__()
         self.inputQueue = inputQueue
@@ -904,16 +875,19 @@ class DVQueryProcessor(multiprocessing.Process):
     
     def stopped(self):
         return self.stop_event.is_set()    
-    
-class DVNegativeProcessor(multiprocessing.Process):
-    def __init__(self, weightsQueue, inputQueue, outputQueue, batchSize):
-        super(DVNegativeProcessor, self).__init__()
+
+class DVPredictionProcessor(multiprocessing.Process):
+    '''
+    Input: a tensor of data
+    Output: a list of predictions for the tensor
+    '''
+    def __init__(self, weightsQueue, inputQueue, outputQueue):
+        super(DVPredictionProcessor, self).__init__()
         self.inputQueue = inputQueue
         self.outputQueue = outputQueue
         self.weightsQueue = weightsQueue
         self.stop_event = multiprocessing.Event()
         self.commit_event = multiprocessing.Event()
-        self.batchSize = batchSize
         
     def run(self):
         # await self.inner_loop(Database().transaction, self.queue)
@@ -924,97 +898,160 @@ class DVNegativeProcessor(multiprocessing.Process):
     
     # dun know if this works or not.. todo: test.
     async def inner_loop(self):
-        try:
-            count=0
-            total=0
-            print("DVNegativeProcessor ready.")
-            os.environ["CUDA_VISIBLE_DEVICES"]="0"
-            print('Child CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
+        print("DVPredictionProcessor ready.")
+        os.environ["CUDA_VISIBLE_DEVICES"]="0"
+        print('Child CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
 
-            model = DeepVelocity().probabilityNetwork
+        model = DeepVelocity().probabilityNetwork
             
-            while True:
+        while True:
+            if self.stopped():
+                break
+            if not self.weightsQueue.empty():
+                # while not self.outputQueue.empty():
+                #     self.outputQueue.get()
+                weightFile = self.weightsQueue.get()
+                model.load_weights(weightFile)
+                print("Loaded new weights...")
+            d = self.inputQueue.get()
+            probs = model.predict(d)
+            self.outputQueue.put(probs)
+                    
+        print("DVNegativeProcessor Exiting")
+        
+    def stop(self):
+        self.stop_event.set()
+    
+    def stopped(self):
+        return self.stop_event.is_set()  
+    
+class DVBatchProcessor(multiprocessing.Process):
+    '''
+    Input: rows from DVQueryProcessor
+    Output: a DataBatch of DV data
+    '''
+    def __init__(self, batchSize, normalizeParams,
+                 trainInputQueue, trainOutputQueue,
+                 testInputQueue, testOutputQueue):
+        super(DVBatchProcessor, self).__init__()
+        
+        self.batchSize = batchSize
+        self.normalizeParams = normalizeParams
+        
+        self.queues = {"input": dict(),
+                       "output": dict(),
+                       "control": dict()}
+        self.queues["input"]["train"] = trainInputQueue
+        self.queues["output"]["train"] = trainOutputQueue
+        self.queues["input"]["test"] = testInputQueue
+        self.queues["output"]["test"] = testOutputQueue
+        self.queues["input"]["predict"] = multiprocessing.Queue()
+        self.queues["output"]["predict"] = multiprocessing.Queue()
+        self.queues["control"] = multiprocessing.Queue()
+        self.queues["weight"] = multiprocessing.Queue()
+        
+        self.model = DVPredictionProcessor(self.queues["weight"],
+                                           self.queues["input"]["predict"],
+                                           self.queues["output"]["predict"])
+        self.model.start()
+        
+        self.stop_event = multiprocessing.Event()
+        self.commit_event = multiprocessing.Event()
+        
+        self.mode = None
+        
+    def train(self):
+        self.queues["control"].put("train")
+        
+    def test(self):
+        self.queues["control"].put("test")
+        
+    def changeWeights(self, weightFile):
+        self.queues["weight"].put(weightFile)
+        
+    def run(self):
+        self.go(self.inner_loop, ())
+    
+    def go(self, fn, args):
+        return asyncio.new_event_loop().run_until_complete(fn(*args))
+    
+    def controlPending(self):
+        return not self.queues["control"].empty()
+    
+    async def controlMsg(self):
+        return self.queues["control"].get()
+        
+    async def inner_loop(self):
+        predInputQueue = self.queues["input"]["predict"]
+        predOutputQueue = self.queues["output"]["predict"]
+        
+        while True:
+            if self.stopped():
+                break
+            if self.controlPending() or self.mode is None:
+                print("mode is ", self.mode)
+                self.mode = self.queues["control"].get()
+                print("mode set to", self.mode)
+                inputQueue = self.queues["input"][self.mode]
+                outputQueue = self.queues["output"][self.mode]
+                
+            dataBatch = DataBatch()
+            while len(dataBatch) < self.batchSize // 2:
                 if self.stopped():
                     break
-                
-                dataBatch = DataBatch()
-                while len(dataBatch) < self.batchSize:
+                if self.controlPending():
+                    break
+                    
+                d = inputQueue.get()
+
+                dataBatch.addFrame(d["frame1"], d["frame2"])
+                dataBatch.addLatent(d["lat1"], d["lat2"])
+                dataBatch.addLocation(d["loc1"], d["loc2"])
+                dataBatch.addOutput([1.0, 0.0])
+            
+            negBatch = DataBatch()
+            count = 0
+            total = 0
+            while len(negBatch) < self.batchSize // 2:
+                if self.stopped():
+                    break
+                if self.controlPending():
+                    break
+                dataBatchTmp1 = dataBatch.copy()
+                dataBatchTmp2 = dataBatch.copy()
+                dataBatchTmp1.toNumpy()
+                dataBatchTmp2.toNumpy()
+                dataBatchTmp2.shuffle()
+                dataBatchTmp1.combine(dataBatchTmp2)
+            
+                dataBatchTmp1.normalize(self.normalizeParams)
+                predInputQueue.put(dataBatchTmp1.getInput())
+                probs = predOutputQueue.get()
+                dataBatchTmp1.denormalize(self.normalizeParams)
+    
+                for i in range(len(probs)):
                     if self.stopped():
                         break
-                    
-                    if not self.weightsQueue.empty():
-                        print("Total accepted {count}/{total}".format(count=count, total=total))
-                        count=0
-                        total=0
-                        while not self.outputQueue.empty():
-                            self.outputQueue.get()
-                        weightFile = self.weightsQueue.get()
-                        model.load_weights(weightFile)
-                        print("Loaded new weights...")
-                    
-                    d = self.inputQueue.get()
-                    
-                    if d is None:
-                        self.stop()
+                    if self.controlPending():
                         break
-                    else:
-                        dataBatch.addFrame(d["frame1"], d["frame2"])
-                        dataBatch.addLatent(d["lat1"], d["lat2"])
-                        # loc1 = np.random.uniform((0,0),(2336,1729))
-                        # loc2 = np.random.uniform((0,0),(2336,1729))
-                        dataBatch.addLocation(d["loc1"], d["loc2"])
-                        # print(d['loc1'], d['loc2'], loc1, loc2)
-                        # dataBatch.addLocation(loc1, loc2)
-                        dataBatch.addOutput([0.0, 1.0])
-                
-                dataBatch.toNumpy()
-                dataBatchTmp = dataBatch.copy()
-                # a = dataBatch.getDataPoint(10)
-                # b = dataBatchTmp.getDataPoint(10)
-                # print("locIni", a["loc1"],a["loc2"], b["loc1"], b["loc2"])
-                dataBatchTmp.shuffle()
-                
-                # a = dataBatch.getDataPoint(10)
-                # b = dataBatchTmp.getDataPoint(10)
-                # print("locShuf", a["loc1"],a["loc2"], b["loc1"], b["loc2"])
-                
-                dataBatch.combine(dataBatchTmp)
-                # a = dataBatch.getDataPoint(10)
-                # b = dataBatchTmp.getDataPoint(10)
-                # print("locCom", a["loc1"],a["loc2"], b["loc1"], b["loc2"])
-                
-                dataBatch.normalize("frame", 
-                                    172.2, 
-                                    21.8)
-                dataBatch.normalize("location", 
-                                    1000.0, 
-                                    585)
-                
-                probs = model.predict(dataBatch.getInput())[:,0]
-                # print('probs', np.average(probs))       
-                dataBatch.denormalize("frame", 
-                                      172.2, 
-                                      21.8)
-                dataBatch.denormalize("location", 
-                                      1000.0, 
-                                      585)       
-
-                for i in range(len(probs)):
-                    bias = probs[i]
+                    bias = probs[i][0]
                     addData = int(np.random.random() + bias)
                     total+=1
                     if addData:
-                        self.outputQueue.put(dataBatch.getDataPoint(i))
+                        d = dataBatchTmp1.getDataPoint(i)
+                        d["output"] = [0.0, 1.0]
+                        negBatch.addDataPoint(d)
                         count+=1
-                
-    
+                    if len(negBatch) == self.batchSize // 2:
+                        break
+            dataBatch.join(negBatch)
+            dataBatch.toNumpy()
+            dataBatch.shuffle()
+            dataBatch.normalize(self.normalizeParams)
+            outputQueue.put(dataBatch)
             
-        except Exception as e:
-            print(e)
-            print("DVNegativeProcessor error")
-            self.stop()
-        print("DVNegativeProcessor Exiting")
-        
+        print("DVBatchProcessor Exiting")
+    
     def stop(self):
         self.stop_event.set()
     
@@ -1025,11 +1062,3 @@ class DummyModel(object):
     def __init__(self):
         self.metrics_names = ['foo', 'bar']
         
-# def exit():
-#     try:
-#         dataGenerator.close()
-#     except:
-#         pass
-#     print('Ok')
-    
-# atexit.register(exit)

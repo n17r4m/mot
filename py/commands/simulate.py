@@ -33,6 +33,8 @@ async def create_video(experiment_uuid, bg_file = "bg.png", out_file = "visualiz
     bg = imread(os.path.join(experiment_dir, bg_file), as_grey=True).astype("float64").squeeze() / 255. / 255.
     height, width = bg.shape
     
+    fname = os.path.join(experiment_dir, out_file)
+    
     vis = Visualize(UUID(experiment_uuid), bg)
     vs = VideoStream(experiment_dir, fname, width=width, height=height)
     

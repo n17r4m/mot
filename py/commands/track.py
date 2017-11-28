@@ -104,6 +104,7 @@ async def track_experiment(experiment_uuid, method='Tracking'):
                                 SELECT segment, number
                                 FROM segment
                                 WHERE experiment = $1
+                                ORDER BY number ASC
                                 """, experiment_uuid):
                                     
             print('tracking segment', segment['number'])
@@ -117,32 +118,42 @@ async def track_experiment(experiment_uuid, method='Tracking'):
             edge_data = dict()
             costs = []
             
-            async for edges in db.query("""
-                                        SELECT f1.frame as fr1, f2.frame as fr2, tr1, tr2, cost, location1, bbox1, latent1, area1, intensity1, radius1, perimeter1, category1, location2, bbox2, latent2, area2, intensity2, radius2, perimeter2, category2
-                                        FROM frame f1, frame f2, segment s
-                                        JOIN LATERAL (
-                                            SELECT t1.track AS tr1, tr2, cost, t1.location as location1, t1.bbox as bbox1, t1.latent as latent1, p1.area as area1, p1.intensity as intensity1, p1.radius as radius1, p1.perimeter as perimeter1, p1.category as category1, location2, bbox2, latent2, area2, intensity2, radius2, perimeter2, category2
-                                            FROM track t1
-                                            LEFT JOIN Particle p1 USING(Particle)
-                                            JOIN LATERAL (
-                                                SELECT 
-                                                    t2.track AS tr2, t2.location as location2, t2.bbox as bbox2, t2.latent as latent2, p2.area as area2, p2.intensity as intensity2, p2.radius as radius2, p2.perimeter as perimeter2, p2.category as category2,
-                                                    ((1 + (t1.latent <-> t2.latent))
-                                                    *(1 + (t1.location <-> t2.location))) AS cost
-                                                FROM track t2
-                                                LEFT JOIN Particle p2 USING(Particle)
-                                                WHERE t2.frame = f2.frame
-                                                ORDER BY cost ASC
-                                                LIMIT 5
-                                            ) C ON TRUE
-                                            WHERE t1.frame = f1.frame) E on true
-                                        WHERE f1.number = f2.number-1
-                                        AND f1.segment = $1
-                                        AND f2.segment = $1
-                                        AND s.segment = f1.segment
-                                        AND s.number >= 0
-                                        ORDER BY f1.number ASC
-                                        """, segment['segment']):
+            q = """
+                SELECT f1.frame as fr1, f2.frame as fr2,
+                       t1.location as location1, t2.location as location2,
+                       t1.bbox as bbox1, t2.bbox as bbox2,
+                       t1.latent as latent1, t2.latent as latent2,
+                       p1.area as area1, p2.area as area2,
+                       p1.intensity as intensity1, p2.intensity as intensity2,
+                       p1.radius as radius1, p2.radius as radius2,
+                       p1.category as category1, p2.category as category2,
+                       p1.perimeter as perimeter1, p2.perimeter as perimeter2,
+                       tr1, tr2,
+                       cost                       
+                FROM frame f1, frame f2,track t1, track t2, particle p1, particle p2
+                JOIN LATERAL (
+                    SELECT t3.track AS tr1, tr2, cost          
+                    FROM track t3
+                    JOIN LATERAL (
+                        SELECT t4.track AS tr2,
+                               ((1 + (t3.latent <-> t4.latent))
+                               *(1 + (t3.location <-> t4.location))) AS cost
+                        FROM track t4
+                        WHERE t4.frame = f2.frame
+                        ORDER BY cost ASC
+                        LIMIT 5
+                    ) C ON TRUE
+                    WHERE t3.frame = f1.frame
+                ) E on true
+                WHERE f1.number = f2.number-1
+                AND t1.track = tr1 AND t2.track = tr2
+                AND t1.particle = p1.particle AND t2.particle = p2.particle
+                AND f1.segment = '{segment}'
+                AND f2.segment = '{segment}'
+                ORDER BY f1.number ASC;
+                """
+            s = q.format(segment=segment["segment"])
+            async for edges in db.query(s):
                 if  edges['tr1'] not in edge_data:
                     edge_data[edges['tr1']] = {'track': edges['tr1'],
                                                'frame': edges['fr1'],
@@ -222,7 +233,7 @@ async def track_experiment(experiment_uuid, method='Tracking'):
             # print("max cost", np.max(costs))
             print("Solving min-cost-flow for segment")
 
-            demand = goldenSectionSearch(mcf_graph, 0, mcf_graph.n_nodes//4, mcf_graph.n_nodes, 2, memo=None)
+            demand = goldenSectionSearch(mcf_graph, 0, mcf_graph.n_nodes//4, mcf_graph.n_nodes//2, 10, memo=None)
             # (min_cost, demand, nEval) = golden(mcf_graph.solve, 
             #                                   (), 
             #                                   brack=(0,512,2048), 

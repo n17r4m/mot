@@ -1,75 +1,42 @@
 
 import numpy as np
-from uuid import UUID, uuid4
-
+import time
+from lib.qpipe import Iter, Pipe, Print
+# Step 0 (importing the library)
+# from numap import NuMap, imports
+# from papy.core import Worker, Piper, Plumber
 from lib.Database import Database
 
 async def main(args):
     
     db = Database()
+    tx, transaction = await db.transaction()
+     
+     
+     
+     
+    q1 = "create table x (id serial primary key, key integer, val text)"
+    s1 = "table created {time}"
+    q2 = "insert into x (key,val) values (generate_series(1,20000000), to_char(trunc(random()*1000000),'999999'))"
+    s2 = "rows inserted {time}"
+    q3 = "select * from x limit 10"
+    s3 = "select {time}"
+    s4 = "commit {time}"
+    q4 = "drop table x"
     
-
-        
-    print("")
-    print("")
-    c = 3
+    start = time.time()
+    await tx.execute(q1)
+    print(s1.format(time=time.time()-start))
     
-    print("Category", c)
+    start = time.time()
+    await tx.execute(q2)
+    print(s2.format(time=time.time()-start))
     
-    latents = []
+    start = time.time()
+    await tx.execute(q3)
+    print(s3.format(time=time.time()-start))
     
-    async for track in db.query("""
-        SELECT (latent) 
-        FROM Track LEFT JOIN particle USING(particle) 
-        WHERE category = $1 
-        AND experiment = '727ca46c-6c35-4d5a-85b9-59dc716674fd'
-        ORDER BY RANDOM() 
-        """, c):
-        
-        latents.append([float(i) for i in track["latent"][1:-1].split(',')])
-    
-    print("Found", len(latents))
-    print("")
-    latents = np.array(latents)
-    
-    mu = np.mean(latents, axis=0)
-    std = np.std(latents, axis=0)
-    
-    print("Mean")
-    print(list(mu.astype("float16")))
-    
-    print("")
-    print("Std")
-    print(list(std.astype("float16")))
-        
-        
-    
-    
-    
-    latents = []
-    
-    async for track in db.query("""
-        SELECT (latent) 
-        FROM Track LEFT JOIN particle USING(particle) 
-        WHERE category = $1 
-        AND experiment = 'c06d2e89-7fd5-4e02-9c4c-544902b5db82'
-        ORDER BY RANDOM() 
-        """, c):
-        
-        latents.append([float(i) for i in track["latent"][1:-1].split(',')])
-    
-    print("Found", len(latents))
-    print("")
-    latents = np.array(latents)
-    
-    mu = np.mean(latents, axis=0)
-    std = np.std(latents, axis=0)
-    
-    print("Mean")
-    print(list(mu.astype("float16")))
-    
-    print("")
-    print("Std")
-    print(list(std.astype("float16")))
-        
+    start = time.time()
+    await transaction.commit()
+    print(s4.format(time=time.time()-start))
     

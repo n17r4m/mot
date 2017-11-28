@@ -58,95 +58,65 @@ async def draw_tracks(args):
     curr_segment = None
     prev_segment = None
 
+
     q = """
-        SELECT f3.number as fn, f3.frame, l1, l2, f3.segment as seg
-        FROM frame f3
-        JOIN LATERAL(
-            SELECT f2.number, l1, l2
-            FROM frame f2
-            JOIN LATERAL (
-                SELECT t1.location as l1, t2.location as l2
-                FROM track t1, track t2, frame f1
-                WHERE t1.particle = t2.particle
-                AND t1.frame = f1.frame
-                AND t2.frame = f2.frame
-                AND f1.number = f2.number - 1
-                AND f1.segment = f2.segment
-            ) A ON TRUE
-            WHERE f2.segment = f3.segment
-        ) B ON TRUE
-        WHERE experiment = $1
-        ORDER BY fn ASC 
+        SELECT segment, number
+        FROM segment
+        WHERE experiment = '{experiment}'
+        ORDER BY number ASC
         """
-    async for track in db.query(q, UUID(experiment_uuid)):
-        curr_segment = track['seg']
-        curr_frame = track['fn']
-        count += 1
-        
-        if curr_frame != prev_frame:
-            if not prev_frame is None:
-                frame_bytes.put(im.tobytes())
-                frame_count += 1
-                print("frame {frame}, drew {count} tracks"
-                      .format(frame = prev_frame, count = count))
-                # print("{frame}".format(frame=prev_frame), end=' ')
-                count = 0
+    s = q.format(experiment=experiment_uuid)
+    async for segment in db.query(s):
+    
+        q = """
+            SELECT f3.number as fn,
+                   t1.location as l1, 
+                   t2.location as l2
+            FROM frame f1, frame f2, frame f3, track t1, track t2
+            WHERE f1.segment = '{segment}'
+            AND f2.segment = '{segment}'
+            AND f3.segment = '{segment}'
+            AND f1.number = f2.number - 1
+            AND t1.frame = f1.frame
+            AND t2.frame = f2.frame
+            AND t1.particle = t2.particle
+            ORDER BY fn ASC;
+            """
+        s = q.format(segment=segment["segment"])
+        async for track in db.query(s):
+            curr_frame = track['fn']
+            count += 1
             
-            # Add in missing frames
-            while frame_count < curr_frame:
-                raw_image = video.frame(frame_count)
+            if curr_frame != prev_frame:
+                if not prev_frame is None:
+                    frame_bytes.put(im.tobytes())
+                    frame_count += 1
+                    print("frame {frame}, drew {count} tracks"
+                          .format(frame = prev_frame, count = count))
+                    # print("{frame}".format(frame=prev_frame), end=' ')
+                    count = 0
+                
+                # Add in missing frames
+                while frame_count < curr_frame:
+                    raw_image = video.frame(frame_count)
+                    im = Image.fromarray(raw_image)
+                    frame_bytes.put(im.tobytes())
+                    print("frame {frame} added".format(frame=frame_count))
+                    frame_count += 1
+                
+                prev_frame = curr_frame
+                raw_image = video.frame(prev_frame)
                 im = Image.fromarray(raw_image)
-                frame_bytes.put(im.tobytes())
-                print("a{frame}".format(frame=frame_count), end=' ')
-                frame_count += 1
+                draw = ImageDraw.Draw(im) 
+    
+            p1 = (int(round(track["l1"].x)), int(round(track["l1"].y)))
+            p2 = (int(round(track["l2"].x)), int(round(track["l2"].y)))
+            draw.line([p1, p2], (0,255,0), 3)
             
-            prev_frame = curr_frame
-            raw_image = video.frame(prev_frame)
-            im = Image.fromarray(raw_image)
-            draw = ImageDraw.Draw(im) 
-    
-        if curr_segment != prev_segment:
-            if not prev_segment is None:
-                pass
-                # frame_bytes.put(np.zeros_like(raw[prev_frame]).tobytes())
-            prev_segment = curr_segment
-
-
-        p1 = (int(round(track["l1"].x)), int(round(track["l1"].y)))
-        p2 = (int(round(track["l2"].x)), int(round(track["l2"].y)))
-        draw.line([p1, p2], (0,255,0), 3)
-        # rr, cc, val = line(
-        #     int(round(track["l1"].y)), int(round(track["l1"].x)), 
-        #     int(round(track["l2"].y)), int(round(track["l2"].x)))
-        
-        # raw[curr_frame, rr, cc, 0] = val*255
-        # raw[curr_frame, rr+1, cc, 0] = val*255
-        # raw[curr_frame, rr, cc+1, 0] = val*255
-        # raw[curr_frame, rr-1, cc, 0] = val*255
-        # raw[curr_frame, rr, cc-1, 0] = val*255
-        
-
-    # while frame_bytes.qsize() > 4:
-    #     await asyncio.sleep(1)
-    
     print("Generation complete.")
-    
-    '''
-    print("Waiting for compression to finish.")
-    counter=0
-    for frame in raw:
-        frame_bytes.put(frame.astype('uint8').tobytes())
-        print(counter)
-        counter+=1
-        print('q',frame_bytes.qsize())
-        while frame_bytes.qsize() > 8:
-            await asyncio.sleep(1)
-    frame_bytes.put(None)
-    '''
-    print("Done.")
     frame_bytes.put(None)
     compressor.join()
-        
+    print("Done.")
 
 def draw_detections(args):
     print("Not implemented")

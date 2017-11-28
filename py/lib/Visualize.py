@@ -2,7 +2,7 @@ import numpy as np
 from uuid import UUID, uuid4
 from lib.Database import Database
 from lib.Compress import VideoStream
-from lib.models.Classifier import Classifier
+
 from lib.util.store_args import store_args
 from math import floor, ceil
 import multiprocessing as mp
@@ -10,8 +10,9 @@ import itertools as it
 import traceback
 import config 
 import matplotlib.pyplot as plt
+import asyncio
 
-from lib.qpipe import Pipe
+from lib.qpipe import Pipe, Exec, Print
 
 from skimage.filters import threshold_otsu as threshold
 from skimage.filters import gaussian as blur
@@ -27,23 +28,37 @@ csize2 = csize // 2
 
 class FrameIter(Pipe):
     @store_args                       
-    def setup(self, experiment_uuid = "00000000-0000-4000-0000-000000000000"):
-        asyncio.new_event_loop().run_until_complete(self.emit_db_frames())
+    def setup(self, experiment_uuid = UUID("00000000-0000-4000-0000-000000000000")):
+        asyncio.new_event_loop().run_until_complete(self.emit_db_frames(experiment_uuid))
         
     async def emit_db_frames(self, experiment_uuid):
         async for frame in Database().query("SELECT * FROM Frame WHERE experiment = $1 ORDER BY number", self.experiment_uuid):
-            self.emit(frame)
+            self.emit(dict(frame))
             
 
 class VisFrame(Pipe):
     @store_args
     def setup(self, bg = np.ones((1729, 2336))):
-        self.height, self.width = bg.shape()
-        self.cc = Classifier().load()
+        
+        print("SETTING UP VISFRAME ON GPU", os.environ["CUDA_VISIBLE_DEVICES"])
+        #os.putenv("CUDA_VISIBLE_DEVICES", os.environ["CUDA_VISIBLE_DEVICES"])
+        print("PID", os.getpid())
+
+        
+        Exec("env").into(Print()).start()
+        
+        self.height, self.width = bg.shape
+        
+        from lib.models.Classifier import Classifier
+        self.CC = Classifier().load()
+            
+        self.loop = asyncio.new_event_loop()
         self.db = Database()
+        
     
     def do(self, frame):
-        asyncio.new_event_loop().run_until_complete(self.emit_vis_frame(frame))
+        
+        self.loop.run_until_complete(self.emit_vis_frame(frame))
         
     async def emit_vis_frame(self, frame):
         
@@ -80,8 +95,17 @@ class VisFrame(Pipe):
 class Visualize(Pipe):
     def __init__(self, experiment_uuid, bg = np.ones((1729, 2336))):
         Pipe.__init__(self)
+        
+        print("BEFORE")
+        #print("VISIBLE_DEVICES", os.environ["CUDA_VISIBLE_DEVICES"])
+        print("PARENT PID", os.getpid())
+        
         env = [{"CUDA_VISIBLE_DEVICES": str(g)} for g in range(config.GPUs)]
         self.infrom(FrameIter(experiment_uuid).into(VisFrame(bg, processes=config.GPUs, env=env)))
+    
+        print("AFTER")
+        #print("VISIBLE_DEVICES", os.environ["CUDA_VISIBLE_DEVICES"])
+        print("PARENT PID", os.getpid())
     
     def do(self, frame_data):
         self.emit(frame_data)

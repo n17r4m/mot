@@ -16,7 +16,6 @@ from keras.layers.core import Flatten
 from keras.optimizers import Nadam
 from keras.layers.advanced_activations import LeakyReLU
 
-    
 # architecture now takes two states (time t, t+1), encodes them, and 
 # computes their probability of matching
 class DeepVelocity(object):
@@ -101,7 +100,7 @@ class DeepVelocity(object):
             loss=['mse'],
             metrics=['acc', 'mse'])  
         
-    def save(self, path):
+    def save_weights(self, path):
         self.probabilityNetwork.save_weights(path)
     
     def load(self, path):
@@ -114,8 +113,8 @@ class DeepVelocity(object):
         self.probabilityNetwork.save(path)
         
     def load_model(self, path):
-        loc = os.path.join(self.path(), path)
-        print("Loading model", loc)
+        # loc = os.path.join(self.path(), path)
+        # print("Loading model", path)
         self.probabilityNetwork = load_model(path)
         return self
 

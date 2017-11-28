@@ -23,7 +23,8 @@ async def main(args):
                 await exportSyncrude(args[1:])
         if args[0] == "particles":
             await exportParticles(args[1:])
-            
+        if args[0] == "particlesVelocitiesLatents":
+            await exportParticlesVelocitiesLatents(args[1:])            
         else:                         print("Invalid export sub-command")
 
 
@@ -39,7 +40,7 @@ async def exportParticles(args):
         WHERE e.experiment = f.experiment
         AND p.particle = t.particle
         AND f.frame = t.frame
-        AND e.name = 'T02601'
+        AND e.experiment = 'b6734bad-2dfc-4502-9260-a7d71e72f6a9'
         AND p.area > 100
         AND p.category in (2,3)
         ORDER BY RANDOM()
@@ -57,7 +58,52 @@ async def exportParticles(args):
                                str(result['track'])+".jpg")
                                
         shutil.copyfile(srcFile, dstFile)
-
+        
+async def exportParticlesVelocitiesLatents(args):
+    directory = args[0]
+    limit = args[1]
+    
+    db = Database()
+    
+    q = """
+        SELECT e.experiment, f1.frame, t1.track, t1.latent, t2.location-t1.location as delta
+        FROM experiment e, frame f1, frame f2, track t1, track t2, particle p
+        WHERE e.experiment = f1.experiment
+        AND e.experiment = f2.experiment
+        AND p.particle = t1.particle
+        AND f1.frame = t1.frame
+        AND f2.frame = t2.frame
+        AND t1.particle = t2.particle
+        AND f1.number = f2.number-1
+        AND e.experiment = 'b6734bad-2dfc-4502-9260-a7d71e72f6a9'
+        AND p.area > 100
+        AND p.category in (2,3)
+        ORDER BY RANDOM()
+        LIMIT {limit}
+        """
+    s = q.format(limit=limit)
+    crops = []
+    
+    line = "{track}, {dx}, {dy}, {latent}\n"
+    outFile = os.path.join(directory, "data.txt")
+    with open(outFile, 'w+') as f:
+        async for result in db.query(s):
+            srcFile = os.path.join(config.experiment_dir, 
+                                   str(result["experiment"]),
+                                   str(result["frame"]),
+                                   str(result["track"])+'.jpg')
+            dstFile = os.path.join(directory,
+                                   str(result['track'])+".jpg")
+                                   
+            shutil.copyfile(srcFile, dstFile)
+            dx = result["delta"][0]
+            dy = result["delta"][1]
+            f.write(line.format(track=result["track"],
+                                dx=dx,
+                                dy=dy,
+                                latent=result["latent"]))
+            
+        
 async def exportSyncrudeAll(args):
     """
     dir [prefix]
