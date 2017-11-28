@@ -94,11 +94,15 @@ class Zueue(mp.Process):
         else:
             return [self]
     
+    def starting(self):
+        self.setup()
+    
     def started(self):
         return self.start_event.is_set()
     
+    
     def run(self):
-        self.setup()
+        self.starting()
         while True:
             if self.stopped():
                 return self.shutdown()
@@ -108,7 +112,7 @@ class Zueue(mp.Process):
                     if data_in is None:
                         self.stop()
                     else:
-                        self.do(data_in)
+                        self.do(self.wrap(data_in))
                 except Exception as e:
                     traceback.print_exc()
                     return e
@@ -119,11 +123,11 @@ class Zueue(mp.Process):
         self.push(data)
     
     # Override me
-    def setup(self):
+    def setup(self, *args, **kwargs):
         pass
     
     # Override me
-    def teardown(self):
+    def teardown(self): 
         pass
     
     def sleep(self, wait = 0.01):
@@ -157,6 +161,14 @@ class Zueue(mp.Process):
     def stopped(self):
         return self.stop_event.is_set()
 
+    def wrap(self, data):
+        return data
+    
+    def warp(self, wrapping):
+        current_wrap = self.wrap
+        def new_wrap(self, data):
+            return wrapping(current_wrap(data))
+        self.wrap = new_warp
 
 
 class ZueueList(list):
@@ -177,9 +189,14 @@ class ZueueList(list):
 class Split(Zueue):
     def setup(self):
         self.seq_id = 0
+        #def wrap(self, p_data): -> data
+        #self.warp(wrap)
     def do(self, data):
         self.push((self.seq_id, data))
         self.seq_id += 1
+    
+    
+    
         
 class Merge(Zueue):
     def setup(self):
@@ -197,8 +214,8 @@ class Merge(Zueue):
                 self.pq.put(p_data)
             
 
-def Parallel(n, f, *args, **kwargs):
-    return [f(*args, **kwargs) for _ in range(n)]
+def By(n, f, *args, **kwargs):
+    return ZueueList([f(*args, **kwargs) for _ in range(n)])
 
 
 
@@ -273,14 +290,16 @@ def listify(item = None):
 
 
 
-
-
-
-
-
 class F(Zueue):
-    pass
-
+    
+    def __init__(self, *args, **kwargs):
+        super(F, self).__init__()
+        self.args = args
+        self.kwargs = kwargs
+        pass
+    
+    def starting(self):
+        self.setup(*self.args, **self.kwargs)
 
 
 
