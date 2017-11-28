@@ -1,12 +1,14 @@
 
 from lib.util.store_args import store_args
-from queue import Empty
+from queue import Empty, PriorityQueue
 
 import multiprocessing as mp
 import time
 import traceback
 import random
 import traceback
+
+
 
 class Zueue(mp.Process):
     
@@ -128,6 +130,7 @@ class Zueue(mp.Process):
         return time.sleep(wait)
     
     def into(self, zueues):
+        
         zueues = listify(zueues)
         if len(self.queues_out) == 0:
             self.queues_out.append(mp.Queue(16))
@@ -142,7 +145,7 @@ class Zueue(mp.Process):
             if len(z.queues_out) == 0:
                 z.queues_out.append(mp.Queue(16))
             self.queues_in.extend(z.queues_out)
-        return ZueueList(zueues)
+        return self
     
     def shutdown(self):
         [self.push(None) for i in range(len(self._into))]
@@ -165,8 +168,37 @@ class ZueueList(list):
         
     def execute(self):
         self[0].execute()
+
     def start(self):
         self[0].start()
+
+
+
+class Split(Zueue):
+    def setup(self):
+        self.seq_id = 0
+    def do(self, data):
+        self.push((self.seq_id, data))
+        self.seq_id += 1
+        
+class Merge(Zueue):
+    def setup(self):
+        self.pq = PriorityQueue() 
+        self.seq_id = 0
+    def do(self, p_data):
+        self.pq.put(p_data)
+        for _ in range(self.pq.qsize()): # todo: optimize
+            p_data = self.pq.get()
+            p, data = p_data
+            if p == self.seq_id:
+                self.seq_id += 1
+                self.push(data)
+            else:
+                self.pq.put(p_data)
+            
+
+def Parallel(n, f, *args, **kwargs):
+    return [f(*args, **kwargs) for _ in range(n)]
 
 
 
@@ -209,16 +241,21 @@ class Xplitter(Zueue):
 
 
 
-def flatten(lis):
+def flatten(to_flatten):
     """Given a list, possibly nested to any level, return it flattened."""
-    # http://code.activestate.com/recipes/578948-flattening-an-arbitrarily-nested-list-in-python/
+    # modified from http://code.activestate.com/recipes/578948-flattening-an-arbitrarily-nested-list-in-python/
+    
     new_lis = []
-    for item in lis:
+    for item in to_flatten:
         if isinstance(item, list):
             new_lis.extend(flatten(item))
         else:
             new_lis.append(item)
     return new_lis
+    
+    # return  [(flatten(item) if isinstance(item, list) else item) for item in to_flatten]
+    
+    
     
 def listify(item = None):
     if item is None:
@@ -231,3 +268,21 @@ def listify(item = None):
         return list(item.values())
     else:
         return [item]
+        
+        
+
+
+
+
+
+
+
+
+class F(Zueue):
+    pass
+
+
+
+
+
+
