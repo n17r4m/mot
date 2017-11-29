@@ -7,7 +7,7 @@ Author: Martin Humphreys
 
 import asyncpg
 import asyncio
-
+from lib.Process import F
 
 DATABASE = "mot"
 USERNAME = "martin"
@@ -193,4 +193,43 @@ class Database(object):
 
 
 
+class DBReader(F):
+    
+    def setup(self, query, *args):
+        self.async(self.begin(Database(), query, *args))
+        
+    async def begin(self, db, q, *args):
+        async for row in db.query(q, *args):
+            if self.stopped():
+                break
+            else:
+                self.push(dict(row))
 
+class DBWriter(F):
+
+    def initialize(self):
+        self.commit_event = self.Event()
+
+    def setup(self):
+        self.tx, self.transaction = self.async(Database().transaction())
+        
+    def do(self, sql):
+        method, query, args = sql
+        self.async(getattr(self.tx, method)(query, *args))
+        
+    def teardown(self):
+        if self.commit_event.is_set():
+            self.async(self.transaction.commit())
+        else:
+            self.async(self.transaction.rollback())
+    
+    def commit(self):
+        self.commit_event.set()
+        return self
+        
+    def rollback(self):
+        self.stop()
+        return self
+    
+
+    

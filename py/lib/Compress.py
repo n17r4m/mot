@@ -61,7 +61,7 @@ class VideoFile(F):
           ' "{}"'.format(os.path.join(experiment_dir, fname))))
               
         self.proc = sp.Popen(shlex.split(self.cmd), stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.STDOUT)
-        fcntl.fcntl(proc.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
+        fcntl.fcntl(self.proc.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
         
         while self.proc.poll() is None:
             try:

@@ -2,6 +2,8 @@
 
 import time
 from lib.Process import F, Iter, Print, Delay, By
+from lib.Database import DBReader, DBWriter
+from multiprocessing import Queue
 import numpy as np
 
 
@@ -26,78 +28,89 @@ class PrintMeta(F):
         print(self.pre, n, self.meta)
         self.push(n)
     
-
+class TestWriter(F):
+    def setup(self, wq):
+        self.wq = wq
+        self.count = 0
+    def do(self, item):
+        self.wq.push(("execute", """
+            INSERT INTO Test (name, value) VALUES ($1, $2)
+        """, (str(self.count), item)))
+        self.push(item)
+        self.count += 1
 
 async def main(args):
     
+    test = -2
     
     
-    (   Iter(range(1, 11))
-        .sequence()
-        .split([Mul(i) for i in range(1, 11)])
-        .merge()
-        .print()
-        .execute())
-    
-    """
-    (
-        Iter([2,3, 4])
-        .sequence()
-        .split([
-            F().into(By(3, Delay)).into(EndSeq()),
-            Square().into(Delay()).into(EndSeq()),
-            Square().into(By(2, Square)).into(By(5, Delay)).into(EndSeq())
-        ])
-        .merge(n=3)
-        .into(Print())
-        .execute()
-    )
-    """
-    """
-    print(
-        Iter(range(2,3))
-        .into(StartSeq())
-        .split([
-            Print("Original").into(By(5, Delay)).into(EndSeq()), 
-            Square().into(Print("Squared")).into(By(5, Delay)).into(EndSeq())
-        ]).endpoints())
-    """
-    
-    
-    """
-    (   Iter(range(6, 8))
-        .into(StartSeq()).into(PrintMeta("Source"))
-        .split([
-            
-            By(5, Delay).into(EndSeq()), 
-            
-            Square()
-                .into(By(5, Delay))
-                .into(PrintMeta("Squared"))
-                .into(EndSeq())
-                .into(PrintMeta("PostSeq"))
-                
-        ])
-        .into(MergeSeq(n=2)).into(PrintMeta("After"))
-    ).execute()
-    """
-    
-    """
-    f = (
-            Iter(range(10)) # A pachinko machine
-            .into(StartSeq())
-            .into(By(10, Delay))
-            .into(By(10, Delay))
-            .into(By(3, Square))
-            .into(By(10, Delay))
-            # .into(Print())
-            # .into(By(7, Delay, 1))
-            # .into([Delay(1, 2), Delay(0.1), Delay(0.1), Delay(0.1)])
-            # .into(By(3, Delay, 0.5, b=10.))
-            .into(EndSeq())
-            .into(Print())
-        )
+
+    if test == -1:
         
-    f.execute()
-    """
+        writer = DBWriter()
+        wq = writer.input()
+        writer.start()
+        
+        
+        print("db started")
+        
+        (   Iter(["one", "two", "three"])
+            .into(TestWriter(wq))
+            .print()
+            .into(Mul(10))
+            .into(TestWriter(wq))
+            .print()
+            .execute())
+        
+        print("proc finished")
+        
+        writer.commit()
+        wq.push(None)
+        
+        print("done")
+        
+    
+    if test == 0:
+        
+        (   DBReader("SELECT * FROM Experiment")
+            .map(lambda x: [str(x["experiment"]), x["name"]])
+            .print()
+            .execute())
+        
+    if test == 1:
+    
+        (   Iter(range(1, 11))
+            .sequence()
+            .split([Mul(i) for i in range(1, 11)])
+            .merge()
+            .print()
+            .execute())
+        
+        
+    if test == 2:
+        
+        (   Iter([2,3,4])
+            .sequence()
+            .split([
+                F().into(By(3, Delay)).order(),
+                Pow().into(Delay()).order(),
+                Pow().into(By(2, Pow)).into(By(5, Delay)).order()
+            ])
+            .merge()
+            .print()
+            .execute())
+            
+    if test == 3:
+        
+        (   Iter(range(10)) # A pachinko machine
+            .sequence()
+            .into(By(10, Delay))
+            .into(By(10, Delay))
+            .into(By(10, Pow))
+            .into(By(10, Delay))
+            .order()
+            .print()
+            .execute())
+        
+    
    
