@@ -29,22 +29,24 @@ async def create_video(experiment_uuid, bg_file = "bg.png", out_file = "visualiz
     
     if not os.path.isdir(experiment_dir):
         os.mkdir(experiment_dir)
-    # if we just made the directory, the background will not be in the experiment directory... kg
-    bg = imread(os.path.join(experiment_dir, bg_file), as_grey=True).astype("float64").squeeze() / 255. / 255.
+        
+    try:
+        bg = imread(os.path.join(experiment_dir, bg_file), as_grey=True).astype("float64").squeeze() / 255. / 255.
+    except:
+        # if we just made the directory, the background will not be in the experiment directory... kg
+        try:
+            bg = imread(os.path.join(config.experiment_dir, "bg.png"), as_grey=True).astype("float64").squeeze() / 255. / 255. 
+        except Exception as e:
+            raise Exception("Cannot read /experiments/{}/bg.png or /experiments/bg.png".format(experiment_uuid))
+            
     height, width = bg.shape
-    
     fname = os.path.join(experiment_dir, out_file)
-    
     envs = [{"CUDA_VISIBLE_DEVICES": str(g)} for g in range(config.GPUs)]
     
-    
-    (   FrameIter(UUID(experiment_uuid))
-        .sequence()
-        .split([VisFrame(bg, env=e) for e in envs])
-        .order()
+    (   FrameIter(UUID(experiment_uuid)).sequence("frame")
+        .into([VisFrame(bg, env=e) for e in envs]).order("frame")
         .into(VideoStream(experiment_dir, fname, width=width, height=height))
-        
-    ).execute()
+        .execute())
     
     
     

@@ -1,7 +1,7 @@
 
 
 import time
-from lib.Process import F, Iter, Print, Delay, StartSeq, EndSeq, MergeSeq, By
+from lib.Process import F, Iter, Print, Delay, By
 import numpy as np
 
 
@@ -32,12 +32,12 @@ async def main(args):
     
     
     
-    (
-        Iter(range(1, 11))
+    (   Iter(range(1, 11))
         .sequence()
         .split([Mul(i) for i in range(1, 11)])
-        .merge().print().execute()
-    )
+        .merge()
+        .print()
+        .execute())
     
     """
     (
