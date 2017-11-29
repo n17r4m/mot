@@ -9,7 +9,7 @@ import os
 class VideoStream(Pipe):
     
     def setup(self, experiment_dir, fname, width=2336, height=1729, fps=300., rate=24., pix_format="gray"):
-        
+        print("Compress.py Notice: kevin changed do() to check for tuples... temporary?")
         self.cmd = ''.join(('ffmpeg',
           ' -f rawvideo -pix_fmt {}'.format(pix_format),
           ' -video_size {}x{}'.format(width,height),
@@ -28,7 +28,10 @@ class VideoStream(Pipe):
         
     
     def do(self, frame_bytes):
-        self.proc.stdin.write(frame_bytes)
+        try:
+            self.proc.stdin.write(frame_bytes)
+        except TypeError:
+            self.proc.stdin.write(frame_bytes[1][1])
         try:
             self.emit(self.proc.stdout.read())
         except:

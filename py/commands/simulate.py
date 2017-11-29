@@ -29,7 +29,7 @@ async def create_video(experiment_uuid, bg_file = "bg.png", out_file = "visualiz
     
     if not os.path.isdir(experiment_dir):
         os.mkdir(experiment_dir)
-    
+    # if we just made the directory, the background will not be in the experiment directory... kg
     bg = imread(os.path.join(experiment_dir, bg_file), as_grey=True).astype("float64").squeeze() / 255. / 255.
     height, width = bg.shape
     

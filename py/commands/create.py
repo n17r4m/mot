@@ -67,9 +67,12 @@ async def frame_resize(args):
             image = np.squeeze(image)
         
         # store the image in the filesystem
-        outfile = os.path.join(config.experiment_dir, 
+        frameDir = os.path.join(config.experiment_dir, 
                             str(experiment_uuid), 
                             str(record["frame"]), 
-                            str(size)+'x'+str(size)+'.png')
+        outfile = os.path.join(frameDir, str(size)+'x'+str(size)+'.png')
+        
+        if not os.path.exists(frameDir):
+            os.mkdir(frameDir)
         imsave(outfile, image)
 

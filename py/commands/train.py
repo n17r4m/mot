@@ -50,16 +50,26 @@ async def train_DeepVelocity(args):
     os.environ["CUDA_VISIBLE_DEVICES"]="1"
     print('Parent CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
     
+    
+    dataGenerator = DVDataGen(debug=False)
     DV = DeepVelocity(lr=0.0003)
 
-    model = DV.probabilityNetwork
-    dataGenerator = DVDataGen(debug=True)
-    
+        
     try:
         if args[1] == "view":
             await DVViewer(model=DV,
                            dataGenerator=dataGenerator)
         else:
+            epochs = int(args[1])
+            batchSize = int(args[2])
+            await dataGenerator.setup(batchSize=batchSize,
+                                      epochs=epochs)
+            if len(args) == 4:
+                DV.load_model(args[3])    
+            else:
+                DV.compile()
+            model = DV.probabilityNetwork 
+                
             await trainer(args[1:], 
                           model=model,
                           dataGenerator=dataGenerator)
@@ -165,14 +175,14 @@ async def trainer(args, model, dataGenerator):
     - save the best model weights as training progresses
     
     '''
+    startEpoch = 0
     epochs = int(args[0])
     batchSize = int(args[1])
-    
-    dataGenerator = dataGenerator
-    await dataGenerator.setup(batchSize=batchSize,
-                              epochs=epochs)
-    
-    model = model
+    weightFile = "DVProbNetwork.h5"
+                              
+    if len(args) == 3:          
+        startEpoch = int(args[2].split("epoch")[-1].split(".")[0])
+        dataGenerator.changeWeights(weightFile)
     
     trainingLosses = []
     testLosses = []
@@ -181,7 +191,7 @@ async def trainer(args, model, dataGenerator):
     numMetrics = len(modelMetrics)
     print("Begin Training...")
     dataGenerator.epochBegin()
-    for epoch in range(epochs):
+    for epoch in range(startEpoch, epochs):
         # Train Section
         batchLosses = []
         epochStart = time.time()
@@ -205,7 +215,7 @@ async def trainer(args, model, dataGenerator):
         epochLoss = np.mean(batchLosses, axis=0)
         trainingLosses.append(epochLoss)
         
-        weightFile = "DVProbNetwork.h5"
+        
         model.save_weights(weightFile)
         
         modelFile = "/local/scratch/mot/py/lib/models/weights/DVexp2-epoch{epoch}.h5".format(epoch=epoch+1)
@@ -484,7 +494,7 @@ class DVDataGen(object):
         self.numTrainBatch = None
         self.numTestBatch = None
         self.splitPercent = 0.8
-        self.method =  "Tracking_heuristicCi"
+        self.method =  "Tracking_trainExp"
         self.debug = debug
         self.db = Database()
     
@@ -984,18 +994,25 @@ class DVBatchProcessor(multiprocessing.Process):
     async def inner_loop(self):
         predInputQueue = self.queues["input"]["predict"]
         predOutputQueue = self.queues["output"]["predict"]
-        
+        total=0
+        count=0
         while True:
             if self.stopped():
                 break
             if self.controlPending() or self.mode is None:
-                print("mode is ", self.mode)
+                
+                # print("mode is ", self.mode)
+                if self.mode == "test":
+                    print("accepted / total", count, total)
+                    total=0
+                    count=0
                 self.mode = self.queues["control"].get()
-                print("mode set to", self.mode)
+                # print("mode set to", self.mode)
                 inputQueue = self.queues["input"][self.mode]
                 outputQueue = self.queues["output"][self.mode]
                 
             dataBatch = DataBatch()
+            batchReady=False
             while len(dataBatch) < self.batchSize // 2:
                 if self.stopped():
                     break
@@ -1010,8 +1027,6 @@ class DVBatchProcessor(multiprocessing.Process):
                 dataBatch.addOutput([1.0, 0.0])
             
             negBatch = DataBatch()
-            count = 0
-            total = 0
             while len(negBatch) < self.batchSize // 2:
                 if self.stopped():
                     break
@@ -1043,12 +1058,14 @@ class DVBatchProcessor(multiprocessing.Process):
                         negBatch.addDataPoint(d)
                         count+=1
                     if len(negBatch) == self.batchSize // 2:
+                        batchReady=True
                         break
-            dataBatch.join(negBatch)
-            dataBatch.toNumpy()
-            dataBatch.shuffle()
-            dataBatch.normalize(self.normalizeParams)
-            outputQueue.put(dataBatch)
+            if batchReady:
+                dataBatch.join(negBatch)
+                dataBatch.toNumpy()
+                dataBatch.shuffle()
+                dataBatch.normalize(self.normalizeParams)
+                outputQueue.put(dataBatch)
             
         print("DVBatchProcessor Exiting")
     

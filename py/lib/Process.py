@@ -1,5 +1,5 @@
 
-from lib.util.store_args import store_args
+
 from queue import Empty, PriorityQueue
 
 import multiprocessing as mp
@@ -23,39 +23,53 @@ class Zueue(mp.Process):
         self._into = []
         self._infrom = []
         self.queue_out_idx = 0
+        
+        self.push_method = "distribute"
     
-    def push(self, data):
-        
+    def push(self, item):
         if len(self.queues_out) > 0:
-            self.queue_out_idx = (1 + self.queue_out_idx) % len(self.queues_out)
-            self.queues_out[self.queue_out_idx].put(data)
-        
-
+            
+            if item is None:
+                    data = None
+            else:
+                data = (self.meta.copy(), item)
+            
+            if self.push_method == "distribute":
+                
+                self.queue_out_idx = (1 + self.queue_out_idx) % len(self.queues_out)
+                self.queues_out[self.queue_out_idx].put(data)
+            
+            elif self.push_method == "split":
+            
+                for qo in self.queues_out:
+                    qo.put(data)
             
     
-    def pull(self, force_list = False):
+    def pull(self):
         
         if len(self.queues_in) == 0:
+            self.meta = {}
             return None
         
-        item = False
+        data = False
         
         
-        while item is False and len(self.queues_in) > 0:
+        while data is False and len(self.queues_in) > 0:
             
             rm_list = []
             random.shuffle(self.queues_in)
+            data = False
             
             for i, qi in enumerate(self.queues_in):
                 
                 try: 
-                    item = qi.get_nowait()
+                    data = qi.get_nowait()
                 except Empty:
                     continue
                 
-                if item is None:
+                if data is None:
                     rm_list.append(i)
-                    item = False
+                    data = False
                 else:
                     break
             
@@ -64,23 +78,35 @@ class Zueue(mp.Process):
             
             self.sleep()
 
-        if item is False:
+        if data is False:
+            self.meta = {}
             return None
         else:
+            self.meta, item = data
             return item
             
-    
+    # Called after init, before first
+    # Creates new process
     def start(self):
         if not self.started():
             self.start_event.set()
+            self.first()
             super(Zueue, self).start()
             [infrom.start() for infrom in self._infrom]
             [into.start() for into in self._into]
-            
-                
+    
+    
+        
     def execute(self):
         self.start()
         [ep.join() for ep in self.endpoints()]
+    
+    
+    def entrypoints(self):
+        if len(self._infrom) > 0:
+            return list(set(flatten([node.entrypoints() for node in self._infrom])))
+        else:
+            return [self]
     
     def endpoints(self):
         if len(self._into) > 0:
@@ -88,11 +114,7 @@ class Zueue(mp.Process):
         else:
             return [self]
     
-    def startpoints(self):
-        if len(self._infrom) > 0:
-            return list(set(flatten([node.startpoints() for node in self._infrom])))
-        else:
-            return [self]
+    
     
     def starting(self):
         self.setup()
@@ -100,19 +122,19 @@ class Zueue(mp.Process):
     def started(self):
         return self.start_event.is_set()
     
-    
     def run(self):
+        self.meta = {}
         self.starting()
         while True:
             if self.stopped():
                 return self.shutdown()
             else:
                 try:
-                    data_in = self.pull()
-                    if data_in is None:
+                    item = self.pull()
+                    if item is None:
                         self.stop()
                     else:
-                        self.do(self.wrap(data_in))
+                        self.do(item)
                 except Exception as e:
                     traceback.print_exc()
                     return e
@@ -120,39 +142,80 @@ class Zueue(mp.Process):
     
     
     # Override me
+    # Called after start/execute, before setup
+    def first(self):
+        pass
+    
+    # Override me
+    # Called after first, before do
     def setup(self, *args, **kwargs):
         pass
     
     # Override me
+    # Called after setup, until teardown
     def do(self, data):
         self.push(data)
     
-    
-    
     # Override me
+    # Called after do completes
     def teardown(self): 
         pass
     
     def sleep(self, wait = 0.01):
         return time.sleep(wait)
     
+    def print(self):
+        return self.into(Print())
+    
     def into(self, zueues):
         
-        zueues = listify(zueues)
-        if len(self.queues_out) == 0:
-            self.queues_out.append(mp.Queue(16))
-        [zueue.infrom(self) for zueue in zueues]
-        return ZueueList(zueues)
+        zueues = ZueueList(listify(zueues))
+        self.ensureOutputQueue()
+        
+        for z in zueues:
+            self._into.append(z)
+            z._infrom.append(self)
+            z.queues_in.extend(self.queues_out)
+        
+        return zueues
     
     def infrom(self, zueues):
-        zueues = listify(zueues)
+        zueues = ZueueList(listify(zueues))
         self._infrom.extend(zueues)
-        [z._into.append(self) for z in zueues]
+        
         for z in zueues:
-            if len(z.queues_out) == 0:
-                z.queues_out.append(mp.Queue(16))
+            z.ensureOutputQueue()
+            z._into.append(self)
             self.queues_in.extend(z.queues_out)
         return self
+    
+    def split(self, zueues):
+        
+        self.push_method = "split"
+        
+        zueues = ZueueList(listify(zueues))
+        
+        for z in zueues.entrypoints():
+            q = mp.Queue(16)
+            self._into.append(z)
+            self.queues_out.append(q)
+            z._infrom.append(self)
+            z.queues_in.append(q)
+        return zueues
+    
+    def merge(self, key = "seq_id", n = None):
+        n = len(set(self._infrom)) if n is None else n
+        return self.into(MergeSeq(key, n))
+    
+    def sequence(self, key = "seq_id"):
+        return self.into(StartSeq(key))
+    
+    def order(self, key = "seq_id"):
+        return self.into(EndSeq(key))
+    
+    def ensureOutputQueue(self):
+        if len(self.queues_out) == 0:
+                self.queues_out.append(mp.Queue(16))
     
     def shutdown(self):
         [self.push(None) for i in range(len(self._into))]
@@ -164,104 +227,45 @@ class Zueue(mp.Process):
     def stopped(self):
         return self.stop_event.is_set()
 
-    def wrap(self, data):
-        return data
-    
-    def warp(self, wrapping):
-        
-        current_wrap = self.wrap
-        def new_wrap(self, data):
-            #https://stackoverflow.com/questions/972/adding-a-method-to-an-existing-object-instance
-            return wrapping(self, current_wrap(data))
-        next_wrap = types.MethodType(new_wrap, self)
-        self.wrap = next_wrap
-
 
 class ZueueList(list):
+    
+    def print(self):
+        return self.into(Print())
+    
     def into(self, zueues): 
         return ZueueList(flatten([z.into(zueues) for z in self]))
         
     def infrom(self, zueues): 
         return ZueueList(flatten([z.infrom(zueues) for z in self]))
+    
+    def split(self, zueues): 
+        return ZueueList(flatten([z.split(zueues) for z in self]))
+    
+    def merge(self, key = "seq_id", n = None):
+        return self.into(MergeSeq(key, n))
+    
+    def sequence(self, key = "seq_id"):
+        return self.into(StartSeq(key))
+    
+    def order(self, key = "seq_id"):
+        return self.into(EndSeq(key))
+    
+    def entrypoints(self):
+        return list(set(flatten([z.entrypoints() for z in self])))
         
+    def endpoints(self):
+        return list(set(flatten([z.endpoints() for z in self])))
+    
     def execute(self):
-        self[0].execute()
+        [z.execute() for z in self]
 
     def start(self):
-        self[0].start()
-
-
-
-class Split(Zueue):
-    def setup(self):
-        self.seq_id = 0
-        def wrap(self, data): 
-            return data
-        self.warp(wrap)
-    def do(self, data):
-        self.push((self.seq_id, data))
-        self.seq_id += 1
+        [z.start() for z in self]
     
     
-    
-        
-class Merge(Zueue):
-    def setup(self):
-        self.pq = PriorityQueue() 
-        self.seq_id = 0
-    def do(self, p_data):
-        self.pq.put(p_data)
-        for _ in range(self.pq.qsize()): # todo: optimize
-            p_data = self.pq.get()
-            p, data = p_data
-            if p == self.seq_id:
-                self.seq_id += 1
-                self.push(data)
-            else:
-                self.pq.put(p_data)
-            
-
-def By(n, f, *args, **kwargs):
-    return ZueueList([f(*args, **kwargs) for _ in range(n)])
 
 
-
-
-class Xplitter(Zueue):
-    @store_args
-    def __init__(self, queue_in = mp.Queue(256), queue_out = mp.Queue(16), n_in = 1, n_out = 1):
-        super(Xsplitter, self).__init__(queue_in, queue_out)
-    
-    def setup(self):
-        self.pq = queue.PriorityQueue() 
-        self._seq = 0
-        self._nones = 0
-    
-    def do(self, pqdata):
-        if pqdata is None:
-            noneCount += 1
-            if noneCount >= self.n_in:
-                self.stop()
-            return
-        else:
-            p, data = pqdata
-            if p == seq:
-                self.queue_out.put(out)
-                seq += 1
-            else:
-                self.pq.put(pqdata)
-                p, data = self.pq.get()
-                if p == seq:
-                    self.queue_out.put(out)
-                    seq += 1
-                else:
-                    self.pq.put((p, data))
-            
-    def teardown(self):
-        if not self.pq.empty():
-            print("Warning: Non empty queue in Xplitter: " + str(self.pq.qsize()))
-        for i in range(n_out):
-            self.queue_out.put(None)
 
 
 
@@ -277,7 +281,7 @@ def flatten(to_flatten):
             new_lis.append(item)
     return new_lis
     
-    # return  [(flatten(item) if isinstance(item, list) else item) for item in to_flatten]
+    # return  [*(flatten(item) if isinstance(item, list) else item) for item in to_flatten]
     
     
     
@@ -310,5 +314,108 @@ class F(Zueue):
 
 
 
+def By(n, f, *args, **kwargs):
+    return ZueueList([f(*args, **kwargs) for _ in range(n)])
+
+
+
+
+class Iter(F):
+    def setup(self, iterable):
+        for x in iterable:
+            self.push(x)
+        self.stop()
+
+
+class Print(F):
+    def setup(self, pre = "", post = ""):
+        self.pre, self.post, = pre, post
+    def do(self, item):
+        if self.pre and self.post:
+            print(self.pre, item, self.post)
+        elif self.pre:
+            print(self.pre, item)
+        elif self.post:
+            print(item, self.post)
+        else:
+            print(item)
+        self.push(item)
+
+
+class Delay(F):
+    def setup(self, c = None, b = None):
+        self.c = 1. if c is None else c
+        self.b = 0. if b is None else 1
+    def do(self, item):
+        time.sleep(self.c * random.random() + self.b)
+        self.push(item)
+
+
+
+
+class StartSeq(F):
+    def setup(self, key = "seq_id"):
+        self.key = key
+        self.seq_id = 0
+    def do(self, item):
+        self.meta[self.key] = self.seq_id
+        self.push(item)
+        self.seq_id += 1
+        
+        
+    
+class EndSeq(F):
+    def setup(self, key = "seq_id"):
+        self.pq = PriorityQueue() 
+        self.key = key
+        self.seq_id = 0
+    def do(self, item):
+        
+        
+        self.pq.put((self.meta[self.key], item))
+        
+        for _ in range(self.pq.qsize()): # todo: optimize
+            p, item = self.pq.get()
+            if p == self.seq_id:
+                self.meta[self.key] = self.seq_id
+                self.push(item)
+                self.seq_id = self.seq_id + 1
+            else:
+                self.pq.put((p, item))
+        
+
+class MergeSeq(F):
+    def setup(self, key = "seq_id", n = None):
+        self.pq = PriorityQueue() 
+        self.key = key
+        self.seq_id = 0
+        self.n = len(set(self._infrom)) if n is None else n
+        
+    def do(self, item):
+        self.pq.put((self.meta[self.key], item))
+        
+        if self.pq.qsize() >= self.n:
+            for _ in range(self.pq.qsize()): # todo: optimize
+                if self.pq.qsize() >= self.n:
+                    keep = []
+                    back = []
+                    for i in range(self.n):
+                        p, item = self.pq.get()
+                        
+                        if p == self.seq_id:
+                            keep.append(item)
+                        else:
+                            back.append((p, item))
+                    
+                    if len(keep) == self.n:
+                        self.meta[self.key] = self.seq_id
+                        self.push(keep)
+                        self.seq_id += 1
+                    else:
+                        for item in keep:
+                            self.pq.put((self.seq_id, item))
+                            
+                    for data in back:
+                        self.pq.put(data)
 
 

@@ -82,6 +82,7 @@ class Simulation:
                 self.motion.tick()
                 
                 
+                
                 for i, p in enumerate(self.motion.particles):
                     
                     # check if particle is in frame

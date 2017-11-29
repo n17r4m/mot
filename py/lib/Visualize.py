@@ -40,12 +40,7 @@ class VisFrame(Pipe):
     @store_args
     def setup(self, bg = np.ones((1729, 2336))):
         
-        print("SETTING UP VISFRAME ON GPU", os.environ["CUDA_VISIBLE_DEVICES"])
-        #os.putenv("CUDA_VISIBLE_DEVICES", os.environ["CUDA_VISIBLE_DEVICES"])
-        print("PID", os.getpid())
-
-        
-        Exec("env").into(Print()).start()
+        # Exec("env").into(Print()).start()
         
         self.height, self.width = bg.shape
         
@@ -64,6 +59,8 @@ class VisFrame(Pipe):
         
         latents = []
         locations = []
+
+        frame=frame[1]
         async for particle in self.db.query("SELECT location, latent from Track LEFT JOIN Particle USING(particle) WHERE frame = $1", frame["frame"]):
             locations.append(particle["location"])
             latents.append([float(i) for i in particle["latent"][1:-1].split(',')])
@@ -96,16 +93,10 @@ class Visualize(Pipe):
     def __init__(self, experiment_uuid, bg = np.ones((1729, 2336))):
         Pipe.__init__(self)
         
-        print("BEFORE")
-        #print("VISIBLE_DEVICES", os.environ["CUDA_VISIBLE_DEVICES"])
-        print("PARENT PID", os.getpid())
         
         env = [{"CUDA_VISIBLE_DEVICES": str(g)} for g in range(config.GPUs)]
         self.infrom(FrameIter(experiment_uuid).into(VisFrame(bg, processes=config.GPUs, env=env)))
-    
-        print("AFTER")
-        #print("VISIBLE_DEVICES", os.environ["CUDA_VISIBLE_DEVICES"])
-        print("PARENT PID", os.getpid())
+
     
     def do(self, frame_data):
         self.emit(frame_data)

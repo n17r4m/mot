@@ -92,13 +92,13 @@ class DeepVelocity(object):
 
             
         self.probabilityNetwork = Model(inputs=eng_state_a+eng_state_b, outputs=[prob_output])
-        
+    
+    def compile(self):
         optimizer = Nadam(lr=self.lr, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004)
-        
         self.probabilityNetwork.compile(
             optimizer=optimizer, 
             loss=['mse'],
-            metrics=['acc', 'mse'])  
+            metrics=['acc', 'mse'])
         
     def save_weights(self, path):
         self.probabilityNetwork.save_weights(path)
