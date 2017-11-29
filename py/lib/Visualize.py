@@ -12,8 +12,7 @@ import config
 import matplotlib.pyplot as plt
 import asyncio
 
-from lib.qpipe import Pipe, Exec, Print
-
+from lib.Process import F
 from skimage.filters import threshold_otsu as threshold
 from skimage.filters import gaussian as blur
 
@@ -26,17 +25,17 @@ csize2 = csize // 2
 
 
 
-class FrameIter(Pipe):
+class FrameIter(F):
     @store_args                       
     def setup(self, experiment_uuid = UUID("00000000-0000-4000-0000-000000000000")):
-        asyncio.new_event_loop().run_until_complete(self.emit_db_frames(experiment_uuid))
+        self.async(self.db_frames(experiment_uuid))
         
-    async def emit_db_frames(self, experiment_uuid):
+    async def db_frames(self, experiment_uuid):
         async for frame in Database().query("SELECT * FROM Frame WHERE experiment = $1 ORDER BY number", self.experiment_uuid):
-            self.emit(dict(frame))
+            self.push(dict(frame))
             
 
-class VisFrame(Pipe):
+class VisFrame(F):
     @store_args
     def setup(self, bg = np.ones((1729, 2336))):
         
@@ -52,10 +51,9 @@ class VisFrame(Pipe):
         
     
     def do(self, frame):
+        self.async(self.vis_frame(frame))
         
-        self.loop.run_until_complete(self.emit_vis_frame(frame))
-        
-    async def emit_vis_frame(self, frame):
+    async def vis_frame(self, frame):
         
         latents = []
         locations = []
@@ -80,7 +78,7 @@ class VisFrame(Pipe):
         
         frame_data = np.clip((frame_data * 255.), 0, 255)[csize2:-csize2, csize2:-csize2].astype("uint8")
         
-        self.emit(frame_data)
+        self.push(frame_data)
         
     def rect(self, location, w = csize, h = csize):
         x, y = location
@@ -89,17 +87,6 @@ class VisFrame(Pipe):
     
 
 
-class Visualize(Pipe):
-    def __init__(self, experiment_uuid, bg = np.ones((1729, 2336))):
-        Pipe.__init__(self)
-        
-        
-        env = [{"CUDA_VISIBLE_DEVICES": str(g)} for g in range(config.GPUs)]
-        self.infrom(FrameIter(experiment_uuid).into(VisFrame(bg, processes=config.GPUs, env=env)))
-
-    
-    def do(self, frame_data):
-        self.emit(frame_data)
 
 
 """

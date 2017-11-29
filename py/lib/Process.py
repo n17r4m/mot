@@ -8,15 +8,18 @@ import traceback
 import random
 import traceback
 import types
+import asyncio
+import os
+
 
 
 class Zueue(mp.Process):
     
-    def __init__(self, queues_in = None, queues_out = None):
+    def __init__(self, *args, **kwargs):
         super(Zueue, self).__init__()
         
-        self.queues_in = listify(queues_in)
-        self.queues_out = listify(queues_out)
+        self.queues_in = []
+        self.queues_out = []
         
         self.stop_event = mp.Event()
         self.start_event = mp.Event()
@@ -25,6 +28,15 @@ class Zueue(mp.Process):
         self.queue_out_idx = 0
         
         self.push_method = "distribute"
+        # todo: each queue should know if it should be broadcast or ditributed.
+        
+        self.args = args
+        self.kwargs = kwargs
+        if not 'env' in self.kwargs:
+            self.env = {}
+        else:
+            self.env = self.kwargs["env"]
+            del self.kwargs["env"]
     
     def push(self, item):
         if len(self.queues_out) > 0:
@@ -90,10 +102,11 @@ class Zueue(mp.Process):
     def start(self):
         if not self.started():
             self.start_event.set()
-            self.first()
+            self.beforeStart()
             super(Zueue, self).start()
             [infrom.start() for infrom in self._infrom]
             [into.start() for into in self._into]
+            self.afterStart()
     
     
         
@@ -115,16 +128,12 @@ class Zueue(mp.Process):
             return [self]
     
     
-    
-    def starting(self):
-        self.setup()
-    
     def started(self):
         return self.start_event.is_set()
     
     def run(self):
         self.meta = {}
-        self.starting()
+        self.setup(*self.args, **self.kwargs)
         while True:
             if self.stopped():
                 return self.shutdown()
@@ -141,10 +150,19 @@ class Zueue(mp.Process):
             self.sleep()
     
     
-    # Override me
-    # Called after start/execute, before setup
-    def first(self):
-        pass
+    
+    def beforeStart(self):
+        self.parent_env = os.environ.copy()
+        for k, v in self.env.items():
+            os.environ[k] = v
+    
+    def afterStart(self):
+        for k, v in self.env.items():
+            if k in self.parent_env:
+                os.environ[k] = self.parent_env[k]
+            else:
+                del os.environ[k]
+    
     
     # Override me
     # Called after first, before do
@@ -230,8 +248,8 @@ class Zueue(mp.Process):
 
 class ZueueList(list):
     
-    def print(self):
-        return self.into(Print())
+    def print(self, pre = None, post = None):
+        return self.into(Print(pre, post))
     
     def into(self, zueues): 
         return ZueueList(flatten([z.into(zueues) for z in self]))
@@ -302,15 +320,9 @@ def listify(item = None):
 
 
 class F(Zueue):
+    def async(self, coroutine):
+        return asyncio.new_event_loop().run_until_complete(coroutine)
     
-    def __init__(self, *args, **kwargs):
-        super(F, self).__init__()
-        self.args = args
-        self.kwargs = kwargs
-        pass
-    
-    def starting(self):
-        self.setup(*self.args, **self.kwargs)
 
 
 

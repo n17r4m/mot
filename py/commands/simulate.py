@@ -22,7 +22,7 @@ async def simulation(model = "linear", profile = "simple", frames = 150, width =
 
 async def create_video(experiment_uuid, bg_file = "bg.png", out_file = "visualization.mp4"):
     from skimage.io import imread
-    from lib.Visualize import Visualize
+    from lib.Visualize import FrameIter, VisFrame
     from lib.Compress import VideoStream
     
     experiment_dir = os.path.join(config.experiment_dir, experiment_uuid)
@@ -35,10 +35,18 @@ async def create_video(experiment_uuid, bg_file = "bg.png", out_file = "visualiz
     
     fname = os.path.join(experiment_dir, out_file)
     
-    vis = Visualize(UUID(experiment_uuid), bg)
-    vs = VideoStream(experiment_dir, fname, width=width, height=height)
+    envs = [{"CUDA_VISIBLE_DEVICES": str(g)} for g in range(config.GPUs)]
     
-    return vis.into(vs).results()
+    
+    (   FrameIter(UUID(experiment_uuid))
+        .sequence()
+        .split([VisFrame(bg, env=e) for e in envs])
+        .order()
+        .into(VideoStream(experiment_dir, fname, width=width, height=height))
+        
+    ).execute()
+    
+    
     
 
 

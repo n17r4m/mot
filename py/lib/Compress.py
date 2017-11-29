@@ -1,4 +1,4 @@
-from lib.qpipe import Pipe
+from lib.Process import F
 
 import subprocess as sp
 import fcntl
@@ -6,7 +6,7 @@ import shlex
 import time
 import os
 
-class VideoStream(Pipe):
+class VideoStream(F):
     
     def setup(self, experiment_dir, fname, width=2336, height=1729, fps=300., rate=24., pix_format="gray"):
         print("Compress.py Notice: kevin changed do() to check for tuples... temporary?")
@@ -33,7 +33,7 @@ class VideoStream(Pipe):
         except TypeError:
             self.proc.stdin.write(frame_bytes[1][1])
         try:
-            self.emit(self.proc.stdout.read())
+            self.push(self.proc.stdout.read())
         except:
             pass
         
@@ -42,12 +42,12 @@ class VideoStream(Pipe):
         self.proc.stdin.close()
         self.proc.wait()
         try:
-            self.emit(self.proc.stdout.read())
+            self.push(self.proc.stdout.read())
         except:
             pass
     
 
-class VideoFile(Pipe):
+class VideoFile(F):
     
     def setup(self, video_fpath, experiment_dir, fname, width=2336, height=1729, fps=300., rate=24.):
         
@@ -65,6 +65,6 @@ class VideoFile(Pipe):
         
         while self.proc.poll() is None:
             try:
-                self.emit(proc.stdout.read())
+                self.push(proc.stdout.read())
             except:
                 time.sleep(1)
