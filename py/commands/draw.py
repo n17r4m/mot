@@ -40,7 +40,7 @@ async def draw_tracks(args):
     print("Starting compressor.")
     frame_bytes = multiprocessing.Queue(5)
     #NOTE: Not enough memory if this is launched after we load the video.
-    compressor = VideoStreamCompressor(frame_bytes, experiment_dir, "tracking.mp4", width=2336-400, height=1728, fps=300, pix_format="rgb24" )
+    compressor = VideoStreamCompressor(frame_bytes, experiment_dir, "tracking.mp4", width=2336, height=1728, fps=300, pix_format="rgb24" )
     compressor.start()
     
     

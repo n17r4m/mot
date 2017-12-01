@@ -10,6 +10,8 @@ import itertools
 import random
 import os
 
+from setproctitle import setproctitle
+
 """
 
 Synopsis
@@ -149,6 +151,7 @@ class Zueue(mp.Process):
                 del os.environ[k]
     
     def run(self):
+        setproctitle("python {}".format(self.name))
         self.meta = {}
         self.setup(*self.args, **self.kwargs)
         while True:
@@ -187,35 +190,51 @@ class Zueue(mp.Process):
         return self.stop_event.is_set()
     
     
+    
     # Process Flow  (Must be used before start)
     # ============
     
     def into(self, zueues):
-        
         zueues = ZueueList(listify(zueues))
         self.ensureOutputQueue()
+        added = []
         
         for z in zueues:
-            self._into.append(z)
-            z._infrom.append(self)
-            z.queues_in.extend(self.queues_out)
-        
-        return zueues
+            if not z in self._into:
+                self._into.append(z)
+                z._infrom.append(self)
+                z.queues_in.extend(self.queues_out)
+                added.append(z)
+                
+        return ZueueList(added)
     
     def infrom(self, zueues):
         zueues = ZueueList(listify(zueues))
         self._infrom.extend(zueues)
-        
         for z in zueues:
             z.ensureOutputQueue()
-            z._into.append(self)
+            if not self in z._into:
+                z._into.append(self)
             self.queues_in.extend(z.queues_out)
         return self
     
+    def results(self):
+        agg = []
+        out = self.output()
+        self.start()
+        while True:
+            item = out.pull()
+            if item is None:
+                return agg
+            else:
+                agg.append(item)
+            self.sleep()
+
     
     # Aux Process Flow  (Must be used before start)
     # ================
     
+
     def input(self):
         return self.InputHandle(self.input_queue())
     
@@ -225,7 +244,13 @@ class Zueue(mp.Process):
         return queue
     
     def output(self):
-        return self.OutputHandle(self.output_queue())
+        q = self.output_queue()
+        o_spaghetti = self.teardown
+        def output_teardown(*args, **kwargs):
+            o_spaghetti(*args, **kwargs)
+            q.put(None)
+        self.teardown = output_teardown
+        return self.OutputHandle(q)
     
     def output_queue(self, queue = None):
         queue = self.Queue(16) if queue is None else queue
@@ -240,8 +265,8 @@ class Zueue(mp.Process):
     def print(self, pre = None, post = None):
         return self.into(Print(pre, post))
     
-    def count(self, pre = None):
-        return self.into(Count(pre))
+    def stamp(self, pre = None):
+        return self.into(Stamp(pre))
     
     def sequence(self, key = "seq_id"):
         return self.into(StartSeq(key))
@@ -328,9 +353,11 @@ class ZueueList(list):
     
     def execute(self):
         [z.execute() for z in self]
+        return self
 
     def start(self):
         [z.start() for z in self]
+        return self
     
     # Process Flow
 
@@ -342,11 +369,15 @@ class ZueueList(list):
 
     # Shortcuts
 
+    def results(self):
+        self.start()
+        return flatten([z.results() for z in self])
+
     def print(self, pre = None, post = None):
         return self.into(Print(pre, post))
 
-    def count(self, pre = None):
-        return self.into(Count(pre))
+    def stamp(self, pre = None):
+        return self.into(Stamp(pre))
 
     def sequence(self, key = "seq_id"):
         return self.into(StartSeq(key))
@@ -485,6 +516,45 @@ class OutgoingQueueList():
             queue_out.put(data)
 
 
+    def _get(self):
+        "Should not be used except by .results()"
+        
+        data = False
+        queues = list(set(flatten(self.queues["distributed"]))) + list(set(flatten(self.queues["broadcasted"])))
+        
+        if len(queues) == 0:
+            "/dev/zero"
+            return None
+        
+        while data is False and len(queues) > 0:
+            "This is a rickety engine."
+            
+            rm_list = [] # Queues evaporate when they push None.
+            random.shuffle(queues) # There is no assumed order
+            data = False # False is not None
+            
+            for i, qi in enumerate(queues):
+
+                try: 
+                    data = qi.get_nowait()
+                except Empty:
+                    continue
+                
+                if data is None:
+                    rm_list.append(i)
+                    data = False
+                else:
+                    break
+            
+            for index in sorted(rm_list, reverse=True):
+                del queues[index]
+            
+            time.sleep(0.001)
+
+        if data is False:
+            return None
+        else:
+            return data
 
 #################
 # Process Nodes #
@@ -533,17 +603,24 @@ class Print(F):
         self.push(item)
 
 
-class Count(F):
+class Stamp(F):
     "A simple counter for debugging"
-    def setup(self, pre = None):
+    def setup(self, pre = None, verbose=False):
         self.pre = pre
         self.count = 0
+        self.verbose = verbose
     def do(self, item):
         self.count += 1
-        if self.pre:
-            print(self.pre, self.count)
+        if self.verbose:
+            if self.pre:
+                print(self.pre, self.count, item)
+            else:
+                print(self.count, item)
         else:
-            print(self.count)
+            if self.pre:
+                print(self.pre, self.count)
+            else:
+                print(self.count)
         self.push(item)
 
 
@@ -578,15 +655,16 @@ class EndSeq(F):
         self.seq_id = 0
         
     def do(self, item):
-        self.pq.put((self.meta[self.key], item))
+        self.pq.put((self.meta[self.key], (self.meta, item)))
         for _ in range(self.pq.qsize()): # todo: optimize
-            p, item = self.pq.get()
+            p, data = self.pq.get()
             if p == self.seq_id:
                 self.meta[self.key] = self.seq_id
+                self.meta, item = data
                 self.push(item)
                 self.seq_id = self.seq_id + 1
             else:
-                self.pq.put((p, item))
+                self.pq.put((p, data))
         
 
 class MergeSeq(F):

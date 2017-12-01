@@ -12,7 +12,7 @@ import config
 
 from lib.Crop import Crop
 from lib.Video import Video
-from lib.Process import F
+from lib.Process import F, By, ZueueList
 from lib.Database import Database, DBWriter
 from lib.Background import Background
 from lib.Compress import VideoFile, VideoStream
@@ -77,6 +77,10 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
     
     try:
         
+        
+
+        
+        
         print("Creating data directory", experiment_dir)
         os.mkdir(experiment_dir)
         
@@ -86,26 +90,38 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
         wq = dbwriter.input()
         dbwriter.start()
         
+        mask_compressor = VideoStream(experiment_dir, "mask.mp4", pix_format="gray")
+        mask_q = mask_compressor.input()
+        mask_compressor.start()
+        
+        
         print("Inserting experiment", name, "(", experiment_uuid, ") into database.")
         wq.push(("execute", """
             INSERT INTO Experiment (experiment, day, name, method, notes) 
             VALUES ($1, $2, $3, $4, $5)
             """, experiment))
         
+        
+        cuda_envs = [{"CUDA_VISIBLE_DEVICES": str(i)} for i in range(config.GPUs)]
+        
+        
+       
+        
         print("Starting processor pipeline.")
         (   FrameIter(wq, video_file, experiment_uuid)
             .sequence()
-            .count("Input Frame")
-            .into(FrameProcessor(experiment_dir))
-            .into(PropertiesProcessor())
-            .into(CropProcessor())
+            .stamp("Input Frame")
+            .into(By(3, FrameProcessor, experiment_dir, mask_q))
+            .into(By(3, PropertiesProcessor))
+            .into([CropProcessor(env=e) for e in cuda_envs])
             .order()
-            .split([
+            .stamp("Middle Frame")
+            .split(ZueueList([
                 DetectionProcessor(experiment_dir),
                 ParticleCommitter(wq).into(CropWriter(experiment_dir))
-            ])
+            ]))
             .merge()
-            .count("Output Frame")
+            .stamp("Output Frame")
             .execute()
         )
     
@@ -155,9 +171,11 @@ class FrameIter(F):
         print("Saving background.")
         io.imsave(os.path.join(self.meta["experiment_dir"], "bg.png"), video.extract_background().squeeze())
         
-        print("Iterating through frames.")
-        for i in range(len(self.video)):
+        print("Iterating through", len(video), "frames.")
+        for i in range(50): #len(video)):
+            
             if self.stopped():
+                
                 raw_compressor.stop()
                 norm_compressor.stop()
             else:
@@ -175,7 +193,6 @@ class FrameIter(F):
                 
                 self.norm_q.push(frame.tobytes())
                 
-                print("Pushing frame", i)
                 
                 self.push(frame)
         
@@ -189,10 +206,8 @@ class FrameIter(F):
 
 
 class FrameProcessor(F):
-    def setup(self, experiment_dir):
-        mask_compressor = VideoStream(experiment_dir, "mask.mp4", pix_format="gray")
-        self.mask_q = mask_compressor.input()
-        mask_compressor.start()
+    def setup(self, experiment_dir, mask_q):
+        self.mask_q = mask_q
     
     def do(self, frame):
         
@@ -210,11 +225,14 @@ class FrameProcessor(F):
         self.push(properties)
             
     def teardown(self):
-        self.mask_q.put(None)
+        self.mask_q.push(None)
 
 
 
 class PropertiesProcessor(F):
+    def setup(self):
+        from lib.models.Classifier import Classifier
+        self.Classifier = Classifier
     def do(self, properties):
         
         cropper = Crop(self.meta["frame"])
@@ -222,17 +240,18 @@ class PropertiesProcessor(F):
         coords = [(p.centroid[1], p.centroid[0]) for p in properties]
         bboxes = [((p.bbox[1], p.bbox[0]), (p.bbox[3], p.bbox[2])) for p in properties]
         crops = np.array([cropper.crop(int(round(c[0])), int(round(c[1]))) for c in coords])
-        pcrops = np.array([Classifier.preproc(None, crop) for crop in crops])
+        pcrops = np.array([self.Classifier.preproc(None, crop) for crop in crops])
         
         self.meta["properties"] = properties
-        self.push((crops, pcrops, coords, bboxes))
+        self.push((crops, pcrops, properties, coords, bboxes))
     
 
 
 class CropProcessor(F):
-    def setup(self):
+    def setup(self, batchSize = 512):
         from lib.models.Classifier import Classifier
         self.classifier = Classifier().load()
+        self.batchSize = batchSize
     
     def make_batch(self, iterable, n=1):
         #https://stackoverflow.com/a/8290508
@@ -241,10 +260,10 @@ class CropProcessor(F):
             yield iterable[ndx:min(ndx + n, l)]
     
     def do(self, cpcb):
-        crops, pcrops, coords, bboxes = cpcb
+        crops, pcrops, properties, coords, bboxes = cpcb
         latents, categories = [], []
         
-        for crop_batch in self.make_batch(pcrops, batchSize):
+        for crop_batch in self.make_batch(pcrops, self.batchSize):
                 
             # need to pad the array of crop images into a number divisible by the # of GPUs
             crop_batch_padded = np.lib.pad(crop_batch, ((0, len(crop_batch) % config.GPUs), (0,0), (0,0), (0,0)), 'constant', constant_values=0)
@@ -255,7 +274,7 @@ class CropProcessor(F):
             latents += list(l[0:len(crop_batch)])
             categories += list(c[0:len(crop_batch)])
         
-        self.push((crops, latents, categories, properties, coords, bboxes))
+        self.push((crops, latents, categories, coords, bboxes))
         
     
 
@@ -263,15 +282,17 @@ class CropProcessor(F):
 class DetectionProcessor(F):
     def setup(self, experiment_dir):
         self.detection_compressor = VideoStream(experiment_dir, "detection.mp4", pix_format="rgb24")
-        self.detc_q = self.detection_compressor.input()
+        self.det_q = self.detection_compressor.input()
         self.detection_compressor.start()
         
     def do(self, detections):
         
-        (crops, latents, categories, properties, coords, bboxes) = detections
+        (crops, latents, categories, coords, bboxes) = detections
+        properties = self.meta["properties"]
         
-        detection_frame = gray2rgb(self.meta["frame"].copy()).astype("int32")
-            
+        detection_frame = gray2rgb(self.meta["frame"]).squeeze().astype("int32")
+        
+        
         for x, p in enumerate(properties):
             rr, cc = circle(*p.centroid, p.major_axis_length, detection_frame.shape)
             if categories[x] == 0: # Undefined
@@ -287,10 +308,11 @@ class DetectionProcessor(F):
             if categories[x] == 4: # Bubbple
                 detection_frame[rr, cc, 1] += 50 # Green
         
-        self.dect_q.push(detection_frame.tobytes())
+        self.det_q.push(detection_frame.astype("uint8").tobytes())
+        self.push("DetectionVisualize")
     
     def teardown(self):
-        self.dect_q.push(None)
+        self.det_q.push(None)
         
         
 
@@ -300,12 +322,13 @@ class ParticleCommitter(F):
     
     def do(self, detections):
         
-        (crops, latents, categories, properties, coords, bboxes) = detections
+        (crops, latents, categories, coords, bboxes) = detections
         
-        experiment_uuid = self.meta("experiment_uuid")
+        experiment_uuid = self.meta["experiment_uuid"]
         frame_uuid = self.meta["frame_uuid"]
+        properties = self.meta["properties"]
             
-        particles = [(uuid4(), self.experiment_uuid, p.area, p.mean_intensity, p.perimeter, p.major_axis_length, categories[i]) 
+        particles = [(uuid4(), experiment_uuid, p.area, p.mean_intensity, p.perimeter, p.major_axis_length, categories[i]) 
             for i, p in enumerate(properties)]
             
         track_uuids = [uuid4() for i in range(len(properties))]
@@ -344,3 +367,6 @@ class CropWriter(F):
                     
         for i, crop in enumerate(crops):
             io.imsave(os.path.join(frame_dir, str(track_uuids[i]) + ".jpg"), crop.squeeze(), quality=90) 
+        
+        self.push("CropWritten")
+        

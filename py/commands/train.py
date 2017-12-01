@@ -84,24 +84,24 @@ async def DVViewer(model, dataGenerator):
     
     DV = model 
     model = DV.probabilityNetwork
+
+    dataGenerator.epochBegin()
+    dataGenerator.trainBegin()
     
     dataBatch = await dataGenerator.trainBatch()
     
-    dataBatch.denormalize("frame", 
-                          dataGenerator.frameMean, 
-                          dataGenerator.frameStd)
-    dataBatch.denormalize("location", 
-                          dataGenerator.locationMean, 
-                          dataGenerator.locationStd)  
-                        
+    dataBatch.denormalize(dataGenerator.normalizeParams)
     
-    weightFile = "/local/scratch/mot/py/lib/models/weights/DVexp1-epoch{epoch}.h5"
+    weightFile = "/local/scratch/mot/py/lib/models/weights/DVexp3-epoch{epoch}.h5"
     
-    negCount = 0
+    negCount = 1
     posCount = 0
     outputData = []
     screenCount = 0
+
     for dataInput, dataOutput in dataBatch:
+        if posCount==1 and negCount==1:
+            break
         if dataOutput[0][0] == 0.0:
             label='neg'
             print("negative example found...")
@@ -133,15 +133,11 @@ async def DVViewer(model, dataGenerator):
                     
             visData.toNumpy()
             
-            visData.normalize("frame", 
-                              dataGenerator.frameMean, 
-                              dataGenerator.frameStd)
-            visData.normalize("location", 
-                              dataGenerator.locationMean, 
-                              dataGenerator.locationStd)
+            visData.normalize(dataGenerator.normalizeParams)
+
             epochData = []
             
-            for epoch in range(17):
+            for epoch in range(31):
                 DV.load_model(weightFile.format(epoch=epoch+1))
                 model = DV.probabilityNetwork
                 probs = model.predict(visData.getInput())[:,0]
@@ -218,7 +214,7 @@ async def trainer(args, model, dataGenerator):
         
         model.save_weights(weightFile)
         
-        modelFile = "/local/scratch/mot/py/lib/models/weights/DVexp2-epoch{epoch}.h5".format(epoch=epoch+1)
+        modelFile = "/local/scratch/mot/py/lib/models/weights/DVexp3-epoch{epoch}.h5".format(epoch=epoch+1)
         model.save(modelFile)
         
         # Printing section
@@ -494,7 +490,7 @@ class DVDataGen(object):
         self.numTrainBatch = None
         self.numTestBatch = None
         self.splitPercent = 0.8
-        self.method =  "Tracking_trainExp"
+        self.method =  "simulation_tracking"
         self.debug = debug
         self.db = Database()
     
@@ -872,7 +868,6 @@ class DVQueryProcessor(multiprocessing.Process):
                              "lat2": latent2,
                              "loc1": loc1,
                              "loc2": loc2}
-                        
                         self.outputQueue.put(r)
                         
                         
@@ -1025,7 +1020,8 @@ class DVBatchProcessor(multiprocessing.Process):
                 dataBatch.addLatent(d["lat1"], d["lat2"])
                 dataBatch.addLocation(d["loc1"], d["loc2"])
                 dataBatch.addOutput([1.0, 0.0])
-            
+                # print("pos accepted")
+                
             negBatch = DataBatch()
             while len(negBatch) < self.batchSize // 2:
                 if self.stopped():
@@ -1056,6 +1052,7 @@ class DVBatchProcessor(multiprocessing.Process):
                         d = dataBatchTmp1.getDataPoint(i)
                         d["output"] = [0.0, 1.0]
                         negBatch.addDataPoint(d)
+                        # print("neg accepted")
                         count+=1
                     if len(negBatch) == self.batchSize // 2:
                         batchReady=True

@@ -69,7 +69,7 @@ async def frame_resize(args):
         # store the image in the filesystem
         frameDir = os.path.join(config.experiment_dir, 
                             str(experiment_uuid), 
-                            str(record["frame"]), 
+                            str(record["frame"])) 
         outfile = os.path.join(frameDir, str(size)+'x'+str(size)+'.png')
         
         if not os.path.exists(frameDir):
