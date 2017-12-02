@@ -2,6 +2,7 @@
 Process.py -- An experimental library of python multiprocessing.
 """
 from queue import Empty, PriorityQueue
+import heapq
 import multiprocessing as mp
 import time
 import asyncio
@@ -131,9 +132,9 @@ class Zueue(mp.Process):
         if not self.started():
             self.start_event.set()
             self.beforeStart()
-            super(Zueue, self).start()
             [infrom.start() for infrom in self._infrom]
             [into.start() for into in self._into]
+            super(Zueue, self).start()
             self.afterStart()
         return self
     
@@ -218,18 +219,19 @@ class Zueue(mp.Process):
             self.queues_in.extend(z.queues_out)
         return self
     
-    def results(self):
-        agg = []
-        out = self.output()
+    
+    def items(self, output_q = None):
+        out = self.output() if output_q is None else output_q
         self.start()
         while True:
+            
             item = out.pull()
+            
             if item is None:
-                return agg
+                break
             else:
-                agg.append(item)
+                yield item
             self.sleep()
-
     
     # Aux Process Flow  (Must be used before start)
     # ================
@@ -246,8 +248,8 @@ class Zueue(mp.Process):
     def output(self):
         q = self.output_queue()
         o_spaghetti = self.teardown
-        def output_teardown(*args, **kwargs):
-            o_spaghetti(*args, **kwargs)
+        def output_teardown():
+            o_spaghetti()
             q.put(None)
         self.teardown = output_teardown
         return self.OutputHandle(q)
@@ -267,6 +269,9 @@ class Zueue(mp.Process):
     
     def stamp(self, pre = None):
         return self.into(Stamp(pre))
+    
+    def watchdog(self, n = 5., also_show = []):
+        return self.into(Watchdog(n, also_show))
     
     def sequence(self, key = "seq_id"):
         return self.into(StartSeq(key))
@@ -362,22 +367,25 @@ class ZueueList(list):
     # Process Flow
 
     def into(self, zueues): 
-        return ZueueList(flatten([z.into(zueues) for z in self]))
+        return ZueueList(set(flatten([z.into(zueues) for z in self])))
         
     def infrom(self, zueues): 
-        return ZueueList(flatten([z.infrom(zueues) for z in self]))
+        return ZueueList(set(flatten([z.infrom(zueues) for z in self])))
 
     # Shortcuts
 
-    def results(self):
-        self.start()
-        return flatten([z.results() for z in self])
+    def items(self):
+        qs = [z.output() for z in self]
+        return merge_iterators([z[0].items(z[1]) for z in zip(self, qs)])
 
     def print(self, pre = None, post = None):
         return self.into(Print(pre, post))
 
     def stamp(self, pre = None):
         return self.into(Stamp(pre))
+        
+    def watchdog(self, n = 5., also_show = []):
+        return self.into(Watchdog(n, also_show))
 
     def sequence(self, key = "seq_id"):
         return self.into(StartSeq(key))
@@ -488,7 +496,7 @@ class OutgoingQueueList():
         return sum([len(qs) for qs in self.queues.values()])
     
     def qsize(self):
-        return sum([sum([q.qsize() for q in qs]) for qs in self.queues])
+        return sum([sum([q.qsize() for q in qs]) for qs in self.queues.values()])
     
     def append(self, q = None, kind = "distributed"):
         q = mp.Queue(16) if q is None else q
@@ -516,45 +524,6 @@ class OutgoingQueueList():
             queue_out.put(data)
 
 
-    def _get(self):
-        "Should not be used except by .results()"
-        
-        data = False
-        queues = list(set(flatten(self.queues["distributed"]))) + list(set(flatten(self.queues["broadcasted"])))
-        
-        if len(queues) == 0:
-            "/dev/zero"
-            return None
-        
-        while data is False and len(queues) > 0:
-            "This is a rickety engine."
-            
-            rm_list = [] # Queues evaporate when they push None.
-            random.shuffle(queues) # There is no assumed order
-            data = False # False is not None
-            
-            for i, qi in enumerate(queues):
-
-                try: 
-                    data = qi.get_nowait()
-                except Empty:
-                    continue
-                
-                if data is None:
-                    rm_list.append(i)
-                    data = False
-                else:
-                    break
-            
-            for index in sorted(rm_list, reverse=True):
-                del queues[index]
-            
-            time.sleep(0.001)
-
-        if data is False:
-            return None
-        else:
-            return data
 
 #################
 # Process Nodes #
@@ -622,6 +591,39 @@ class Stamp(F):
             else:
                 print(self.count)
         self.push(item)
+
+
+class Watchdog(F):
+    "Observes queue sizes every n seconds"
+    def setup(self, n = 5., also_show = []):
+        
+        self.dog = self.Dog(n, self.proc_queue_list(also_show)).start()
+    
+    def teardown(self):
+        self.dog.stop()
+    
+    def all_procs(self):
+        def walk(ob, target):
+            procs = set()
+            for p in getattr(ob, target):
+                procs.add(p)
+                [procs.add(z) for z in walk(p, target)]
+            return procs
+                
+        return list(walk(self, "_infrom")) + [self] + list(walk(self, "_into"))
+    
+    def proc_queue_list(self, also_show = []):
+        return sorted([(p.name, p.queues_in, p.queues_out) for p in (self.all_procs() + also_show)])
+        
+    
+    class Dog(F):
+        def setup(self, n = 5., proc_queue_list = []):
+            import pprint
+            while not self.stopped():
+                self.sleep(n/2.)
+                print("WATCHDOG:", pprint.pformat(["Queues:"] + [(p[1].qsize(), p[2].qsize(), p[0]) for p in proc_queue_list]))
+                self.sleep(n/2.)
+        
 
 
 class Delay(F):
@@ -704,7 +706,7 @@ class MergeSeq(F):
 
 
 class Batch(F):
-    "Groups input into batches of cardinality 'size'"
+    "Groups input into batches of 'size'"
     def setup(self, size = 64):
         self.batch = []
         self.size = size
@@ -719,6 +721,9 @@ class Batch(F):
     def teardown(self):
         if len(self.batch) > 0:
             self.push(self.batch)
+
+
+
 
 
 class Map(F):
@@ -773,3 +778,29 @@ def listify(item = None):
         return list(item.values())
     else:
         return [item]
+
+
+# modified from http://blog.moertel.com/posts/2013-05-26-python-lazy-merge.html
+
+def iterator_to_stream(iterator):
+    """Convert an iterator into a stream (None if the iterator is empty)."""
+    try:
+        return next(iterator), iterator
+    except StopIteration:
+        return None
+
+def stream_next(stream):
+    """Get (next_value, next_stream) from a stream."""
+    val, iterator = stream
+    return val, iterator_to_stream(iterator)
+
+
+def merge_iterators(iterators):
+    """Make a lazy sorted iterator that merges lazy sorted iterators."""
+    streams = list(map(iterator_to_stream, map(iter, iterators)))
+    while streams:
+        stream = streams.pop()
+        if stream is not None:
+            val, stream = stream_next(stream)
+            streams.insert(0, stream)
+            yield val

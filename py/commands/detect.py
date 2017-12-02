@@ -112,7 +112,7 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
             .sequence()
             .stamp("Input Frame")
             .into(By(3, FrameProcessor, experiment_dir, mask_q))
-            .into(By(3, PropertiesProcessor))
+            .into(By(5, PropertiesProcessor))
             .into([CropProcessor(env=e) for e in cuda_envs])
             .order()
             .stamp("Middle Frame")
@@ -122,6 +122,7 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
             ]))
             .merge()
             .stamp("Output Frame")
+            .watchdog(5, [dbwriter, mask_compressor])
             .execute()
         )
     
@@ -197,7 +198,8 @@ class FrameIter(F):
                 self.push(frame)
         
         self.stop()
-    
+        
+        
     def teardown(self):
         self.norm_q.push(None)
 

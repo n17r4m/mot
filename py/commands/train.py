@@ -130,21 +130,20 @@ async def DVViewer(model, dataGenerator):
                     dataInput[3] = loc2
                     
                     visData.addInput(dataInput)
-                    
+
             visData.toNumpy()
             
             visData.normalize(dataGenerator.normalizeParams)
 
             epochData = []
             
-            for epoch in range(31):
+            for epoch in range(0, 100, 3):
                 DV.load_model(weightFile.format(epoch=epoch+1))
                 model = DV.probabilityNetwork
                 probs = model.predict(visData.getInput())[:,0]
                 
                 screenBuf = np.zeros((SIZE, SIZE))
                 count = 0
-                
                 for i in range(SIZE):
                     for j in range(SIZE):
                         screenBuf[j,i] = probs[count]
@@ -955,10 +954,10 @@ class DVBatchProcessor(multiprocessing.Process):
         self.queues["control"] = multiprocessing.Queue()
         self.queues["weight"] = multiprocessing.Queue()
         
-        self.model = DVPredictionProcessor(self.queues["weight"],
-                                           self.queues["input"]["predict"],
-                                           self.queues["output"]["predict"])
-        self.model.start()
+        # self.model = DVPredictionProcessor(self.queues["weight"],
+        #                                   self.queues["input"]["predict"],
+        #                                   self.queues["output"]["predict"])
+        # self.model.start()
         
         self.stop_event = multiprocessing.Event()
         self.commit_event = multiprocessing.Event()
@@ -1023,7 +1022,14 @@ class DVBatchProcessor(multiprocessing.Process):
                 # print("pos accepted")
                 
             negBatch = DataBatch()
+            genNegSamples=False
             while len(negBatch) < self.batchSize // 2:
+                if genNegSamples is False:
+                    dataBatch.toNumpy()
+                    dataBatch.shuffle()
+                    dataBatch.normalize(self.normalizeParams)
+                    outputQueue.put(dataBatch)
+                    break
                 if self.stopped():
                     break
                 if self.controlPending():
