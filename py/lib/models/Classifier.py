@@ -148,7 +148,7 @@ class Classifier(object):
         
         # provide classification on images
         imageclassifier = Model(input_img, classified)
-        imageclassifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
+        # imageclassifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
         
         # and classifications on encoded representations
         encoded_input = Input(shape=(encoding_shape[1:]))
@@ -156,7 +156,7 @@ class Classifier(object):
         for l in range(-n, 0):
             fc = imageclassifier.layers[l](fc)
         featureclassifier = Model(encoded_input, fc)
-        featureclassifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
+        # featureclassifier.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
         
         # Some KL loss
         def vae_objective(x, x_decoded):
@@ -170,11 +170,11 @@ class Classifier(object):
         optimizer = Nadam(lr=0.0002, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004, clipnorm=0.618)
         #         = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, clipnorm=1.0)
         
-        classycoder.compile(
-            optimizer=optimizer,
-            loss=[vae_objective, 'categorical_crossentropy'],
-            loss_weights=[0.1, 1.0],
-            metrics=['acc'])
+        # classycoder.compile(
+        #     optimizer=optimizer,
+        #     loss=[vae_objective, 'categorical_crossentropy'],
+        #     loss_weights=[0.1, 1.0],
+        #     metrics=['acc'])
         
         
         

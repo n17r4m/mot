@@ -1,7 +1,7 @@
 import numpy as np
 from uuid import UUID, uuid4
 from lib.Database import Database
-from lib.Compress import VideoStream
+
 
 from lib.util.store_args import store_args
 from math import floor, ceil
@@ -11,8 +11,8 @@ import traceback
 import config 
 import matplotlib.pyplot as plt
 import asyncio
-
-from lib.Process import F
+from mpyx.Compress import VideoStream
+from mpyx.Process import F
 from skimage.filters import threshold_otsu as threshold
 from skimage.filters import gaussian as blur
 
@@ -38,18 +38,12 @@ class FrameIter(F):
 class VisFrame(F):
     @store_args
     def setup(self, bg = np.ones((1729, 2336))):
-        
-        # Exec("env").into(Print()).start()
-        
-        self.height, self.width = bg.shape
-        
         from lib.models.Classifier import Classifier
         self.CC = Classifier().load()
-            
+        self.height, self.width = bg.shape
         self.loop = asyncio.new_event_loop()
         self.db = Database()
         
-    
     def do(self, frame):
         self.async(self.vis_frame(frame))
         

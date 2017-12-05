@@ -6,7 +6,7 @@ from skimage import io
 import config
 
 from lib.Crop import Crop
-from lib.Video import Video
+from mpyx.Video import Video
 from lib.Database import Database
 from lib.legacy.DataBag import DataBag
 from lib.models.Classifier import Classifier

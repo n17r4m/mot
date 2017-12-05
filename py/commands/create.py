@@ -20,7 +20,7 @@ from skimage.transform import resize
 from skimage.io import imsave
 
 from lib.Database import Database
-from lib.Video import Video
+from mpyx.Video import Video
 
 import numpy as np
 
@@ -74,5 +74,6 @@ async def frame_resize(args):
         
         if not os.path.exists(frameDir):
             os.mkdir(frameDir)
+            
         imsave(outfile, image)
 

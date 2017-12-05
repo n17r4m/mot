@@ -12,7 +12,7 @@ import multiprocessing
 import subprocess
 import shlex
 import fcntl
-from lib.Video import Video
+from mpyx.Video import Video
 
 async def main(args):
     

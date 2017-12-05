@@ -1,10 +1,9 @@
 
 
 import time
-from lib.Process import F
+from mpyx.Process import F
 import numpy as np
-import libxmp
-from libxmp.utils import file_to_dict, XMPFiles
+
 
 async def main(args):
 

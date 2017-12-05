@@ -7,7 +7,7 @@ Author: Martin Humphreys
 
 import asyncpg
 import asyncio
-from lib.Process import F
+from mpyx.Process import F
 
 DATABASE = "mot"
 USERNAME = "martin"

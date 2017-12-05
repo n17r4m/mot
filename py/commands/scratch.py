@@ -1,7 +1,7 @@
 
 import numpy as np
 import time
-from lib.qpipe import Iter, Pipe, Print
+
 # Step 0 (importing the library)
 # from numap import NuMap, imports
 # from papy.core import Worker, Piper, Plumber

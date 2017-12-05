@@ -10,12 +10,12 @@ from skimage.draw import circle
 
 import config
 
-from lib.Crop import Crop
-from lib.Video import Video
-from lib.Process import F, By, ZueueList
+from mpyx.Video import Video
+from mpyx.Process import F, By, ZueueList
+from mpyx.Compress import VideoFile, VideoStream
+
 from lib.Database import Database, DBWriter
-from lib.Background import Background
-from lib.Compress import VideoFile, VideoStream
+from lib.Crop import Crop
 
 from dateutil.parser import parse as dateparse
 from base64 import b64encode
@@ -71,9 +71,6 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
     experiment_day = dateparse(date)
     experiment_dir = os.path.join(config.experiment_dir, str(experiment_uuid))
     experiment = (experiment_uuid, experiment_day, name, "detection", notes)
-    vwidth, vheight, fps = 2336 - (crop_side*2), 1729, 300
-    queue_max_size = 100
-    db_queue_max_size = 300
     
     try:
         
@@ -90,9 +87,20 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
         wq = dbwriter.input()
         dbwriter.start()
         
+        raw_compressor = VideoFile(video_file, experiment_dir, "raw.mp4")
+        raw_compressor.start()
+        
+        norm_compressor = VideoStream(experiment_dir, "extraction.mp4", pix_format="gray")
+        norm_q = norm_compressor.input()
+        norm_compressor.start()
+        
         mask_compressor = VideoStream(experiment_dir, "mask.mp4", pix_format="gray")
         mask_q = mask_compressor.input()
         mask_compressor.start()
+        
+        detection_compressor = VideoStream(experiment_dir, "detection.mp4", pix_format="rgb24")
+        det_q = detection_compressor.input()
+        detection_compressor.start()
         
         
         print("Inserting experiment", name, "(", experiment_uuid, ") into database.")
@@ -108,21 +116,21 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
        
         
         print("Starting processor pipeline.")
-        (   FrameIter(wq, video_file, experiment_uuid)
+        (   FrameIter(wq, norm_q, video_file, experiment_uuid)
             .sequence()
             .stamp("Input Frame")
-            .into(By(3, FrameProcessor, experiment_dir, mask_q))
-            .into(By(5, PropertiesProcessor))
+            .into(By(4, FrameProcessor, experiment_dir, mask_q))
+            .into(By(4, PropertiesProcessor))
             .into([CropProcessor(env=e) for e in cuda_envs])
             .order()
             .stamp("Middle Frame")
             .split(ZueueList([
-                DetectionProcessor(experiment_dir),
+                DetectionProcessor(experiment_dir, det_q),
                 ParticleCommitter(wq).into(CropWriter(experiment_dir))
             ]))
             .merge()
             .stamp("Output Frame")
-            .watchdog(5, [dbwriter, mask_compressor])
+            .watchdog(5, [dbwriter, norm_compressor, mask_compressor, detection_compressor])
             .execute()
         )
     
@@ -152,19 +160,12 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
 
 
 class FrameIter(F):
-    def setup(self, wq, video_file, experiment_uuid):
+    def setup(self, wq, norm_q, video_file, experiment_uuid):
         
         print("Starting FrameIter")
-        
+        self.norm_q = norm_q
         self.meta["experiment_uuid"] = experiment_uuid
         self.meta["experiment_dir"] = os.path.join(config.experiment_dir, str(experiment_uuid))
-        
-        raw_compressor = VideoFile(video_file, self.meta["experiment_dir"], "raw.mp4")
-        raw_compressor.start()
-        
-        norm_compressor = VideoStream(self.meta["experiment_dir"], "extraction.mp4", pix_format="gray")
-        self.norm_q = norm_compressor.input()
-        norm_compressor.start()
         
         print("Loading video.")
         video = Video(video_file)
@@ -173,12 +174,11 @@ class FrameIter(F):
         io.imsave(os.path.join(self.meta["experiment_dir"], "bg.png"), video.extract_background().squeeze())
         
         print("Iterating through", len(video), "frames.")
-        for i in range(50): #len(video)):
+        for i in range(len(video)):
             
             if self.stopped():
-                
-                raw_compressor.stop()
-                norm_compressor.stop()
+                return
+            
             else:
                 
                 frame_uuid = uuid4()
@@ -191,6 +191,11 @@ class FrameIter(F):
                 """, (frame_uuid, experiment_uuid, i)))
                 
                 frame = video.normal_frame(i)
+                
+                
+                #print(frame.shape)
+                print(frame[0,4,0])
+                
                 
                 self.norm_q.push(frame.tobytes())
                 
@@ -282,10 +287,9 @@ class CropProcessor(F):
 
 
 class DetectionProcessor(F):
-    def setup(self, experiment_dir):
-        self.detection_compressor = VideoStream(experiment_dir, "detection.mp4", pix_format="rgb24")
-        self.det_q = self.detection_compressor.input()
-        self.detection_compressor.start()
+    def setup(self, experiment_dir, det_q):
+        self.det_q = det_q
+        
         
     def do(self, detections):
         
@@ -311,7 +315,7 @@ class DetectionProcessor(F):
                 detection_frame[rr, cc, 1] += 50 # Green
         
         self.det_q.push(detection_frame.astype("uint8").tobytes())
-        self.push("DetectionVisualize")
+        self.push("Detection Visualized") # Dummy value
     
     def teardown(self):
         self.det_q.push(None)
@@ -370,5 +374,5 @@ class CropWriter(F):
         for i, crop in enumerate(crops):
             io.imsave(os.path.join(frame_dir, str(track_uuids[i]) + ".jpg"), crop.squeeze(), quality=90) 
         
-        self.push("CropWritten")
+        self.push("Crops Written") # Dummy value
         

@@ -34,11 +34,11 @@ def grab_extraction(args):
         io.imsave(args[2], frame.squeeze())
 
 def grab_background(args):
-
-    from lib.Background import Background
+    
+    from pyyx.Video import Video
     
     if len(args) < 2: print("Please supply \"video image_file\"")
     else:
-        bg = Background(args[0]).extract()
+        bg = Video(args[0]).extract_background()
         io.imsave(args[1], bg.squeeze())
     

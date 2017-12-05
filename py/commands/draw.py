@@ -18,7 +18,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 from lib.Database import Database
-from lib.Video import Video
+from mpyx.Video import Video
 from uuid import UUID
 
 async def main(args):

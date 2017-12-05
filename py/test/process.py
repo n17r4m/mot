@@ -1,4 +1,4 @@
-from lib.Process import *
+from mpyx.Process import *
 
 success = []
 failure = []

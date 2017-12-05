@@ -11,10 +11,10 @@ from skimage.draw import circle
 import config
 
 from lib.Crop import Crop
-from lib.Video import Video
-from lib.Process import F
+from mpyx.Video import Video
+from mpyx.Process import F
 from lib.Database import Database
-from lib.Background import Background
+
 from lib.models.Classifier import Classifier
 
 from dateutil.parser import parse as dateparse
