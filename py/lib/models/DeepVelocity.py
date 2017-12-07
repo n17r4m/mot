@@ -12,9 +12,14 @@ from keras.layers import Input, Dense, Activation
 from keras.layers.normalization import BatchNormalization
 from keras.layers.convolutional import Conv2D
 from keras.layers import concatenate
+from keras.layers import RepeatVector
+from keras.layers import Reshape
+from keras.layers import MaxPooling2D
 from keras.layers.core import Flatten
 from keras.optimizers import Nadam
+from keras.optimizers import SGD
 from keras.layers.advanced_activations import LeakyReLU
+from keras import backend as K
 
 # architecture now takes two states (time t, t+1), encodes them, and 
 # computes their probability of matching
@@ -36,28 +41,47 @@ class DeepVelocity(object):
             print("Network structured input shape is", structured_input.get_shape())
             print("Network screen input shape is", screen_input.get_shape())
             print("Network latent input shape is", lat_input.get_shape())
-
-        # Let's unify the inputs
-        screen_output = Flatten()(screen_input)
-        structured_output = structured_input
-        lat_output = lat_input
         
-        # Create the state encoding network
-        x = concatenate([screen_output, lat_output, structured_output])
-        x = Dense(32)(x)
+        # Broadcast the structured information along
+        # channel dimension.
+        x = RepeatVector(screen_input_shape[0]*screen_input_shape[1])(structured_input)
+        newShape = tuple(list(screen_input_shape)+list(structured_input_shape))
+        x = Reshape(newShape)(x)
+        newShape = tuple(list(screen_input_shape)+[1])
+        y = Reshape(newShape)(screen_input)
+        x = concatenate([y, x])
+        
+        x = Conv2D(16, (5,5))(x)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
-        x = Dense(64)(x)
+        x = Conv2D(32, (3,3))(x)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
-        x = BatchNormalization()(x)
-        x = Dense(128)(x)
+        x = MaxPooling2D(2)(x)
+        x = Conv2D(32, (3,3))(x)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
+        x = Conv2D(32, (3,3))(x)
+        x = BatchNormalization()(x)
+        x = Activation('relu')(x)
+        x = MaxPooling2D(2)(x)
+        x = Flatten()(x)
+
+        x = concatenate([x, lat_input])
         x = Dense(256)(x)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
-        state_output = Dense(8)(x)
+        x = Dense(128)(x)
+        x = BatchNormalization()(x)
+        x = Activation('relu')(x)
+        x = BatchNormalization()(x)
+        x = Dense(64)(x)
+        x = BatchNormalization()(x)
+        x = Activation('relu')(x)
+        x = Dense(32)(x)
+        x = BatchNormalization()(x)
+        x = Activation('relu')(x)
+        state_output = Dense(16)(x)
         
         state_network = Model(inputs=eng_state, outputs=[state_output])
         
@@ -77,17 +101,17 @@ class DeepVelocity(object):
         
         # Create the probability network
         prob_input = concatenate([enc_state_a, enc_state_b])
-        x = Dense(32)(prob_input)
+        x = Dense(128)(prob_input)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
         x = Dense(64)(x)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
         x = BatchNormalization()(x)
-        x = Dense(128)(x)
+        x = Dense(32)(x)
         x = BatchNormalization()(x)
         x = Activation('relu')(x)
-        prob_output = Dense(2, activation='softmax')(x)
+        prob_output = Dense(2, activation='softmax', name="probOutput")(x)
         
 
             
@@ -95,9 +119,10 @@ class DeepVelocity(object):
     
     def compile(self):
         optimizer = Nadam(lr=self.lr, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004)
+        # optimizer = SGD()
         self.probabilityNetwork.compile(
             optimizer=optimizer, 
-            loss=['mse'],
+            loss='contrastive_loss',
             metrics=['acc', 'mse'])
         
     def save_weights(self, path):
@@ -120,3 +145,16 @@ class DeepVelocity(object):
 
     def path(self):
         return os.path.dirname(os.path.realpath(__file__))
+    
+
+        
+def contrastive_loss(y_true, y_pred):
+    '''Contrastive loss from Hadsell-et-al.'06
+    http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
+    '''
+    margin = 1
+    return K.mean(y_true * K.square(y_pred) + (1 - y_true) * K.square(K.maximum(margin - y_pred, 0)))
+    
+from keras.utils.generic_utils import get_custom_objects
+
+get_custom_objects().update({"contrastive_loss": contrastive_loss})

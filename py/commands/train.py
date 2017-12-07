@@ -19,6 +19,7 @@ import time
 import asyncio
 import multiprocessing
 import traceback
+import logging
 from uuid import UUID
 from skimage import io
 
@@ -35,7 +36,7 @@ async def train(args):
     
     try:
         if args[0] == "DeepVelocity":
-            return await train_DeepVelocity(args)
+            return await train_DeepVelocity(args[1:])
             
     except Exception as e:
         print("Uh oh. Something went wrong")
@@ -50,15 +51,33 @@ async def train_DeepVelocity(args):
     os.environ["CUDA_VISIBLE_DEVICES"]="1"
     print('Parent CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
     
-    
-    dataGenerator = DVDataGen(debug=False)
+    if args[1] == "view":
+        debug = True
+    else:
+        debug = False
+    dataGenerator = DVDataGen(debug=debug)
     DV = DeepVelocity(lr=0.0003)
-
-        
+    name = args[0]
+    
+    experimentPath = os.path.join(config.training_dir, name)
+    if not os.path.exists(experimentPath):
+        os.mkdir(experimentPath)
+    
+    logFile = os.path.join(experimentPath, "DV.log")
+    # logging.basicConfig(filename=logFile,level=logging.DEBUG)
+    logger = logging.getLogger('dvTraining')
+    logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler(logFile)
+    fh.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    
     try:
         if args[1] == "view":
             await DVViewer(model=DV,
-                           dataGenerator=dataGenerator)
+                           dataGenerator=dataGenerator,
+                           experimentPath=experimentPath)
         else:
             epochs = int(args[1])
             batchSize = int(args[2])
@@ -72,12 +91,13 @@ async def train_DeepVelocity(args):
                 
             await trainer(args[1:], 
                           model=model,
-                          dataGenerator=dataGenerator)
+                          dataGenerator=dataGenerator,
+                          experimentPath=experimentPath)
     except:
         traceback.print_exc()
         dataGenerator.close()
         
-async def DVViewer(model, dataGenerator):
+async def DVViewer(model, dataGenerator, experimentPath):
     
     dataGenerator = dataGenerator
     await dataGenerator.setup()
@@ -92,7 +112,7 @@ async def DVViewer(model, dataGenerator):
     
     dataBatch.denormalize(dataGenerator.normalizeParams)
     
-    weightFile = "/local/scratch/mot/py/lib/models/weights/DVexp3-epoch{epoch}.h5"
+    modelFile = os.path.join(experimentPath, "modelEpoch{epoch}.h5")
     
     negCount = 1
     posCount = 0
@@ -117,7 +137,7 @@ async def DVViewer(model, dataGenerator):
         
         SIZE = 101
         scaleData = []
-        for scale in [0.001,0.01,0.1,1.0]:
+        for scale in [0.001,0.01,0.1]:
             visData = DataBatch()
             for i in range(SIZE):
                 for j in range(SIZE):
@@ -137,8 +157,8 @@ async def DVViewer(model, dataGenerator):
 
             epochData = []
             
-            for epoch in range(0, 100, 3):
-                DV.load_model(weightFile.format(epoch=epoch+1))
+            for epoch in range(0,20,2):
+                DV.load_model(modelFile.format(epoch=epoch+1))
                 model = DV.probabilityNetwork
                 probs = model.predict(visData.getInput())[:,0]
                 
@@ -160,9 +180,10 @@ async def DVViewer(model, dataGenerator):
             negCount+=1
         if posCount and negCount:
             break
-    np.save('screenBuf', np.array(outputData))
+    screenFile = os.join(experimentPath, "screenBuf.npy")
+    np.save(screenFile, np.array(outputData))
         
-async def trainer(args, model, dataGenerator):
+async def trainer(args, model, dataGenerator, experimentPath):
     '''
     Args: epochs, batchSize
     
@@ -173,11 +194,13 @@ async def trainer(args, model, dataGenerator):
     startEpoch = 0
     epochs = int(args[0])
     batchSize = int(args[1])
-    weightFile = "DVProbNetwork.h5"
-                              
+    weightFile =  os.path.join(experimentPath, "weightsEpoch{epoch}.h5")
+    modelFile = os.path.join(experimentPath, "modelEpoch{epoch}.h5")
+    logger = logging.getLogger('dvTraining')
+    
     if len(args) == 3:          
         startEpoch = int(args[2].split("epoch")[-1].split(".")[0])
-        dataGenerator.changeWeights(weightFile)
+        dataGenerator.changeWeights(weightFile.format(epoch=startEpoch-1))
     
     trainingLosses = []
     testLosses = []
@@ -210,11 +233,8 @@ async def trainer(args, model, dataGenerator):
         epochLoss = np.mean(batchLosses, axis=0)
         trainingLosses.append(epochLoss)
         
-        
-        model.save_weights(weightFile)
-        
-        modelFile = "/local/scratch/mot/py/lib/models/weights/DVexp3-epoch{epoch}.h5".format(epoch=epoch+1)
-        model.save(modelFile)
+        model.save_weights(weightFile.format(epoch=epoch+1))
+        model.save(modelFile.format(epoch=epoch+1))
         
         # Printing section
         trainTime = time.time() - epochStart
@@ -226,7 +246,9 @@ async def trainer(args, model, dataGenerator):
         print(trainingMessage.format(epoch=epoch+1,
                                      time=trainTime,
                                      metrics=metrics))
-        
+        logger.info(trainingMessage.format(epoch=epoch+1,
+                                            time=trainTime,
+                                            metrics=metrics))
         # Test Section
         batchLosses = []
         epochStart = time.time()
@@ -235,7 +257,8 @@ async def trainer(args, model, dataGenerator):
             dataBatch = await dataGenerator.testBatch()
             batchLoss = model.test_on_batch(dataBatch.getInput(), dataBatch.getOutput())
             batchLosses.append(batchLoss)
-
+            sys.stdout.write("Test epoch progress: %d%% %ds   \r" % (100*float(batchNum+1)/dataGenerator.numTestBatch, time.time()-epochStart) )
+            sys.stdout.flush()
         epochLoss = np.mean(batchLosses, axis=0)
         testLosses.append(epochLoss)
         
@@ -249,9 +272,11 @@ async def trainer(args, model, dataGenerator):
         print(testMessage.format(epoch=epoch+1,
                                      time=testTime,
                                      metrics=metrics))
-                                     
+        logger.info(testMessage.format(epoch=epoch+1,
+                                        time=testTime,
+                                        metrics=metrics))            
         dataGenerator.epochEnd()
-        dataGenerator.changeWeights(weightFile)
+        dataGenerator.changeWeights(weightFile.format(epoch=epoch+1))
         
     print("Done")
     
@@ -322,43 +347,6 @@ class DataBatch():
             self.mask[key]["B"][self.mask[key]["B"]<prob] = 0
             self.mask[key]["A"] = np.array(self.mask[key]["A"], dtype=bool)
             self.mask[key]["B"] = np.array(self.mask[key]["B"], dtype=bool)
-            
-        # self.mask["frame"]["A"] = np.random.random(len(self.data["frame"]["A"]))
-        # self.mask["frame"]["B"] = 1.0 - self.mask["frame"]["A"]
-        # self.mask["latent"]["A"] = np.random.random(len(self.data["latent"]["A"]))
-        # self.mask["latent"]["B"] = 1.0 - self.mask["latent"]["A"]
-        # self.mask["location"]["A"] = np.random.random(len(self.data["location"]["A"]))
-        # self.mask["location"]["B"] = 1.0 - self.mask["location"]["A"]
-        
-        # self.mask["frame"]["A"][self.mask["frame"]["A"]>=frameProb] = 1
-        # self.mask["frame"]["A"][self.mask["frame"]["A"]<frameProb] = 0
-        # self.mask["frame"]["B"][self.mask["frame"]["B"]>=frameProb] = 1
-        # self.mask["frame"]["B"][self.mask["frame"]["B"]<frameProb] = 0
-        # self.mask["latent"]["A"][self.mask["latent"]["A"]>=latentProb] = 1
-        # self.mask["latent"]["A"][self.mask["latent"]["A"]<latentProb] = 0
-        # self.mask["latent"]["B"][self.mask["latent"]["B"]>=latentProb] = 1
-        # self.mask["latent"]["B"][self.mask["latent"]["B"]<latentProb] = 0
-        # self.mask["location"]["A"][self.mask["location"]["A"]>=locationProb] = 1
-        # self.mask["location"]["A"][self.mask["location"]["A"]<locationProb] = 0
-        # self.mask["location"]["B"][self.mask["location"]["B"]>=locationProb] = 1
-        # self.mask["location"]["B"][self.mask["location"]["B"]<locationProb] = 0
-        
-        # self.mask["frame"]["A"] = np.array(self.mask["frame"]["A"], dtype=bool)
-        # self.mask["frame"]["B"] = np.array(self.mask["frame"]["B"], dtype=bool)
-        # self.mask["latent"]["A"] = np.array(self.mask["latent"]["A"], dtype=bool)
-        # self.mask["latent"]["B"] = np.array(self.mask["latent"]["B"], dtype=bool)
-        # self.mask["location"]["A"] = np.array(self.mask["location"]["A"], dtype=bool)
-        # self.mask["location"]["B"] = np.array(self.mask["location"]["B"], dtype=bool)
-        
-        # self.mask["frame"]["A"][:split] = False
-        # self.mask["frame"]["B"][:split] = False
-        # self.mask["latent"]["A"][:split] = False
-        # self.mask["latent"]["B"][:split] = False
-        # self.mask["location"]["A"][:split] = False
-        # self.mask["location"]["B"][:split] = False
-        
-        # self.mask["output"] = np.zeros(len(self.data["output"]), dtype=bool)
-        # self.mask["output"][split:] = True
         
     def join(self, dataBatch):
         self.data["frame"]["A"].extend(dataBatch.data["frame"]["A"])
@@ -533,11 +521,11 @@ class DVDataGen(object):
 
         trainQueryQueue = multiprocessing.Queue()
         trainDataQueue = multiprocessing.Queue(2000)
-        self.trainBatchQueue = multiprocessing.Queue(5)
+        self.trainBatchQueue = multiprocessing.Queue(100)
 
         testQueryQueue = multiprocessing.Queue()
         testDataQueue = multiprocessing.Queue(2000)
-        self.testBatchQueue = multiprocessing.Queue(5)
+        self.testBatchQueue = multiprocessing.Queue(100)
     
         for _ in range(epochs*2):
             q = self._trainBatchQuery()
@@ -565,7 +553,8 @@ class DVDataGen(object):
                                           trainInputQueue=trainDataQueue,
                                           trainOutputQueue=self.trainBatchQueue,
                                           testInputQueue=testDataQueue,
-                                          testOutputQueue=self.testBatchQueue)
+                                          testOutputQueue=self.testBatchQueue,
+                                          genNegSamples=not self.debug)
             
         batchProcessor.daemon=True
         batchProcessor.start()
@@ -894,7 +883,6 @@ class DVPredictionProcessor(multiprocessing.Process):
         self.commit_event = multiprocessing.Event()
         
     def run(self):
-        # await self.inner_loop(Database().transaction, self.queue)
         self.go(self.inner_loop, ())
     
     def go(self, fn, args):
@@ -912,14 +900,14 @@ class DVPredictionProcessor(multiprocessing.Process):
             if self.stopped():
                 break
             if not self.weightsQueue.empty():
-                # while not self.outputQueue.empty():
-                #     self.outputQueue.get()
                 weightFile = self.weightsQueue.get()
                 model.load_weights(weightFile)
                 print("Loaded new weights...")
+            # if not self.inputQueue.empty():
             d = self.inputQueue.get()
             probs = model.predict(d)
             self.outputQueue.put(probs)
+
                     
         print("DVNegativeProcessor Exiting")
         
@@ -936,7 +924,8 @@ class DVBatchProcessor(multiprocessing.Process):
     '''
     def __init__(self, batchSize, normalizeParams,
                  trainInputQueue, trainOutputQueue,
-                 testInputQueue, testOutputQueue):
+                 testInputQueue, testOutputQueue,
+                 genNegSamples=True):
         super(DVBatchProcessor, self).__init__()
         
         self.batchSize = batchSize
@@ -954,15 +943,18 @@ class DVBatchProcessor(multiprocessing.Process):
         self.queues["control"] = multiprocessing.Queue()
         self.queues["weight"] = multiprocessing.Queue()
         
-        # self.model = DVPredictionProcessor(self.queues["weight"],
-        #                                   self.queues["input"]["predict"],
-        #                                   self.queues["output"]["predict"])
-        # self.model.start()
+        if genNegSamples:
+            self.model = DVPredictionProcessor(self.queues["weight"],
+                                               self.queues["input"]["predict"],
+                                               self.queues["output"]["predict"])
+            self.model.start()
         
         self.stop_event = multiprocessing.Event()
         self.commit_event = multiprocessing.Event()
         
         self.mode = None
+        
+        self.genNegSamples = genNegSamples
         
     def train(self):
         self.queues["control"].put("train")
@@ -990,24 +982,27 @@ class DVBatchProcessor(multiprocessing.Process):
         predOutputQueue = self.queues["output"]["predict"]
         total=0
         count=0
+        logger = logging.getLogger('dvTraining')
         while True:
             if self.stopped():
                 break
             if self.controlPending() or self.mode is None:
-                
                 # print("mode is ", self.mode)
+                logger.debug("mode is {mode}".format(mode=self.mode))
                 if self.mode == "test":
                     print("accepted / total", count, total)
+                    logger.info("accepted: {count}/{total} ".format(count=count, total=total))
                     total=0
                     count=0
                 self.mode = self.queues["control"].get()
-                # print("mode set to", self.mode)
+                print("mode set to", self.mode)
+                logger.debug("mode set to {mode}".format(mode=self.mode))
                 inputQueue = self.queues["input"][self.mode]
                 outputQueue = self.queues["output"][self.mode]
                 
             dataBatch = DataBatch()
             batchReady=False
-            while len(dataBatch) < self.batchSize // 2:
+            while len(dataBatch) < self.batchSize // (self.genNegSamples+1):
                 if self.stopped():
                     break
                 if self.controlPending():
@@ -1022,13 +1017,12 @@ class DVBatchProcessor(multiprocessing.Process):
                 # print("pos accepted")
                 
             negBatch = DataBatch()
-            genNegSamples=False
-            while len(negBatch) < self.batchSize // 2:
-                if genNegSamples is False:
-                    dataBatch.toNumpy()
-                    dataBatch.shuffle()
-                    dataBatch.normalize(self.normalizeParams)
-                    outputQueue.put(dataBatch)
+            
+            if self.genNegSamples:
+                batchReady = True
+                
+            while len(negBatch) < self.batchSize // (self.genNegSamples+1):
+                if not self.genNegSamples:
                     break
                 if self.stopped():
                     break
@@ -1051,7 +1045,7 @@ class DVBatchProcessor(multiprocessing.Process):
                         break
                     if self.controlPending():
                         break
-                    bias = probs[i][0]
+                    bias = probs[i][1]
                     addData = int(np.random.random() + bias)
                     total+=1
                     if addData:
@@ -1063,12 +1057,13 @@ class DVBatchProcessor(multiprocessing.Process):
                     if len(negBatch) == self.batchSize // 2:
                         batchReady=True
                         break
+            
             if batchReady:
                 dataBatch.join(negBatch)
                 dataBatch.toNumpy()
                 dataBatch.shuffle()
                 dataBatch.normalize(self.normalizeParams)
-                outputQueue.put(dataBatch)
+                outputQueue.put(dataBatch, False)
             
         print("DVBatchProcessor Exiting")
     
