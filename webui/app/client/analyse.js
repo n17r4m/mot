@@ -1,5 +1,6 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
+import { Meteor } from 'meteor/meteor'
 import { Queries } from '../queries'
 
 import './analyse.html';
@@ -7,30 +8,31 @@ import './analyse.html';
 
 
 Template.analyse.onCreated(function makeVars(){
+    
     this.queries = new ReactiveVar([])
-    this.bagList = new ReactiveVar([])
-    this.bagName = new ReactiveVar()
-    this.dayList = new ReactiveVar([])
-    this.dayName = new ReactiveVar()
+    this.days = new ReactiveVar([])
+    this.experiments = new ReactiveVar([])
+    this.experiment = new ReactiveVar()
     this.query = new ReactiveVar()
     this.crops = new ReactiveVar([])
-    //this.plot = new ReactiveVar("<p>Select a Query</p>")
+    
+    Meteor.call('experiment_days', (err, res) => { this.days.set(res.rows) })
+    
+    
+    
 })
 
 Template.analyse.onRendered(function updateDayList(){
     this.$("select.dropdown").dropdown()
     this.queries.set(Queries.filter((q) => q.type == "analyse"))
-    Meteor.call("dayList", (err, list) => {
-        return err ? this.dayList.set("Error") : this.dayList.set(list)
-    })
 })
 
 Template.analyse.helpers({
-    queries() { return Template.instance().queries.get() },
-    dayList() { return Template.instance().dayList.get() },
-    bagList() { return Template.instance().bagList.get() },
-    crops()   { return Template.instance().crops.get()   },
-    arg()     {
+    queries()  { return Template.instance().queries.get()     },
+    dayList()  { return Template.instance().days.get()        },
+    nameList() { return Template.instance().experiments.get() },
+    crops()    { return Template.instance().crops.get()       },
+    arg()      {
         let q = Queries.get(Template.instance().query.get())
         if (q) return q.args || []; else return []
     }
@@ -42,13 +44,12 @@ Template.analyse.events({
         updateChart(instance)
     },
     "change select[name=day]": function daySelect(event, instance){
-        instance.dayName.set(event.currentTarget.value)
-        Meteor.call("bagList", instance.dayName.get(), (err, list) => {
-            return err ? instance.bagList.set(["Error"]) : instance.bagList.set(list)
+        Meteor.call("experiments_on_day", event.currentTarget.value, (err, res) => {
+            instance.experiments.set(res.rows)
         })
     },
-    "change select[name=bag]": function bagSelect(event, instance){
-        instance.bagName.set(event.currentTarget.value)
+    "change select[name=experiment]": function bagSelect(event, instance){
+        instance.experiment.set(event.currentTarget.value)
         updateChart(instance)
     }
 })
@@ -56,14 +57,12 @@ Template.analyse.events({
 
 
 function updateChart(instance){
-    const day = instance.dayName.get(),
-          bn = instance.bagName.get(),
+    const experiment = instance.experiment.get(),
           q  = instance.query.get()
-    if(day && bn && q){
-        Meteor.call("getPlot", day, bn, q, (err, res) => {
+    if(experiment && q){
+        Meteor.call("getPlot", experiment, q, (err, res) => {
             if(err){ alert(err); return }
             var query = Queries[q]
-            
             
             Plotly.newPlot($('#analysis_plot')[0], res.data, res.layout).then((plt) => {
                 
@@ -73,7 +72,7 @@ function updateChart(instance){
                     $("#crop_loader").addClass("active")
                     console.info(plt, data.points)
                     console.info(data.points.map(query.isolate, plt.data))
-                    Meteor.call("getCrops", day, bn, q, data.points.map(query.isolate, plt.data), (err, res) => {
+                    Meteor.call("getCrops", experiment, q, data.points.map(query.isolate, plt.data), (err, res) => {
                         $("#crop_loader").removeClass("active")
                         console.info(err, res)
                         instance.crops.set(res)

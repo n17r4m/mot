@@ -13,7 +13,7 @@ from dateutil.parser import parse as dateparse
 
 async def main(args):
     
-    if len(args) == 0: print("What you want to export to? [syncrude|pymot]")
+    if len(args) == 0: print("What you want to export to? [syncrude|pymot|particlesVelocitiesLatents]")
         
     else:
         if args[0] == "syncrude":
@@ -75,8 +75,10 @@ async def exportParticlesVelocitiesLatents(args):
         AND f2.frame = t2.frame
         AND t1.particle = t2.particle
         AND f1.number = f2.number-1
-        AND e.experiment = 'b6734bad-2dfc-4502-9260-a7d71e72f6a9'
+        AND e.experiment = '3a24cfcf-bef5-40a1-a477-6e7007bcd7ae'
         AND p.area > 100
+        AND f1.number > 200
+        AND f1.number < 500
         AND p.category in (2,3)
         ORDER BY RANDOM()
         LIMIT {limit}

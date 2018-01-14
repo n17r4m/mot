@@ -1,11 +1,17 @@
 from os.path import join as j
 
-data_dir = "/local/scratch/mot/data"
+
+project_dir = "/home/mot"
+data_dir = j(project_dir, "data")
 experiment_dir = j(data_dir, "experiments")
+training_dir = j(data_dir, "training")
+model_dir = j(project_dir, "py", "lib", "models")
 
 detection_threshold = 75
 
-CPUs = 8
-GPUs = 2
+CPUs = 16
+GPUs = 4
 
 crop_size = 64
+
+use_magic_pixel_segmentation = True

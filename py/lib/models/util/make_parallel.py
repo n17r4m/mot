@@ -1,9 +1,8 @@
 #https://github.com/kuza55/keras-extras/blob/master/utils/multi_gpu.py
 
 #from keras.layers import merge
-from keras.layers.merge import concatenate
-from keras.layers.core import Lambda
-from keras.models import Model
+from tensorflow.python.keras.layers import concatenate, Lambda
+from tensorflow.python.keras.models import Model
 
 import tensorflow as tf
 
@@ -28,7 +27,7 @@ def make_parallel(model, gpu_count):
                 #Slice each input into a piece for processing on this GPU
                 for x in model.inputs:
                     input_shape = tuple(x.get_shape().as_list())[1:]
-                    slice_n = Lambda(get_slice, output_shape=input_shape, arguments={'idx':i,'parts':gpu_count})(x)
+                    slice_n = Lambda(get_slice, arguments={'idx':i,'parts':gpu_count})(x)
                     inputs.append(slice_n)                
 
                 outputs = model(inputs)

@@ -1,7 +1,7 @@
 <template name="experiment">
     {{#with experiment}}
         <h1>{{day}} {{name}} {{method}}</h1>
-        <p>{{_id}}</p>
+        <p>{{this.experiment}}</p>
         <p>{{notes}}</p>
         
         <video id="video" controls loop autoplay style="width:100%;" src="/mot/data/experiments/{{_id}}/detection.mp4"></video>

@@ -51,8 +51,8 @@ class VisFrame(F):
         
         latents = []
         locations = []
-
-        frame=frame[1]
+        # print('test:',frame)
+        # frame=frame[1]
         async for particle in self.db.query("SELECT location, latent from Track LEFT JOIN Particle USING(particle) WHERE frame = $1", frame["frame"]):
             locations.append(particle["location"])
             latents.append([float(i) for i in particle["latent"][1:-1].split(',')])

@@ -11,7 +11,8 @@
     "babel-runtime": "^6.26.0",
     "fibers": "^2.0.0",
     "meteor-node-stubs": "~0.2.4",
-    "meteor-pg": "^1.0.9"
+    "pg": "^7.4.1",
+    "pg-native": "^2.2.0"
   },
   "postcss": {
     "plugins": {

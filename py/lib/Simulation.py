@@ -7,13 +7,13 @@ import traceback
 
 class Simulation:
     @store_args
-    def __init__(self, model = "linear", profile = "simple", frames = 1000, width = 2336, height = 1729, segment_size = 10):
+    def __init__(self, model = "linear", profile = "simple", frames = 1000, width = 2336, height = 1729, segment_size = 10, method='simulation'):
         self.motion = getattr(Motion, model)(profile, width, height)
+        self.method = method
         
     async def go(self):
         
         tx, transaction = await Database().transaction()
-        
         
         try:
         
@@ -31,8 +31,8 @@ class Simulation:
         
             experiment_name = str(uuid4())
             
-            experiment_detection = (uuid4(), experiment_name, "simulation_detection", " ".join((self.model, self.profile)))
-            experiment_tracking  = (uuid4(), experiment_name, "simulation_tracking", " ".join((self.model, self.profile)))
+            experiment_detection = (uuid4(), experiment_name, self.method+"_detection", " ".join((self.model, self.profile)))
+            experiment_tracking  = (uuid4(), experiment_name, self.method+"_tracking", " ".join((self.model, self.profile)))
             
             await tx.executemany("""
                 INSERT INTO Experiment (experiment, day, name, method, notes)
@@ -44,9 +44,8 @@ class Simulation:
             
             for f in range(self.frames):
                 
-                print("Frame", f)
-                
                 if f % self.segment_size == 0:
+                    print("Frame", f)
                     segment_detection = (uuid4(), experiment_detection[0], segment_number)
                     segment_tracking  = (uuid4(),  experiment_tracking[0], segment_number)
                     
@@ -63,10 +62,29 @@ class Simulation:
                     particle_tracking_uuids = [uuid4() for i in range(self.motion.quantity)]
                     
                     
-                    particle_latents = []
-                    for p in self.motion.particles:
-                        particle_latents.append(np.random.choice(latent_samples[int(p[6])]))
+                    # particle_latents = []
+                    # for p in self.motion.particles:
+                    #     particle_latents.append(np.random.choice(latent_samples[int(p[6])]))
+                    ### New code to get latents - faster?
+                    nParticles = len(self.motion.particles)
+                   
+                    particle_latents = [0]*nParticles
                     
+                    # categories
+                    for cat in [2,3,4]:
+                        bParticleCats = self.motion.particles[:,6] == cat
+                        particleCats = self.motion.particles[:,6][bParticleCats]
+
+                        latents = np.random.choice(latent_samples[cat],
+                                                   size=particleCats.shape)
+                        
+                        count = 0
+                        for i in range(nParticles):
+                            if bParticleCats[i]:
+                                particle_latents[i] = latents[count]
+                                count += 1
+
+                    ### End New code 
                     
                     particles_uuids_inserted = []
                     
@@ -170,12 +188,20 @@ class Motion:
                                     axμ = 0, axσ = 0, ayμ = 0, ayσ = 0):
                     pass
             
+            # def simple(self):
+            #     PC = self.ParticleClass; return [
+            #     #   name      c   qty  dxμ  dxσ   dyμ  dyσ  axμ  axσ  ayμ  ayσ 
+            #     PC("bitumen", 2,  200, 0.0, 1.0,  5.0, 3.0, 0.0, 0.0, 0.0, 0.0),
+            #     PC("sand",    3,  200, 0.0, 3.0, -3.0, 2.0, 0.0, 0.0, 0.0, 0.0),
+            #     PC("bubble",  4,   50, 0.0, 1.0, 10.0, 4.0, 0.0, 0.0, 0.0, 0.0)]
+                
+                
             def simple(self):
                 PC = self.ParticleClass; return [
-                #   name      c   qty  dxμ  dxσ   dyμ  dyσ  axμ  axσ  ayμ  ayσ 
-                PC("bitumen", 2,  200, 0.0, 1.0,  5.0, 3.0, 0.0, 0.0, 0.0, 0.0),
-                PC("sand",    3,  200, 0.0, 3.0, -3.0, 2.0, 0.0, 0.0, 0.0, 0.0),
-                PC("bubble",  4,   50, 0.0, 1.0, 10.0, 4.0, 0.0, 0.0, 0.0, 0.0)]
+                #   name      c   qty  dxμ  dxσ    dyμ  dyσ  axμ  axσ  ayμ  ayσ 
+                PC("bitumen", 2,  200, 0.0, 0.5, -10.0, 2.0, 0.0, 0.0, 0.0, 0.0),
+                PC("sand",    3,  200, 0.0, 0.5,  10.0, 2.0, 0.0, 0.0, 0.0, 0.0),
+                PC("bubble",  4,   50, 0.0, 0.5, -50.0, 4.0, 0.0, 0.0, 0.0, 0.0)]
                 
             def sandy(self):
                 PC = self.ParticleClass; return [

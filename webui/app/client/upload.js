@@ -1,7 +1,8 @@
 import { Template } from 'meteor/templating'
 import { Session } from 'meteor/session'
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-
+import { Meteor } from 'meteor/meteor'
+import { Client } from 'pg'
 
 import './upload.html';
 
@@ -9,18 +10,26 @@ import './upload.html';
 
 
 Template.upload.onCreated(function sub(){
-    this.subscribe('experiments')
+    this.experiment_list = new ReactiveVar([]);
+    Meteor.call("experiments", (err, res) => {
+        this.experiment_list.set(res.rows)
+    })
 })
 
 
 
 Template.upload.helpers({
-    experiments() { return Experiments.find({}, {sort: { day: -1, name: -1, method: 1 }}) }
+    experiments() { return Template.instance().experiment_list.get() }
 })
 
 Template.upload.events({
-    "click table.experiments tr": (e) => {
-        FlowRouter.go("/app/experiment/:experiment", {experiment: e.currentTarget.dataset.experiment})
+    "click table.experiments tr": (event, instance) => {
+        FlowRouter.go("/app/experiment/:experiment", {
+            experiment: event.currentTarget.dataset.experiment
+        })
     }
     
 })
+
+
+

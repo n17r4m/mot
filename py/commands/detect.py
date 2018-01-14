@@ -118,12 +118,10 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
         print("Starting processor pipeline.")
         (   FrameIter(wq, norm_q, video_file, experiment_uuid)
             .sequence()
-            .stamp("Input Frame")
             .into(By(4, FrameProcessor, experiment_dir, mask_q))
             .into(By(4, PropertiesProcessor))
             .into([CropProcessor(env=e) for e in cuda_envs])
             .order()
-            .stamp("Middle Frame")
             .split(ZueueList([
                 DetectionProcessor(experiment_dir, det_q),
                 ParticleCommitter(wq).into(CropWriter(experiment_dir))
@@ -174,6 +172,12 @@ class FrameIter(F):
         io.imsave(os.path.join(self.meta["experiment_dir"], "bg.png"), video.extract_background().squeeze())
         
         print("Iterating through", len(video), "frames.")
+
+        magic_pixel = 255
+        magic_pixel_delta = 0.1
+        segment_number = -1
+
+        
         for i in range(len(video)):
             
             if self.stopped():
@@ -181,20 +185,31 @@ class FrameIter(F):
             
             else:
                 
+                raw_frame = video.frame(i)
+                frame = video.normal_frame(i)
+                
+                if config.use_magic_pixel_segmentation:
+                    this_frame_magic_pixel = raw_frame[0,4,0]
+                    if abs(this_frame_magic_pixel - magic_pixel) > magic_pixel_delta:
+                        print("Segment Boundry Detected:", i)
+                        segment_number += 1
+                        segment = (uuid4(), experiment_uuid, segment_number)
+                        wq.push(("execute", """
+                            INSERT INTO Segment (segment, experiment, number)
+                            VALUES ($1, $2, $3)
+                        """, segment))
+                    magic_pixel = this_frame_magic_pixel
+                
+                
+                
                 frame_uuid = uuid4()
                 self.meta["frame_uuid"] = frame_uuid
                 self.meta["frame_number"] = i
                 
                 wq.push(("execute", """
-                    INSERT INTO Frame (frame, experiment, number)
-                    VALUES ($1, $2, $3)
-                """, (frame_uuid, experiment_uuid, i)))
-                
-                frame = video.normal_frame(i)
-                
-                
-                #print(frame.shape)
-                print(frame[0,4,0])
+                    INSERT INTO Frame (frame, experiment, segment, number)
+                    VALUES ($1, $2, $3, $4)
+                """, (frame_uuid, experiment_uuid, segment[0], i)))
                 
                 
                 self.norm_q.push(frame.tobytes())
@@ -288,18 +303,37 @@ class CropProcessor(F):
 
 class DetectionProcessor(F):
     def setup(self, experiment_dir, det_q):
+        from PIL import Image, ImageDraw
+        self.PilImage, self.PilDraw = Image, ImageDraw
         self.det_q = det_q
-        
+        # [(Outline colour), (Fill colour)]
+        self.cat_colors = [
+            [(200, 200,   0), (200, 200,   0, 80)],
+            [(0,   200, 200), (0,   200, 200, 80)],
+            [(0,     0, 200), (0,     0, 200, 80)],
+            [(200,   0,   0), (200,   0,   0, 80)],
+            [(0,   200,   0), (0,   200,   0, 80)],
+        ]
         
     def do(self, detections):
         
         (crops, latents, categories, coords, bboxes) = detections
         properties = self.meta["properties"]
         
-        detection_frame = gray2rgb(self.meta["frame"]).squeeze().astype("int32")
+        detection_frame = gray2rgb(self.meta["frame"]).squeeze().astype("uint8")
+        
+        im = self.PilImage.fromarray(detection_frame)
+        draw = self.PilDraw.Draw(im, mode="RGBA")
+        
+        
         
         
         for x, p in enumerate(properties):
+            draw.ellipse(bboxes[x], 
+                outline=self.cat_colors[categories[x]][0],
+                fill=self.cat_colors[categories[x]][1])
+            
+            """
             rr, cc = circle(*p.centroid, p.major_axis_length, detection_frame.shape)
             if categories[x] == 0: # Undefined
                 detection_frame[rr, cc, 0] += 25
@@ -313,14 +347,18 @@ class DetectionProcessor(F):
                 detection_frame[rr, cc, 0] += 50 # Red
             if categories[x] == 4: # Bubbple
                 detection_frame[rr, cc, 1] += 50 # Green
-        
-        self.det_q.push(detection_frame.astype("uint8").tobytes())
+            """
+            
+        self.det_q.push(im.tobytes())
         self.push("Detection Visualized") # Dummy value
     
     def teardown(self):
         self.det_q.push(None)
         
         
+
+
+
 
 class ParticleCommitter(F):
     def setup(self, wq):

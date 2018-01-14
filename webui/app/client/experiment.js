@@ -1,17 +1,20 @@
 import { Template } from 'meteor/templating'
 import { Session } from 'meteor/session'
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra'
-
+import { ReactiveVar } from 'meteor/reactive-var';
 
 import './experiment.html';
 
 
 Template.experiment.onCreated(function sub(){
-    
+    this.experiment = new ReactiveVar()
+    Meteor.call("experiment", Session.get("experiment"), (err, res) => {
+        this.experiment.set(res.rows[0])
+    })
 })
 
 Template.experiment.helpers({
-    experiment() { return Experiments.findOne(Session.get("experiment")) }
+    experiment() { return Template.instance().experiment.get() }
 })
 
 Template.experiment.events({

@@ -59,6 +59,7 @@ import queue
 import asyncio
 from scipy.optimize import golden
 
+from skimage import io
 import time
 
 from uuid import uuid4, UUID
@@ -73,19 +74,80 @@ async def main(args):
         print("What you want to track?")
         print("USING: experiment-uuid [method]")
     else:
-        start = time.time()
-        print(await track_experiment(*args))
-        print('Total time:',time.time()-start)
+        if args[0] == "deep":
+            if args[1] == "all_models":
+                start = time.time()
+                await track_allModels(*args[1:])
+                print('Total time:',time.time()-start)
+            else:
+                start = time.time()
+                await track_model(*args[1:])
+                print('Total time:',time.time()-start)
+        else:    
+            start = time.time()
+            print(await track_experiment(*args))
+            print('Total time:',time.time()-start)
 
-async def track_experiment(experiment_uuid, method='Tracking'):
+
+
+
+async def track_model(experiment_uuid, method, modelName, epoch):
+    from lib.models.DeepVelocity import DeepVelocity
+    os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
+    DV = DeepVelocity()
+    DV.compile()
+    model = DV.probabilityNetwork
+    experimentPath = os.path.join(config.training_dir, modelName)
+
+    weightEpoch = "weightsEpoch{epoch}.h5".format(epoch=epoch)
+    
+    models = [file for file in os.listdir(experimentPath) if file.startswith("weight")]
+    
+    if not weightEpoch in models:
+        print("weight file not found")
+        return
+    
+    weightFile =  os.path.join(experimentPath, weightEpoch)        
+    model.load_weights(weightFile)
+    methodTmp = method+weightEpoch.split(".")[0]
+    print("tracking", methodTmp)
+    await track_experiment(experiment_uuid, methodTmp, model)
+
+async def track_allModels(experiment_uuid, method, modelName):
+    from lib.models.DeepVelocity import DeepVelocity
+    os.environ["CUDA_VISIBLE_DEVICES"]="0,1"
+    DV = DeepVelocity()
+    DV.compile()
+    model = DV.probabilityNetwork
+    experimentPath = os.path.join(config.training_dir, modelName)
+
+    
+    models = [file for file in os.listdir(experimentPath) if file.startswith("weight")]
+
+    for weightEpoch in models:
+        weightFile =  os.path.join(experimentPath, weightEpoch)        
+        model.load_weights(weightFile)
+        methodTmp = method+weightEpoch.split(".")[0]
+        print("tracking",methodTmp)
+        await track_experiment(experiment_uuid, methodTmp, model)
+
+async def track_experiment(experiment_uuid, method='Tracking', model=None):
     '''
     
     '''
     cpus = multiprocessing.cpu_count()
     loop = asyncio.get_event_loop()
     db = Database()
-    # Clone the experiment
     
+    if isinstance(model, str):
+        from lib.models.DeepVelocity import DeepVelocity
+        DV = DeepVelocity()
+        DV.compile()
+        model = DV.probabilityNetwork
+        weightFile = os.path.join(config.model_dir, model, ".h5")        
+        model.load_weights(weightFile)
+
+    # Clone the experiment
     try:
         start = time.time()
         tx, transaction = await db.transaction()
@@ -116,7 +178,9 @@ async def track_experiment(experiment_uuid, method='Tracking'):
             Cen = 150
             Cex = 150
             edge_data = dict()
+            dvEdges = []
             costs = []
+            dvCosts = []
             
             q = """
                 SELECT f1.frame as fr1, f2.frame as fr2,
@@ -154,7 +218,7 @@ async def track_experiment(experiment_uuid, method='Tracking'):
                 """
             s = q.format(segment=segment["segment"])
             async for edges in db.query(s):
-                if  edges['tr1'] not in edge_data:
+                if edges['tr1'] not in edge_data:
                     edge_data[edges['tr1']] = {'track': edges['tr1'],
                                                'frame': edges['fr1'],
                                                'location': edges['location1'],
@@ -221,24 +285,71 @@ async def track_experiment(experiment_uuid, method='Tracking'):
                 # Cij = -Log(Plink(xi|xj)), Plink = Psize*Pposiiton*Pappearance*Ptime
                 Cij = int(edges["cost"])
                 costs.append(Cij)
-                mcf_graph.add_edge(v1, u2, weight=Cij, capacity=1)
-            
-        
+                
+                if not model:
+                    mcf_graph.add_edge(v1, u2, weight=Cij, capacity=1)
+                else:
+                    dvEdges.append((v1,u2))
+
             if mcf_graph.n_nodes == 2: # only START and END nodes present (empty)
                 print("Nothing in segment")    
                 continue
-            # print("nodes:", mcf_graph.n_nodes)
-            # print("min cost", np.min(costs))
-            # print("average cost", np.average(costs))
-            # print("max cost", np.max(costs))
+            
+            if model:
+                batch = DataBatch()
+                for v1, u2 in dvEdges:
+                    v1Data = edge_data[UUID(v1[2:])]
+                    u2Data = edge_data[UUID(u2[2:])]
+                    
+                    loc1 = (v1Data["location"][0], v1Data["location"][1])
+                    loc2 = (u2Data["location"][0], u2Data["location"][1])
+                    frameFile1 = os.path.join(config.experiment_dir, 
+                                              experiment_uuid,
+                                              str(v1Data["frame"]),
+                                              '64x64.png')
+                    frame1 = io.imread(frameFile1, as_grey=True)
+                    
+                    frameFile2 = os.path.join(config.experiment_dir, 
+                                              experiment_uuid,
+                                              str(u2Data["frame"]),
+                                              '64x64.png')
+                    frame2 = io.imread(frameFile2, as_grey=True)
+                    
+                    latent1_string = v1Data["latent"][1:-1].split(',')
+                    latent1 = [float(i) for i in latent1_string]
+                    
+                    latent2_string = u2Data["latent"][1:-1].split(',')
+                    latent2 = [float(i) for i in latent2_string]   
+                    
+                    batch.addLocation(loc1, loc2)
+                    batch.addFrame(frame1, frame2)
+                    batch.addLatent(latent1, latent2)
+                    batch.addOutput([0.0,0.0])
+                # make the batch divisible by # gpus
+                
+                while len(batch) % 4:
+                    # print(len(batch))
+                    batch.addLocation(loc1, loc2)
+                    batch.addFrame(frame1, frame2)
+                    batch.addLatent(latent1, latent2)
+                    batch.addOutput([0.0,0.0])
+            
+                batch.normParams()
+                batch.toNumpy()
+                batch.normalize(batch.normalizeParams)
+                probs = model.predict(batch.getInput())
+                
+                for i, (v1, u2) in enumerate(dvEdges):
+                    Cij = np.int32( min( -100 * np.log(probs[i][0]), 2147483647) )
+                    dvCosts.append(Cij)
+                    mcf_graph.add_edge(v1, u2, weight=Cij, capacity=1)
+                        
+                print('dvCt', np.min(dvCosts), np.mean(dvCosts), np.max(dvCosts))
+            print('cost', np.min(costs), np.mean(costs), np.max(costs))
+
             print("Solving min-cost-flow for segment")
 
             demand = goldenSectionSearch(mcf_graph, 0, mcf_graph.n_nodes//4, mcf_graph.n_nodes//2, 10, memo=None)
-            # (min_cost, demand, nEval) = golden(mcf_graph.solve, 
-            #                                   (), 
-            #                                   brack=(0,512,2048), 
-            #                                   tol=10, 
-            #                                   full_output=True)
             
             print("Optimal number of tracks", demand)
             min_cost = mcf_graph.solve(demand)
@@ -318,7 +429,7 @@ async def track_experiment(experiment_uuid, method='Tracking'):
     
     else:  
     ##################  OK: COMMIT DB TRANSACTRION    ###############
-        print('made it! :)')
+        print('made it! :)')            
         await transaction.commit()
         
     return new_experiment_uuid
@@ -332,12 +443,34 @@ async def clone_experiment(experiment_uuid, tx, method, testing=False):
     experiment_path = join(config.experiment_dir, str(experiment_uuid))
     
     base_files = [file for file in os.listdir(experiment_path) if isfile(join(experiment_path, file))]
+
+    s = """
+        SELECT frame
+        FROM frame
+        WHERE experiment = '{experiment}'
+        """
+    q = s.format(experiment=experiment_uuid)
+    dbFrames = []
+    async for row in tx.cursor(q):
+        dbFrames.append(str(row['frame']))
+        
+    osFrames = [frame for frame in os.listdir(experiment_path) if isdir(join(experiment_path, frame))]
+    frame_uuid_map = {UUID(f): uuid4() for f in dbFrames}
     
-    frames = [frame for frame in os.listdir(experiment_path) if isdir(join(experiment_path, frame))]
-    frame_uuid_map = {UUID(f): uuid4() for f in frames}
+    s = """
+        SELECT t.frame as frame, track
+        FROM track t, frame f
+        WHERE t.frame = f.frame
+        AND f.experiment = '{experiment}'
+        """
+    q = s.format(experiment=experiment_uuid)
+    dbTracks = []
+    async for row in tx.cursor(q):
+        dbTracks.append(str(row['track']))
     
-    tracks = [(frame, os.path.splitext(track)) for frame in frames for track in os.listdir(join(experiment_path, frame))]
-    track_uuid_map = {UUID(track[1][0]): uuid4() for track in tracks}
+    
+    osTracks = [(frame, os.path.splitext(track)) for frame in osFrames for track in os.listdir(join(experiment_path, frame)) if len(track) == 40]
+    track_uuid_map = {UUID(track): uuid4() for track in dbTracks}
     
     # tracks = [(frame, (uuid, ext))]
     
@@ -369,9 +502,9 @@ async def clone_experiment(experiment_uuid, tx, method, testing=False):
     
     # Create null segment for frames with no segment.
     # A workaround until segment is improved
-    segment_uuid = uuid4()
-    segment_uuid_map[None] = {"segment": segment_uuid, "number": -1}
-    segment_insert.append((segment_uuid, new_experiment_uuid, -1))
+    # segment_uuid = uuid4()
+    # segment_uuid_map[None] = {"segment": segment_uuid, "number": -1}
+    # segment_insert.append((segment_uuid, new_experiment_uuid, -1))
     
     
     await tx.executemany("INSERT INTO Segment (segment, experiment, number) VALUES ($1, $2, $3)", segment_insert)
@@ -384,16 +517,16 @@ async def clone_experiment(experiment_uuid, tx, method, testing=False):
             INSERT INTO Frame (frame, experiment, segment, number) 
             SELECT $1, $2, $3, number FROM Frame
             WHERE frame = $4
-            """, [(frame_uuid_map[UUID(frame)], new_experiment_uuid, frame_segment_map[UUID(frame)], UUID(frame)) for frame in frames])
+            """, [(frame_uuid_map[UUID(frame)], new_experiment_uuid, frame_segment_map[UUID(frame)], UUID(frame)) for frame in dbFrames])
     
     if not testing:
-        for track in tracks:
+        for track in osTracks:
             os.link(
                 join(experiment_path, track[0], "".join(track[1])), 
                 join(new_experiment_path, 
                     str(frame_uuid_map[UUID(track[0])]), 
                     str(track_uuid_map[UUID(track[1][0])]) + track[1][1]))
-    
+
     return (new_experiment_uuid, frame_uuid_map, track_uuid_map)
     
 class MCF_GRAPH_HELPER:
@@ -557,3 +690,248 @@ def goldenSectionSearch(f, a, c, b, absolutePrecision, memo=None):
         return goldenSectionSearch(f, c, d, b, absolutePrecision, memo)
     else:
         return goldenSectionSearch(f, d, c, a, absolutePrecision, memo)
+
+
+class DataBatch():
+    def __init__(self):
+        self.data = dict()
+        
+        self.data["frame"] = {"A": [], "B": []}
+        self.data["latent"] = {"A": [], "B": []}
+        self.data["location"] = {"A": [], "B": []}
+        self.data["output"] = []
+        self.current = 0
+    
+    def copy(self):
+        '''
+        return a copy of this databatch
+        '''
+        foo = DataBatch()
+        
+        for k,v in self.data.items():
+            if isinstance(v, dict):
+                for _k, _v in v.items():
+                    foo.data[k][_k] = _v.copy()
+            else:
+                foo.data[k] = v.copy()
+        
+        return foo
+        
+    def combine(self, dataBatch):
+        '''
+        combines two databatches using the randomMasks method
+        '''
+        self.randomMasks()
+        self.data["frame"]["A"][self.mask["frame"]["A"]] = dataBatch.data["frame"]["A"][self.mask["frame"]["A"]]
+        self.data["frame"]["B"][self.mask["frame"]["B"]] = dataBatch.data["frame"]["B"][self.mask["frame"]["B"]]
+        self.data["latent"]["A"][self.mask["latent"]["A"]] = dataBatch.data["latent"]["A"][self.mask["latent"]["A"]]
+        self.data["latent"]["B"][self.mask["latent"]["B"]] = dataBatch.data["latent"]["B"][self.mask["latent"]["B"]]
+        self.data["location"]["A"][self.mask["location"]["A"]] = dataBatch.data["location"]["A"][self.mask["location"]["A"]]
+        self.data["location"]["B"][self.mask["location"]["B"]] = dataBatch.data["location"]["B"][self.mask["location"]["B"]]
+        # self.data["output"][self.mask["output"]] = dataBatch.data["output"][self.mask["output"]]
+    
+    def randomMasks(self):
+        self.mask = dict()
+        
+        self.mask["frame"] = {"A": [], "B": []}
+        self.mask["latent"] = {"A": [], "B": []}
+        self.mask["location"] = {"A": [], "B": []}
+        self.mask["output"] = []        
+        
+        # Probability of a feature remaining unchanged... sort of
+        # we'll take the complement for A B state pairs probability
+        # to guarantee only either A or B are randomized
+        probs = {"frame": 0.5,
+                 "latent": 0.5,
+                 "location": 0.5}
+        
+        keys = ["frame", "latent", "location"]
+        
+        selectedKeys = np.random.choice(keys, size=1, replace=False)
+        
+        for key in selectedKeys:
+            prob = probs[key]
+            self.mask[key]["A"] = np.random.random(len(self.data[key]["A"]))
+            self.mask[key]["B"] = 1.0 - self.mask[key]["A"]
+            self.mask[key]["A"][self.mask[key]["A"]>=prob] = 1
+            self.mask[key]["A"][self.mask[key]["A"]<prob] = 0
+            self.mask[key]["B"][self.mask[key]["B"]>=prob] = 1
+            self.mask[key]["B"][self.mask[key]["B"]<prob] = 0
+            self.mask[key]["A"] = np.array(self.mask[key]["A"], dtype=bool)
+            self.mask[key]["B"] = np.array(self.mask[key]["B"], dtype=bool)
+            
+        # self.mask["frame"]["A"] = np.random.random(len(self.data["frame"]["A"]))
+        # self.mask["frame"]["B"] = 1.0 - self.mask["frame"]["A"]
+        # self.mask["latent"]["A"] = np.random.random(len(self.data["latent"]["A"]))
+        # self.mask["latent"]["B"] = 1.0 - self.mask["latent"]["A"]
+        # self.mask["location"]["A"] = np.random.random(len(self.data["location"]["A"]))
+        # self.mask["location"]["B"] = 1.0 - self.mask["location"]["A"]
+        
+        # self.mask["frame"]["A"][self.mask["frame"]["A"]>=frameProb] = 1
+        # self.mask["frame"]["A"][self.mask["frame"]["A"]<frameProb] = 0
+        # self.mask["frame"]["B"][self.mask["frame"]["B"]>=frameProb] = 1
+        # self.mask["frame"]["B"][self.mask["frame"]["B"]<frameProb] = 0
+        # self.mask["latent"]["A"][self.mask["latent"]["A"]>=latentProb] = 1
+        # self.mask["latent"]["A"][self.mask["latent"]["A"]<latentProb] = 0
+        # self.mask["latent"]["B"][self.mask["latent"]["B"]>=latentProb] = 1
+        # self.mask["latent"]["B"][self.mask["latent"]["B"]<latentProb] = 0
+        # self.mask["location"]["A"][self.mask["location"]["A"]>=locationProb] = 1
+        # self.mask["location"]["A"][self.mask["location"]["A"]<locationProb] = 0
+        # self.mask["location"]["B"][self.mask["location"]["B"]>=locationProb] = 1
+        # self.mask["location"]["B"][self.mask["location"]["B"]<locationProb] = 0
+        
+        # self.mask["frame"]["A"] = np.array(self.mask["frame"]["A"], dtype=bool)
+        # self.mask["frame"]["B"] = np.array(self.mask["frame"]["B"], dtype=bool)
+        # self.mask["latent"]["A"] = np.array(self.mask["latent"]["A"], dtype=bool)
+        # self.mask["latent"]["B"] = np.array(self.mask["latent"]["B"], dtype=bool)
+        # self.mask["location"]["A"] = np.array(self.mask["location"]["A"], dtype=bool)
+        # self.mask["location"]["B"] = np.array(self.mask["location"]["B"], dtype=bool)
+        
+        # self.mask["frame"]["A"][:split] = False
+        # self.mask["frame"]["B"][:split] = False
+        # self.mask["latent"]["A"][:split] = False
+        # self.mask["latent"]["B"][:split] = False
+        # self.mask["location"]["A"][:split] = False
+        # self.mask["location"]["B"][:split] = False
+        
+        # self.mask["output"] = np.zeros(len(self.data["output"]), dtype=bool)
+        # self.mask["output"][split:] = True
+        
+    def join(self, dataBatch):
+        self.data["frame"]["A"].extend(dataBatch.data["frame"]["A"])
+        self.data["frame"]["B"].extend(dataBatch.data["frame"]["B"])
+        self.data["latent"]["A"].extend(dataBatch.data["latent"]["A"])
+        self.data["latent"]["B"].extend(dataBatch.data["latent"]["B"])
+        self.data["location"]["A"].extend(dataBatch.data["location"]["A"])
+        self.data["location"]["B"].extend(dataBatch.data["location"]["B"])
+        self.data["output"].extend(dataBatch.data["output"])
+        
+    def toNumpy(self):
+        self.data["frame"]["A"] = np.array(self.data["frame"]["A"], dtype=float)
+        self.data["frame"]["B"] = np.array(self.data["frame"]["B"], dtype=float)
+        self.data["latent"]["A"] = np.array(self.data["latent"]["A"])
+        self.data["latent"]["B"] = np.array(self.data["latent"]["B"])
+        self.data["location"]["A"] = np.array(self.data["location"]["A"])
+        self.data["location"]["B"] = np.array(self.data["location"]["B"])
+        self.data["output"] = np.array(self.data["output"])
+
+    def shuffle(self):
+        rng_state = np.random.get_state()
+        
+        for k,v in self.data.items():
+            if isinstance(v, dict):
+                for _k, _v in v.items():
+                    np.random.shuffle(_v)
+                    np.random.set_state(rng_state)
+            else:
+                np.random.shuffle(v)
+                np.random.set_state(rng_state)
+    
+    def normParams(self):
+        d = {"frame": None, "location": None}
+        frameMean = np.mean(self.data["frame"]["A"] +
+                            self.data["frame"]["B"])
+        frameStd = np.std(self.data["frame"]["A"] +
+                          self.data["frame"]["B"])    
+        locMean = np.mean(self.data["location"]["A"] +
+                          self.data["location"]["B"])
+        locStd = np.std(self.data["location"]["A"] + 
+                        self.data["location"]["B"])
+                         
+        d["frame"] = (frameMean, frameStd)
+        d["location"] = (locMean, locStd)
+        
+        self.normalizeParams = d
+            
+    def normalize(self, params):
+        for feature, stats in params.items():
+            mean, std = stats
+            self.data[feature]["A"] -= mean
+            self.data[feature]["A"] /= std
+            self.data[feature]["B"] -= mean
+            self.data[feature]["B"] /= std
+        
+    def denormalize(self, params):
+        for feature, stats in params.items():
+            mean, std = stats        
+            self.data[feature]["A"] *= std
+            self.data[feature]["A"] += mean
+            self.data[feature]["B"] *= std
+            self.data[feature]["B"] += mean
+                
+    def addInput(self, A):
+        '''
+        eng = [locationA, latentA, frameA,
+               locationB, latentB, frameB]
+        '''
+        self.addLocation(A[0], A[3])
+        self.addLatent(A[1], A[4])
+        self.addFrame(A[2], A[5])
+    
+    def addDataPoint(self, d):
+        self.addLocation(d["loc1"], d["loc2"])
+        self.addLatent(d["lat1"], d["lat2"])
+        self.addFrame(d["frame1"], d["frame2"])
+        self.addOutput(d["output"])
+        
+    def getDataPoint(self, i):
+        r = {"frame1": self.data["frame"]["A"][i],
+             "frame2": self.data["frame"]["B"][i],
+             "lat1": self.data["latent"]["A"][i],
+             "lat2": self.data["latent"]["B"][i],
+             "loc1": self.data["location"]["A"][i],
+             "loc2": self.data["location"]["B"][i],
+             "output": self.data["output"][i]
+            }
+        return r
+                             
+    def getInput(self, start=None, end=None):
+        engA = [self.data["location"]["A"][start:end],
+                self.data["latent"]["A"][start:end],
+                self.data["frame"]["A"][start:end]]
+        
+        engB = [self.data["location"]["B"][start:end],
+                self.data["latent"]["B"][start:end],
+                self.data["frame"]["B"][start:end]]
+                
+        return engA + engB
+        
+    def getOutput(self, start=None, end=None):
+        return self.data["output"][start:end]
+    
+    def addOutput(self, A):
+        self.data["output"].append(A)
+        
+    def addLocation(self, A, B):
+        self.data["location"]["A"].append(A)
+        self.data["location"]["B"].append(B)
+        
+    def addLatent(self, A, B):
+        self.data["latent"]["A"].append(A)
+        self.data["latent"]["B"].append(B)
+    
+    def addFrame(self, A, B):
+        self.data["frame"]["A"].append(A)
+        self.data["frame"]["B"].append(B)
+        
+    def setOutput(self, A):
+        self.data["output"] = A
+        
+    def __len__(self):
+        return len(self.data["output"])
+        
+    def __iter__(self):
+        return self
+    
+    def __next__(self):
+        if self.current > len(self):
+            raise StopIteration
+        else:
+            self.current += 1
+            
+            dataInputs = self.getInput(self.current-1, self.current)
+            dataInput = [i[0] for i in dataInputs]
+            dataOutput = self.getOutput(self.current-1, self.current)
+            
+            return (dataInput, dataOutput)
+   

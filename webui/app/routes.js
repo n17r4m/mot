@@ -31,9 +31,6 @@ FlowRouter.route('/app/upload', {
 });
 
 FlowRouter.route('/app/experiment/:experiment', {
-    waitOn(params, queryParams) {
-        return Meteor.subscribe("experiments")
-    },
     action(params) {
         Session.set("experiment", params.experiment)
         BlazeLayout.render("app", {main: "experiment"});

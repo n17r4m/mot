@@ -27,7 +27,7 @@ async def main():
         
         command, args = opts.args[0], opts.args[1:]
         module = __import__("commands." + command)
-        await getattr(module, command).main(args)
+        print(await getattr(module, command).main(args))
         
     except ImportError as e:
         

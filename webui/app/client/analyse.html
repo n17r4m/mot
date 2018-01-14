@@ -13,14 +13,14 @@
     <select name="day" class="ui selection dropdown">
       <option class="item" value="">Select an experiment day</option>
       {{#each dayList}}
-      <option value={{this}} class="item">{{this}}</option>
+      <option value={{_id}} class="item">{{_id}}</option>
       {{/each}}
     </select>    
     
-    <select name="bag" class="ui selection dropdown">
-      <option class="item" value="">Select a bag</option>
-      {{#each bagList}}
-      <option value={{this}} class="item">{{this}}</option>
+    <select name="experiment" class="ui selection dropdown">
+      <option class="item" value="">Select an experiment</option>
+      {{#each nameList}}
+      <option value={{_id}} class="item">{{name}}</option>
       {{/each}}
     </select>
     

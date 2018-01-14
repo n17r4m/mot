@@ -1,5 +1,5 @@
 """
-A command that should enable the user to train a learning model.ArithmeticError
+A command that should enable the user to train a learning model
 
 First designed for DeepVelocity...
 
@@ -20,6 +20,8 @@ import asyncio
 import multiprocessing
 import traceback
 import logging
+from shutil import copyfile
+
 from uuid import UUID
 from skimage import io
 
@@ -48,13 +50,14 @@ async def train(args):
     print('Fin')
 
 async def train_DeepVelocity(args):
-    os.environ["CUDA_VISIBLE_DEVICES"]="1"
-    print('Parent CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
-    
     if args[1] == "view":
-        debug = True
+        debug = False
     else:
         debug = False
+        print("DEBUG:", debug)
+        os.environ["CUDA_VISIBLE_DEVICES"]="2"
+        print('Parent CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
+        
     dataGenerator = DVDataGen(debug=debug)
     DV = DeepVelocity(lr=0.0003)
     name = args[0]
@@ -62,9 +65,13 @@ async def train_DeepVelocity(args):
     experimentPath = os.path.join(config.training_dir, name)
     if not os.path.exists(experimentPath):
         os.mkdir(experimentPath)
-    
+
     logFile = os.path.join(experimentPath, "DV.log")
     # logging.basicConfig(filename=logFile,level=logging.DEBUG)
+    
+    if args[1] == "view":
+        logFile = os.path.join(experimentPath, "view.log")
+    
     logger = logging.getLogger('dvTraining')
     logger.setLevel(logging.DEBUG)
     fh = logging.FileHandler(logFile)
@@ -72,19 +79,26 @@ async def train_DeepVelocity(args):
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     fh.setFormatter(formatter)
     logger.addHandler(fh)
-    
+
     try:
         if args[1] == "view":
+            logger.info("Running DVViewer")
             await DVViewer(model=DV,
                            dataGenerator=dataGenerator,
                            experimentPath=experimentPath)
         else:
+            logger.info("Running DVTrainer")
+            src = os.path.join(config.project_dir, "py/lib/models/DeepVelocity.py")
+            dst = os.path.join(experimentPath, "DeepVelocity.py")
+            copyfile(src, dst)
             epochs = int(args[1])
             batchSize = int(args[2])
             await dataGenerator.setup(batchSize=batchSize,
                                       epochs=epochs)
             if len(args) == 4:
-                DV.load_model(args[3])    
+                modelFile = os.path.join(experimentPath, "modelEpoch{epoch}.h5")
+                startEpoch = int(args[3])
+                DV.load_model(modelFile.format(epoch=startEpoch-1))
             else:
                 DV.compile()
             model = DV.probabilityNetwork 
@@ -103,6 +117,7 @@ async def DVViewer(model, dataGenerator, experimentPath):
     await dataGenerator.setup()
     
     DV = model 
+    DV.compile()
     model = DV.probabilityNetwork
 
     dataGenerator.epochBegin()
@@ -112,7 +127,7 @@ async def DVViewer(model, dataGenerator, experimentPath):
     
     dataBatch.denormalize(dataGenerator.normalizeParams)
     
-    modelFile = os.path.join(experimentPath, "modelEpoch{epoch}.h5")
+    weightFile = os.path.join(experimentPath, "weightsEpoch{epoch}.h5")
     
     negCount = 1
     posCount = 0
@@ -135,9 +150,9 @@ async def DVViewer(model, dataGenerator, experimentPath):
             
         loc1, lat1, f1, loc2, lat2, f2 = dataInput
         
-        SIZE = 101
+        SIZE = 60
         scaleData = []
-        for scale in [0.001,0.01,0.1]:
+        for scale in [0.1,1.0]:
             visData = DataBatch()
             for i in range(SIZE):
                 for j in range(SIZE):
@@ -157,9 +172,8 @@ async def DVViewer(model, dataGenerator, experimentPath):
 
             epochData = []
             
-            for epoch in range(0,20,2):
-                DV.load_model(modelFile.format(epoch=epoch+1))
-                model = DV.probabilityNetwork
+            for epoch in range(0,20):
+                model.load_weights(weightFile.format(epoch=epoch+1))
                 probs = model.predict(visData.getInput())[:,0]
                 
                 screenBuf = np.zeros((SIZE, SIZE))
@@ -180,9 +194,10 @@ async def DVViewer(model, dataGenerator, experimentPath):
             negCount+=1
         if posCount and negCount:
             break
-    screenFile = os.join(experimentPath, "screenBuf.npy")
+    screenFile = os.path.join(experimentPath, "screenBuf.npy")
     np.save(screenFile, np.array(outputData))
         
+
 async def trainer(args, model, dataGenerator, experimentPath):
     '''
     Args: epochs, batchSize
@@ -198,8 +213,9 @@ async def trainer(args, model, dataGenerator, experimentPath):
     modelFile = os.path.join(experimentPath, "modelEpoch{epoch}.h5")
     logger = logging.getLogger('dvTraining')
     
-    if len(args) == 3:          
-        startEpoch = int(args[2].split("epoch")[-1].split(".")[0])
+    if len(args) == 3:
+        startEpoch = int(args[2])
+        logger.info("Resuming training at epoch {epoch}".format(epoch=startEpoch))
         dataGenerator.changeWeights(weightFile.format(epoch=startEpoch-1))
     
     trainingLosses = []
@@ -254,7 +270,7 @@ async def trainer(args, model, dataGenerator, experimentPath):
         epochStart = time.time()
         dataGenerator.testBegin()
         for batchNum in range(dataGenerator.numTestBatch):
-            dataBatch = await dataGenerator.testBatch()
+            dataBatch = await dataGenerator.testBatch()            
             batchLoss = model.test_on_batch(dataBatch.getInput(), dataBatch.getOutput())
             batchLosses.append(batchLoss)
             sys.stdout.write("Test epoch progress: %d%% %ds   \r" % (100*float(batchNum+1)/dataGenerator.numTestBatch, time.time()-epochStart) )
@@ -279,7 +295,7 @@ async def trainer(args, model, dataGenerator, experimentPath):
         dataGenerator.changeWeights(weightFile.format(epoch=epoch+1))
         
     print("Done")
-    
+      
 class DataBatch():
     def __init__(self):
         self.data = dict()
@@ -334,6 +350,7 @@ class DataBatch():
                  "location": 0.5}
         
         keys = ["frame", "latent", "location"]
+        # keys = ["location"]
         
         selectedKeys = np.random.choice(keys, size=1, replace=False)
         
@@ -477,10 +494,10 @@ class DVDataGen(object):
         self.numTrainBatch = None
         self.numTestBatch = None
         self.splitPercent = 0.8
-        self.method =  "simulation_tracking"
+        self.method =  "simulation_tracking2"
         self.debug = debug
         self.db = Database()
-    
+        self.logger = logging.getLogger('dvTraining')
         self.processors = []
 
     def _split(self):
@@ -518,7 +535,8 @@ class DVDataGen(object):
         for feature, stats in self.normalizeParams.items():
             print("{feature} mean/std {stats}".format(feature=feature,
                                                       stats=stats))
-
+            self.logger.info("{feature} mean/std {stats}".format(feature=feature,
+                                                      stats=stats))
         trainQueryQueue = multiprocessing.Queue()
         trainDataQueue = multiprocessing.Queue(2000)
         self.trainBatchQueue = multiprocessing.Queue(100)
@@ -685,10 +703,10 @@ class DVDataGen(object):
         '''
         
         if self.debug:
-            frameMean = 172.2
-            frameStd = 21.8
-            locationMean = 1000.0
-            locationStd = 585
+            frameMean = 111.0
+            frameStd = 27.0
+            locationMean = 1022.0
+            locationStd = 611.0
         else:
             sampleSize = 10000
             frames = []
@@ -891,10 +909,12 @@ class DVPredictionProcessor(multiprocessing.Process):
     # dun know if this works or not.. todo: test.
     async def inner_loop(self):
         print("DVPredictionProcessor ready.")
-        os.environ["CUDA_VISIBLE_DEVICES"]="0"
+        os.environ["CUDA_VISIBLE_DEVICES"]="3"
         print('Child CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
 
-        model = DeepVelocity().probabilityNetwork
+        DV = DeepVelocity()
+        DV.compile()
+        model = DV.probabilityNetwork
             
         while True:
             if self.stopped():
@@ -905,6 +925,7 @@ class DVPredictionProcessor(multiprocessing.Process):
                 print("Loaded new weights...")
             # if not self.inputQueue.empty():
             d = self.inputQueue.get()
+
             probs = model.predict(d)
             self.outputQueue.put(probs)
 
@@ -994,15 +1015,24 @@ class DVBatchProcessor(multiprocessing.Process):
                     logger.info("accepted: {count}/{total} ".format(count=count, total=total))
                     total=0
                     count=0
+
                 self.mode = self.queues["control"].get()
                 print("mode set to", self.mode)
                 logger.debug("mode set to {mode}".format(mode=self.mode))
+
                 inputQueue = self.queues["input"][self.mode]
                 outputQueue = self.queues["output"][self.mode]
-                
+
+                if self.mode == "test":
+                    self.genNegSamples = False
+                    pass
+                elif self.mode == "train":                    
+                    self.genNegSamples = True
+                    pass
+                    
             dataBatch = DataBatch()
             batchReady=False
-            while len(dataBatch) < self.batchSize // (self.genNegSamples+1):
+            while len(dataBatch) < (self.batchSize // (self.genNegSamples+1)):
                 if self.stopped():
                     break
                 if self.controlPending():
@@ -1014,13 +1044,13 @@ class DVBatchProcessor(multiprocessing.Process):
                 dataBatch.addLatent(d["lat1"], d["lat2"])
                 dataBatch.addLocation(d["loc1"], d["loc2"])
                 dataBatch.addOutput([1.0, 0.0])
-                # print("pos accepted")
+                # logger.debug("pos accepted")
                 
+            if not self.genNegSamples and len(dataBatch) == self.batchSize:
+                batchReady=True
+
             negBatch = DataBatch()
-            
-            if self.genNegSamples:
-                batchReady = True
-                
+                            
             while len(negBatch) < self.batchSize // (self.genNegSamples+1):
                 if not self.genNegSamples:
                     break
@@ -1030,6 +1060,11 @@ class DVBatchProcessor(multiprocessing.Process):
                     break
                 dataBatchTmp1 = dataBatch.copy()
                 dataBatchTmp2 = dataBatch.copy()
+
+                # for i in range(4):
+                #     dataBatchTmp1.join(dataBatchTmp1)
+                #     dataBatchTmp2.join(dataBatchTmp2)
+
                 dataBatchTmp1.toNumpy()
                 dataBatchTmp2.toNumpy()
                 dataBatchTmp2.shuffle()
@@ -1045,7 +1080,7 @@ class DVBatchProcessor(multiprocessing.Process):
                         break
                     if self.controlPending():
                         break
-                    bias = probs[i][1]
+                    bias = probs[i][0]
                     addData = int(np.random.random() + bias)
                     total+=1
                     if addData:
@@ -1059,11 +1094,12 @@ class DVBatchProcessor(multiprocessing.Process):
                         break
             
             if batchReady:
-                dataBatch.join(negBatch)
+                if self.genNegSamples:
+                    dataBatch.join(negBatch)
                 dataBatch.toNumpy()
                 dataBatch.shuffle()
                 dataBatch.normalize(self.normalizeParams)
-                outputQueue.put(dataBatch, False)
+                outputQueue.put(dataBatch, True)
             
         print("DVBatchProcessor Exiting")
     

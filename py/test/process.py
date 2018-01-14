@@ -93,6 +93,25 @@ else:                  success.append(test)
 
 
 
+try:
+    test = ["Split By"]
+    x = list(
+        Iter(test)
+        .sequence()
+        .split([
+            F().into(By(3, Delay, 0, 0.1)), 
+            F().into(By(3, Delay, 0, 0.1)),
+            F().into(By(3, Delay, 0, 0.1))
+        ])
+        .merge()
+        .items())
+    print(x)
+    assert(x == [test * 3])
+    
+except Exception as e: failure.append((test, e))
+else:                  success.append(test)
+
+
 
 
 

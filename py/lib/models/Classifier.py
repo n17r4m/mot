@@ -6,17 +6,14 @@ from scipy.interpolate import interp2d
 import tensorflow as tf
 import numpy as np
 
-from keras import backend as K
-from keras import metrics
-from keras.models import Model, Sequential
-from keras.layers import Input, Flatten, Conv2D, Conv2DTranspose, LocallyConnected2D, Dense, MaxPooling2D, AveragePooling2D, UpSampling2D
-from keras.layers import Activation, Concatenate, Dropout, AlphaDropout, Reshape, Layer, Lambda
 
-from keras.layers.normalization import BatchNormalization
-from keras.layers.advanced_activations import LeakyReLU
-from keras.regularizers import l2
-from keras.optimizers import Adam, Nadam
-from keras.objectives import binary_crossentropy
+from tensorflow.python.keras import backend as K
+from tensorflow.python.keras import metrics
+from tensorflow.python.keras.models import Model, Sequential
+from tensorflow.python.keras.layers import Activation, Concatenate, Dropout, AlphaDropout, Reshape, Layer, Lambda, BatchNormalization, Input, Flatten, Conv2D, Conv2DTranspose, LocallyConnected2D, Dense, MaxPooling2D, AveragePooling2D, UpSampling2D, LeakyReLU
+from tensorflow.python.keras.regularizers import l2
+from tensorflow.python.keras.optimizers import Adam, Nadam
+from tensorflow.python.keras.losses import binary_crossentropy
 
 from lib.models.util.make_parallel import make_parallel
 
@@ -85,7 +82,7 @@ class Classifier(object):
         def sampling(args):
             z_mean, z_log_var = args
             return K.random_normal(shape=K.shape(z_log_var), mean=0., stddev=noise_std) * K.exp(.5 * z_log_var) + z_mean
-        z = Lambda(sampling, output_shape=(latent_dim,))([z_mean, z_log_var])  
+        z = Lambda(sampling)([z_mean, z_log_var])  
         
         encoding_shape = K.int_shape(z)
         

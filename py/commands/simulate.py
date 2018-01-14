@@ -8,9 +8,19 @@ async def main(args):
     else:
         if   args[0] == "experiment":  print(await simulation(*args[1:]))
         elif args[0] == "video":       print(await create_video(*args[1:]))
+        elif args[0] == "corruption":  print(await corruption(*args[1:]))
         else:                          print("Invalid simulate sub-command")
 
     
+
+
+
+
+async def corruption(model = "linear", profile = "simple", method="simulationCorrupt", frames = 150, width = 2336, height = 1729, segment_size = 10):
+    from lib.Corruption import Corruption
+    from lib.Simulation import Simulation
+    experiment = await Simulation(model, profile, frames, width, height, segment_size, method).go()
+    return await Corruption(experiment, model, profile, frames, width, height, segment_size).go()
 
 
 async def simulation(model = "linear", profile = "simple", frames = 150, width = 2336, height = 1729, segment_size = 10):
@@ -20,10 +30,11 @@ async def simulation(model = "linear", profile = "simple", frames = 150, width =
 
 
 
-async def create_video(experiment_uuid, bg_file = "bg.png", out_file = "visualization.mp4"):
+async def create_video(experiment_uuid, bg_file = "bg.png", out_file = "extraction.mp4"):
     from skimage.io import imread
     from lib.Visualize import FrameIter, VisFrame
-    from lib.Compress import VideoStream
+    from mpyx.Compress import VideoStream
+    import numpy as np
     
     experiment_dir = os.path.join(config.experiment_dir, experiment_uuid)
     
@@ -31,11 +42,13 @@ async def create_video(experiment_uuid, bg_file = "bg.png", out_file = "visualiz
         os.mkdir(experiment_dir)
         
     try:
-        bg = imread(os.path.join(experiment_dir, bg_file), as_grey=True).astype("float64").squeeze() / 255. / 255.
+        bg = imread(os.path.join(experiment_dir, bg_file), as_grey=True).astype("float64").squeeze() / 255.
+        print('bg loaded:', np.min(bg), np.max(bg))
     except:
         # if we just made the directory, the background will not be in the experiment directory... kg
         try:
-            bg = imread(os.path.join(config.experiment_dir, "bg.png"), as_grey=True).astype("float64").squeeze() / 255. / 255. 
+            bg = imread(os.path.join(config.experiment_dir, "bg.png"), as_grey=True).astype("float64").squeeze() 
+            print('bg loaded2:', np.min(bg), np.max(bg))
         except Exception as e:
             raise Exception("Cannot read /experiments/{}/bg.png or /experiments/bg.png".format(experiment_uuid))
             
