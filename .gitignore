@@ -76,3 +76,21 @@ c9
 util/models/*.h5
 py/lib/models/*.h5
 py/lib/models/weights/*.h5
+
+#metoer
+.meteor
+
+#local
+.local
+
+#oh wow
+.ssh
+
+.nv
+.plotly
+
+
+
+
+.*
+!/.gitignore
