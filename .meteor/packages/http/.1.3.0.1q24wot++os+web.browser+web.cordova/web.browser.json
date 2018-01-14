@@ -1,0 +1,92 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "HTTP",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "url"
+    },
+    {
+      "package": "ecmascript"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/httpcall_common.js",
+      "length": 3930,
+      "offset": 0,
+      "path": "httpcall_common.js",
+      "hash": "12da3e5376928d16695dc4fae9b758a902f338b2",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/httpcall_client.js",
+      "length": 7211,
+      "offset": 0,
+      "path": "httpcall_client.js",
+      "hash": "4bec6fbd88dcebe5c66f5f9c173bb405f260c10e",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/deprecated.js",
+      "length": 95,
+      "offset": 0,
+      "path": "deprecated.js",
+      "hash": "e72cdbbce6c4ecb8bb7cb249bdc53f4c1a6f3ae7",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/httpcall_server.js",
+      "length": 3191,
+      "offset": 0,
+      "path": "httpcall_server.js",
+      "hash": "f1979f086b68aaac5997039f5e2870cd5720bb47",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/httpcall_tests.js",
+      "length": 18238,
+      "offset": 0,
+      "path": "httpcall_tests.js",
+      "hash": "8c929ae55199a66cb6b2e6ce2178d678499003e1",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/test_responder.js",
+      "length": 2394,
+      "offset": 0,
+      "path": "test_responder.js",
+      "hash": "890eaa47ac8bd8d9891219e23e3fd5a526e6e113",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

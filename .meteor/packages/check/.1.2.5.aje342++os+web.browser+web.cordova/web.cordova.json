@@ -1,0 +1,71 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "check",
+      "testOnly": false
+    },
+    {
+      "name": "Match",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "modules",
+      "constraint": "0.7.9"
+    },
+    {
+      "package": "underscore",
+      "constraint": "1.0.10"
+    },
+    {
+      "package": "ejson",
+      "constraint": "1.0.13"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/match.js",
+      "length": 15016,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "match.js",
+      "hash": "a20b24271162edfcdad39cc2a5a278242e38bb14",
+      "fileOptions": {
+        "mainModule": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/isPlainObject.js",
+      "length": 924,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "isPlainObject.js",
+      "hash": "5e3347ed3ce2e67a27c5dbf5199dfa4c9adc72b9",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/match_test.js",
+      "length": 14856,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "match_test.js",
+      "hash": "35fded45a8ada39d0440442635d01d258e1c0dc5",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ]
+}

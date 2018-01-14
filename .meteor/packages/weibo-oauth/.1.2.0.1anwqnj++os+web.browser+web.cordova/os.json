@@ -1,0 +1,39 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Weibo",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "oauth1"
+    },
+    {
+      "package": "oauth"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "service-configuration"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/weibo_server.js",
+      "length": 2687,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "weibo_server.js",
+      "hash": "0f9bc1479a8e52b1ca0768ed72a2688ee8a28662",
+      "fileOptions": {}
+    }
+  ]
+}

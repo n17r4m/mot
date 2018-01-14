@@ -1,0 +1,78 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "check"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "routepolicy"
+    },
+    {
+      "package": "webapp"
+    },
+    {
+      "package": "mongo"
+    },
+    {
+      "package": "service-configuration"
+    },
+    {
+      "package": "logging"
+    },
+    {
+      "package": "oauth-encryption",
+      "weak": true
+    },
+    {
+      "package": "localstorage"
+    },
+    {
+      "package": "url"
+    }
+  ],
+  "resources": [
+    {
+      "type": "asset",
+      "file": "os/packages/oauth/end_of_popup_response.html",
+      "length": 354,
+      "offset": 0,
+      "servePath": "/packages/oauth/end_of_popup_response.html",
+      "path": "end_of_popup_response.html"
+    },
+    {
+      "type": "asset",
+      "file": "os/packages/oauth/end_of_redirect_response.html",
+      "length": 205,
+      "offset": 0,
+      "servePath": "/packages/oauth/end_of_redirect_response.html",
+      "path": "end_of_redirect_response.html"
+    },
+    {
+      "type": "prelink",
+      "file": "os-legacy/packages/oauth.js",
+      "length": 72071,
+      "offset": 0,
+      "servePath": "/packages/oauth.js"
+    }
+  ],
+  "packageVariables": [
+    {
+      "name": "OAuth",
+      "export": true
+    },
+    {
+      "name": "OAuthTest",
+      "export": "tests"
+    },
+    {
+      "name": "Oauth",
+      "export": true
+    }
+  ]
+}

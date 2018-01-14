@@ -1,0 +1,107 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "WebApp",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "ecmascript"
+    },
+    {
+      "package": "underscore"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/webapp_client.js",
+      "length": 435,
+      "offset": 0,
+      "path": "webapp_client.js",
+      "hash": "a271c4fb76dcde7d5c4faf2e2c9ca3e3b48c9111",
+      "fileOptions": {
+        "mainModule": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/socket_file.js",
+      "length": 2555,
+      "offset": 0,
+      "path": "socket_file.js",
+      "hash": "75317a9a6d3fb87be8894eefe9d2a64796df3be5",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/socket_file_tests.js",
+      "length": 1801,
+      "offset": 0,
+      "path": "socket_file_tests.js",
+      "hash": "263fa5af91adbf6733a3032c1189714e416586e3",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/webapp_client_tests.js",
+      "length": 228,
+      "offset": 0,
+      "path": "webapp_client_tests.js",
+      "hash": "6892b88b516556e454658cf0810f72aeaaf4d30e",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/webapp_cordova.js",
+      "length": 100,
+      "offset": 0,
+      "path": "webapp_cordova.js",
+      "hash": "c77f809ed12f618bbce0cd3b940d95470dcd2264",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/webapp_server.js",
+      "length": 33135,
+      "offset": 0,
+      "path": "webapp_server.js",
+      "hash": "5e4a77b27440074defa2410718f0d6c3ce718971",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/webapp_tests.js",
+      "length": 7713,
+      "offset": 0,
+      "path": "webapp_tests.js",
+      "hash": "d3a5f37a592d931cb10f261731a79ad069f583fe",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

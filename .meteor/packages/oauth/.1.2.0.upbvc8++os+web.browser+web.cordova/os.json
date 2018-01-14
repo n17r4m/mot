@@ -1,0 +1,115 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "OAuth",
+      "testOnly": false
+    },
+    {
+      "name": "OAuthTest",
+      "testOnly": true
+    },
+    {
+      "name": "Oauth",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "check"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "routepolicy"
+    },
+    {
+      "package": "webapp"
+    },
+    {
+      "package": "mongo"
+    },
+    {
+      "package": "service-configuration"
+    },
+    {
+      "package": "logging"
+    },
+    {
+      "package": "oauth-encryption",
+      "weak": true
+    },
+    {
+      "package": "localstorage"
+    },
+    {
+      "package": "url"
+    }
+  ],
+  "resources": [
+    {
+      "type": "asset",
+      "file": "os/packages/oauth/end_of_popup_response.html",
+      "length": 354,
+      "offset": 0,
+      "servePath": "/packages/oauth/end_of_popup_response.html",
+      "path": "end_of_popup_response.html"
+    },
+    {
+      "type": "asset",
+      "file": "os/packages/oauth/end_of_redirect_response.html",
+      "length": 205,
+      "offset": 0,
+      "servePath": "/packages/oauth/end_of_redirect_response.html",
+      "path": "end_of_redirect_response.html"
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/oauth_server.js",
+      "length": 16347,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "oauth_server.js",
+      "hash": "b13f58c15b8fab8465b5eb973707eaa40b995eb3",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/pending_credentials.js",
+      "length": 3712,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "pending_credentials.js",
+      "hash": "febf680293830032a5208fe61783f9b9f52b51e9",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/oauth_common.js",
+      "length": 2151,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "oauth_common.js",
+      "hash": "2f2d33d28cefdada8b7a4fbcd6fd6eaa55bfcdfc",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/deprecated.js",
+      "length": 41,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "deprecated.js",
+      "hash": "150de4a41a91e4308bba0720c0034de3049474a0",
+      "fileOptions": {}
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Tracker",
+      "testOnly": false
+    },
+    {
+      "name": "Deps",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/tracker.js",
+      "length": 20026,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "tracker.js",
+      "hash": "868b4464a2dc31e6a0b0de1cbd686349409414cc",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/deprecated.js",
+      "length": 543,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "deprecated.js",
+      "hash": "e6bc5717d7b2d73d327808fbd89fc4687a153b56",
+      "fileOptions": {}
+    }
+  ]
+}

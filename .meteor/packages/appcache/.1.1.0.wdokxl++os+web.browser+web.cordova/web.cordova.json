@@ -1,0 +1,25 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "reload"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/appcache-client.js",
+      "length": 1757,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "appcache-client.js",
+      "hash": "5e6e4473bedee2659d78db0df9aec41f4d519bac",
+      "fileOptions": {}
+    }
+  ]
+}

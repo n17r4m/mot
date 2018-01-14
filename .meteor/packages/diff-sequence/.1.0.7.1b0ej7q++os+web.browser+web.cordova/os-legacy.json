@@ -1,0 +1,29 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "ejson"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "os-legacy/packages/diff-sequence.js",
+      "length": 23197,
+      "offset": 0,
+      "servePath": "/packages/diff-sequence.js"
+    }
+  ],
+  "packageVariables": [
+    {
+      "name": "DiffSequence",
+      "export": true
+    }
+  ]
+}

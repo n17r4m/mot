@@ -1,0 +1,46 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "templating",
+      "constraint": "1.2.13"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "css",
+      "file": "web.browser/facebook_login_button.css",
+      "length": 417,
+      "offset": 0,
+      "path": "facebook_login_button.css",
+      "hash": "7b6e74d628e59311774e7b3409bdc3686e70e788",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "html",
+      "file": "web.browser/facebook_configure.html",
+      "length": 1136,
+      "offset": 0,
+      "path": "facebook_configure.html",
+      "hash": "971a331b6a93cd940375096f9b461c02bb10fadf",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/facebook_configure.js",
+      "length": 303,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "facebook_configure.js",
+      "hash": "decd78d7a1bc8d37ba254cd13a89ab33787b3a8c",
+      "fileOptions": {}
+    }
+  ]
+}

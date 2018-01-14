@@ -1,0 +1,38 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "RoutePolicy",
+      "testOnly": false
+    },
+    {
+      "name": "RoutePolicyTest",
+      "testOnly": true
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "webapp",
+      "unordered": true
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/routepolicy.js",
+      "length": 4449,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "routepolicy.js",
+      "hash": "b9d529bf93603e03155b28d6c28742530eb1d7aa",
+      "fileOptions": {}
+    }
+  ]
+}

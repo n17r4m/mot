@@ -1,0 +1,42 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "ecmascript"
+    },
+    {
+      "package": "random"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/caching-compiler.js",
+      "length": 12817,
+      "offset": 0,
+      "path": "caching-compiler.js",
+      "hash": "2a3f893b9312311e61a25bdb18d623e38eb99a4e",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/multi-file-caching-compiler.js",
+      "length": 8000,
+      "offset": 0,
+      "path": "multi-file-caching-compiler.js",
+      "hash": "3c57276c4d4dfa0f7be48dfcf0f69768f8a14b05",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

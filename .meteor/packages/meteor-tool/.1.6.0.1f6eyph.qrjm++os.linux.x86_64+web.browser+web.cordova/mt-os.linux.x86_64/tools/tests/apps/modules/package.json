@@ -1,0 +1,24 @@
+{
+  "name": "modules-test-app",
+  "author": "Ben Newman <ben@meteor.com>",
+  "description": "Test app exercising many aspects of the Meteor module system.",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "^2.2.41",
+    "babel-plugin-transform-do-expressions": "^6.22.0",
+    "babel-runtime": "^6.26.0",
+    "github": "^0.2.4",
+    "idle-gc": "^1.0.1",
+    "meteor-node-stubs": "^0.3.2",
+    "moment": "2.11.1",
+    "mssql": "^3.1.1",
+    "regenerator-runtime": "^0.9.5",
+    "stripe": "^4.4.0",
+    "winston": "^2.3.1"
+  },
+  "scripts": {
+    "test": "METEOR_PROFILE=100 ../../../../meteor test --full-app --driver-package dispatch:mocha-phantomjs",
+    "browser": "METEOR_PROFILE=100 ../../../../meteor test --full-app --driver-package dispatch:mocha-browser",
+    "test-packages": "../../../../meteor test-packages --driver-package dispatch:mocha-phantomjs packages/modules-test-package"
+  }
+}

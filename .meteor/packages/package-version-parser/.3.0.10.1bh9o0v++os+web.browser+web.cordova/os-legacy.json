@@ -1,0 +1,29 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "os-legacy/packages/package-version-parser.js",
+      "length": 173156,
+      "offset": 0,
+      "servePath": "/packages/package-version-parser.js"
+    }
+  ],
+  "packageVariables": [
+    {
+      "name": "PackageVersion",
+      "export": true
+    },
+    {
+      "name": "SemVer410"
+    }
+  ]
+}

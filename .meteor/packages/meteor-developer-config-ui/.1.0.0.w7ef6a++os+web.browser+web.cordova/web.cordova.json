@@ -1,0 +1,46 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "templating",
+      "constraint": "1.2.13"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "css",
+      "file": "web.cordova/meteor_developer_login_button.css",
+      "length": 2328,
+      "offset": 0,
+      "path": "meteor_developer_login_button.css",
+      "hash": "3decc87b3ca8d2bb01941c02c6e17ccc95d32978",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "html",
+      "file": "web.cordova/meteor_developer_configure.html",
+      "length": 592,
+      "offset": 0,
+      "path": "meteor_developer_configure.html",
+      "hash": "8fa16b564b33c3cab98ccfde5550dbe409ee5fbb",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/meteor_developer_configure.js",
+      "length": 320,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "meteor_developer_configure.js",
+      "hash": "7f0fe78fcfeb77838e7908aa8f7969eafecae5c0",
+      "fileOptions": {}
+    }
+  ]
+}

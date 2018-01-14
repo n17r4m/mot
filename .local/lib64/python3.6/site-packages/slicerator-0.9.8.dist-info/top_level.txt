@@ -1,0 +1,2 @@
+_slicerator_version
+slicerator

@@ -1,0 +1,23 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "meteor"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "os-legacy/packages/markdown.js",
+      "length": 184876,
+      "offset": 0,
+      "servePath": "/packages/markdown.js"
+    }
+  ],
+  "packageVariables": [
+    {
+      "name": "Showdown",
+      "export": true
+    }
+  ]
+}

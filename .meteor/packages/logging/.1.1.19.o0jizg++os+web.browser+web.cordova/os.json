@@ -1,0 +1,66 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Log",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore",
+      "constraint": "1.0.10"
+    },
+    {
+      "package": "ejson",
+      "constraint": "1.0.14"
+    },
+    {
+      "package": "modules",
+      "constraint": "0.10.0"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/logging.js",
+      "length": 8710,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "logging.js",
+      "hash": "1a801970766e241485f43d026a1ffafed9dde76a",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/logging_cordova.js",
+      "length": 486,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "logging_cordova.js",
+      "hash": "d574ddf8d82ff16e9b85fc86f349099a82b3e487",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/logging_test.js",
+      "length": 7743,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "logging_test.js",
+      "hash": "42054125bf8c9649f5a1d7cdab3f517de47239fd",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

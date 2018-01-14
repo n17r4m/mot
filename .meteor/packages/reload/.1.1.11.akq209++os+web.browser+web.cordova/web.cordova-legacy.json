@@ -1,0 +1,29 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "ecmascript-runtime"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "web.cordova-legacy/packages/reload.js",
+      "length": 25259,
+      "offset": 0,
+      "servePath": "/packages/reload.js"
+    }
+  ],
+  "packageVariables": [
+    {
+      "name": "Reload",
+      "export": true
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "meteorInstall",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/.npm/package/node_modules/install/install.js",
+      "length": 20298,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": ".npm/package/node_modules/install/install.js",
+      "hash": "3fa38d9ce13871aa2ebbbb6f76b99688ee3894a9",
+      "fileOptions": {
+        "bare": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/options.js",
+      "length": 268,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "options.js",
+      "hash": "50d8e1dda271e29b8da1f8df6fbd1d487f932329",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/client.js",
+      "length": 206,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "client.js",
+      "hash": "32bbd79946bbc43c311ac9a3586da3672afab210",
+      "fileOptions": {}
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

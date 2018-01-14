@@ -1,0 +1,41 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "URL",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/url_common.js",
+      "length": 1290,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "url_common.js",
+      "hash": "01710dea193a523c55eddb3d5df29b820c32092b",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/url_server.js",
+      "length": 256,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "url_server.js",
+      "hash": "c0fce2206a76200604e8bb67f7ee6dbd933b2297",
+      "fileOptions": {}
+    }
+  ]
+}

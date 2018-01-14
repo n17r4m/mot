@@ -1,0 +1,100 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "isobuild:dynamic-import",
+      "constraint": "1.5.0"
+    },
+    {
+      "package": "browser-policy-content",
+      "constraint": "1.1.0",
+      "weak": true
+    },
+    {
+      "package": "modules",
+      "constraint": "0.11.0"
+    },
+    {
+      "package": "promise",
+      "constraint": "0.10.0"
+    },
+    {
+      "package": "ddp",
+      "constraint": "1.4.0"
+    },
+    {
+      "package": "check",
+      "constraint": "1.2.5"
+    },
+    {
+      "package": "ecmascript",
+      "constraint": "0.9.0"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/server.js",
+      "length": 2097,
+      "offset": 0,
+      "path": "server.js",
+      "hash": "181db2c15405911a28c5acbf627785965cdd90d1",
+      "fileOptions": {
+        "mainModule": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/cache.js",
+      "length": 5747,
+      "offset": 0,
+      "path": "cache.js",
+      "hash": "4dda858169b4770cc4cb43338dd2542602ef0680",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/client.js",
+      "length": 4241,
+      "offset": 0,
+      "path": "client.js",
+      "hash": "4a0f3537a1ed48f38792ce4206ddea42c56820c8",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/dynamic-versions.js",
+      "length": 959,
+      "offset": 0,
+      "path": "dynamic-versions.js",
+      "hash": "88f77230a1f6189499b7d9da94ca3dbcfee3b73b",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/security.js",
+      "length": 1095,
+      "offset": 0,
+      "path": "security.js",
+      "hash": "ea86585b87952b3848ac2f21b73c5665c7c0f11d",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ]
+}

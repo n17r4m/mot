@@ -1,0 +1,66 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "random"
+    },
+    {
+      "package": "accounts-base"
+    },
+    {
+      "package": "accounts-oauth"
+    },
+    {
+      "package": "meteor-developer-oauth"
+    },
+    {
+      "package": "accounts-ui",
+      "weak": true
+    },
+    {
+      "package": "meteor-developer-config-ui",
+      "weak": true
+    }
+  ],
+  "implies": [
+    {
+      "package": "accounts-base",
+      "constraint": ""
+    },
+    {
+      "package": "meteor-developer-oauth",
+      "constraint": ""
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/notice.js",
+      "length": 423,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "notice.js",
+      "hash": "3d5df9b40df2dee928095463c9211ba966f12b18",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/meteor-developer.js",
+      "length": 1137,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "meteor-developer.js",
+      "hash": "74fc4e05f43a3512dc6fb9e1fae0a4445be67443",
+      "fileOptions": {}
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "runTests",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "ecmascript"
+    },
+    {
+      "package": "tinytest"
+    },
+    {
+      "package": "bootstrap",
+      "constraint": "1.0.1"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "session"
+    },
+    {
+      "package": "reload"
+    },
+    {
+      "package": "jquery"
+    },
+    {
+      "package": "autoupdate",
+      "weak": true
+    },
+    {
+      "package": "random"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/autoupdate.js",
+      "length": 355,
+      "offset": 0,
+      "path": "autoupdate.js",
+      "hash": "ef2e1b0d65253aca8abb0312c9be90c5404c410a",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/diff_match_patch_uncompressed.js",
+      "length": 76493,
+      "offset": 0,
+      "path": "diff_match_patch_uncompressed.js",
+      "hash": "146686739070ef66dde1cc021de6b78d0d34e6d3",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/driver.js",
+      "length": 14748,
+      "offset": 0,
+      "path": "driver.js",
+      "hash": "7f23a75a79b815cf692d5c2f4202826c49a64f01",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ]
+}

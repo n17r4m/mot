@@ -1,0 +1,62 @@
+{
+  "isopack-2": {
+    "name": "stylus",
+    "summary": "Expressive, dynamic, robust CSS",
+    "version": "2.513.13",
+    "isTest": false,
+    "builds": [
+      {
+        "kind": "main",
+        "arch": "os",
+        "path": "os.json"
+      },
+      {
+        "kind": "main",
+        "arch": "web.browser",
+        "path": "web.browser.json"
+      },
+      {
+        "kind": "main",
+        "arch": "web.cordova",
+        "path": "web.cordova.json"
+      }
+    ],
+    "plugins": [
+      {
+        "name": "compileStylusBatch",
+        "arch": "os",
+        "path": "plugin.compileStylusBatch.os/program.json"
+      }
+    ]
+  },
+  "isopack-1": {
+    "name": "stylus",
+    "summary": "Expressive, dynamic, robust CSS",
+    "version": "2.513.13",
+    "isTest": false,
+    "builds": [
+      {
+        "kind": "main",
+        "arch": "os",
+        "path": "os-legacy.json"
+      },
+      {
+        "kind": "main",
+        "arch": "web.browser",
+        "path": "web.browser-legacy.json"
+      },
+      {
+        "kind": "main",
+        "arch": "web.cordova",
+        "path": "web.cordova-legacy.json"
+      }
+    ],
+    "plugins": [
+      {
+        "name": "compileStylusBatch",
+        "arch": "os",
+        "path": "plugin.compileStylusBatch.os/program.json"
+      }
+    ]
+  }
+}

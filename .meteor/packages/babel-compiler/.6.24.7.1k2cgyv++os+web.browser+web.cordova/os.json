@@ -1,0 +1,46 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Babel",
+      "testOnly": false
+    },
+    {
+      "name": "BabelCompiler",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "ecmascript-runtime"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/babel.js",
+      "length": 1336,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "babel.js",
+      "hash": "ae6b969a0f6676eac981b1e9bcddb46ea9df6782",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/babel-compiler.js",
+      "length": 11483,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "babel-compiler.js",
+      "hash": "8674f08eae5dd6498299e51adf4563f0b4cec325",
+      "fileOptions": {}
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

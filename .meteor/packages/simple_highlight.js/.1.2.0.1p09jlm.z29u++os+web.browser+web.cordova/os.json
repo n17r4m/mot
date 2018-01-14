@@ -1,0 +1,60 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "hljs",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "chuangbo:marked",
+      "constraint": "0.3.5_1",
+      "weak": true
+    },
+    {
+      "package": "markdown",
+      "constraint": "1.0.2",
+      "weak": true
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/detect-ie8.js",
+      "length": 177,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "detect-ie8.js",
+      "hash": "45043995e545764b040e6c7367d36610880509be",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/highlight.pack.js",
+      "length": 35116,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "highlight.pack.js",
+      "hash": "95bce0317864832c7b7c46189112eef43ee04e2e",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/markdown-integration.js",
+      "length": 1836,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "markdown-integration.js",
+      "hash": "6c69e111028a497ef256bfe9ba265487fdd51e58",
+      "fileOptions": {}
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

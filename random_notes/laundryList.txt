@@ -1,0 +1,18 @@
+- crops calculation is heuristic based
+- look into responsibly fixing skvideo ffmpeg.py assertion error bug. : https://github.com/scikit-video/scikit-video/issues/60
+
+
+-  Have webui use new database
+
+-  Create meteor systemctl service unit.
+
+
+[[[ Completed ]]]
+
+-  Change detection visualization to use PIL
+
+-  Add segment detection to detect.py via magic pixel 
+        [DONE, but... edge case of potential wraparound not addressed 
+        - (find uppper broundy of px value, add to value when new value is less than previous)].
+
+

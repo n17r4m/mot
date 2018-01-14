@@ -1,0 +1,72 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Promise",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "modules"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/client.js",
+      "length": 96,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "client.js",
+      "hash": "ae22273a444134fc2f5ec68b3e8ac4b0c2bf1d62",
+      "fileOptions": {
+        "mainModule": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/common.js",
+      "length": 449,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "common.js",
+      "hash": "e706ceae39fc316258daed25c34d006212461118",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/promise-tests.js",
+      "length": 550,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "promise-tests.js",
+      "hash": "245ee7f8ce0c8f9a0488d2229d89113772003e55",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/server.js",
+      "length": 212,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "server.js",
+      "hash": "74de0a954a7e33332eb29717126d719539c89b51",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

@@ -1,0 +1,39 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "modules",
+      "constraint": "0.7.9"
+    },
+    {
+      "package": "underscore",
+      "constraint": "1.0.10"
+    },
+    {
+      "package": "ejson",
+      "constraint": "1.0.13"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "web.cordova-legacy/packages/check.js",
+      "length": 123115,
+      "offset": 0,
+      "servePath": "/packages/check.js"
+    }
+  ],
+  "packageVariables": [
+    {
+      "name": "check",
+      "export": true
+    },
+    {
+      "name": "Match",
+      "export": true
+    }
+  ]
+}

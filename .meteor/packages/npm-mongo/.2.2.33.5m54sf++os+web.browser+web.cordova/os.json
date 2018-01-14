@@ -1,0 +1,32 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "NpmModuleMongodb",
+      "testOnly": false
+    },
+    {
+      "name": "NpmModuleMongodbVersion",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/wrapper.js",
+      "length": 114,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "wrapper.js",
+      "hash": "af2b9b044452ab9abc5ac3266895a0f864f56285",
+      "fileOptions": {}
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

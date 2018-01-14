@@ -1,0 +1,44 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Reload",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "ecmascript-runtime"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/reload.js",
+      "length": 8041,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "reload.js",
+      "hash": "39701123a8586f481bb4dd5d05c3fc5fa7200e28",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/deprecated.js",
+      "length": 278,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "deprecated.js",
+      "hash": "fbebd2bb6e2dd6a34ea550d67b726742d493e2b6",
+      "fileOptions": {}
+    }
+  ]
+}

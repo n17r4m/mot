@@ -1,0 +1,62 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "BlazeLayout",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "blaze",
+      "constraint": "2.0.3"
+    },
+    {
+      "package": "templating",
+      "constraint": "1.0.9"
+    },
+    {
+      "package": "reactive-dict",
+      "constraint": "1.0.4"
+    },
+    {
+      "package": "underscore",
+      "constraint": "1.0.1"
+    },
+    {
+      "package": "jquery",
+      "constraint": "1.0.1"
+    },
+    {
+      "package": "tracker",
+      "constraint": "1.0.3"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/lib/client/namespace.js",
+      "length": 17,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "lib/client/namespace.js",
+      "hash": "dc34e9f96c9e795509994d0ef61fecb8930169c3",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/lib/client/layout.js",
+      "length": 4361,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "lib/client/layout.js",
+      "hash": "bc32cbd9cc37b3f1d471719b98a9455fcc9267d6",
+      "fileOptions": {}
+    }
+  ]
+}

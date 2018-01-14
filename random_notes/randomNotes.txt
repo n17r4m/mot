@@ -1,0 +1,11 @@
+postgres startup config:
+/etc/systemd/system/postgresql-10.service.d/
+
+
+cuda enviroment:
+located in /opt
+/etc/env.d/99cuda 
+run: env-update
+run: source /etc/profile
+
+

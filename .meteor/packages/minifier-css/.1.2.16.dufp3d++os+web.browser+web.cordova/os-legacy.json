@@ -1,0 +1,31 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore",
+      "constraint": "1.0.10"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "os-legacy/packages/minifier-css.js",
+      "length": 53503,
+      "offset": 0,
+      "servePath": "/packages/minifier-css.js"
+    }
+  ],
+  "node_modules": "npm/node_modules",
+  "packageVariables": [
+    {
+      "name": "CssTools",
+      "export": true
+    },
+    {
+      "name": "MinifyAst"
+    }
+  ]
+}

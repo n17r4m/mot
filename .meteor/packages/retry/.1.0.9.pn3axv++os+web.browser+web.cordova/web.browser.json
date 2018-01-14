@@ -1,0 +1,33 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Retry",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "random"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/retry.js",
+      "length": 1900,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "retry.js",
+      "hash": "703c20cdb912fe410c4260416b4b7d77a82af449",
+      "fileOptions": {}
+    }
+  ]
+}

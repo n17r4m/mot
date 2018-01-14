@@ -1,0 +1,261 @@
+Evaluating Experiment: 591983db-25b4-4982-8831-13db26637d13
+Method: Tracking2DvExp9weightsEpoch1
+Ground truths               22835
+False positives             0
+Misses                      4566
+Mismatches                  8740
+Recoverable mismatches      7959
+Non recoverable mismatches  8636
+Correspondences             18269
+
+MOTP 0.00168207620702
+MOTA 0.417298007444712
+FP IDs set()
+Evaluating Experiment: 79987971-6873-437e-aa34-9f3a3c4515e3
+Method: Tracking2DvExp9weightsEpoch10
+Ground truths               22835
+False positives             0
+Misses                      22681
+Mismatches                  26
+Recoverable mismatches      9
+Non recoverable mismatches  20
+Correspondences             154
+
+MOTP 0.0
+MOTA 0.005605430260564925
+FP IDs set()
+Evaluating Experiment: 72ff4948-5d41-4b4e-a147-4228dc2b66d1
+Method: Tracking2DvExp9weightsEpoch11
+Ground truths               22835
+False positives             0
+Misses                      22132
+Mismatches                  30
+Recoverable mismatches      13
+Non recoverable mismatches  25
+Correspondences             703
+
+MOTP 0.0
+MOTA 0.0294723012918765
+FP IDs set()
+Evaluating Experiment: 6117e0f0-5ba6-4796-8ceb-40018fa3c788
+Method: Tracking2DvExp9weightsEpoch12
+Ground truths               22835
+False positives             0
+Misses                      22448
+Mismatches                  20
+Recoverable mismatches      6
+Non recoverable mismatches  16
+Correspondences             387
+
+MOTP 0.0
+MOTA 0.01607181957521353
+FP IDs set()
+Evaluating Experiment: 6bcc46b1-d9b1-40ad-b8a9-477ee2e83497
+Method: Tracking2DvExp9weightsEpoch13
+Ground truths               22835
+False positives             0
+Misses                      22732
+Mismatches                  57
+Recoverable mismatches      29
+Non recoverable mismatches  44
+Correspondences             103
+
+MOTP 0.0
+MOTA 0.002014451499890546
+FP IDs set()
+Evaluating Experiment: cd2c5141-8282-479e-8b48-6c5fe693af78
+Method: Tracking2DvExp9weightsEpoch14
+Ground truths               22835
+False positives             0
+Misses                      22685
+Mismatches                  88
+Recoverable mismatches      50
+Non recoverable mismatches  67
+Correspondences             150
+
+MOTP 0.0
+MOTA 0.0027151302824611756
+FP IDs set()
+Evaluating Experiment: f06cfe58-b118-4ac8-a3be-0e261c317e13
+Method: Tracking2DvExp9weightsEpoch15
+Ground truths               22835
+False positives             0
+Misses                      22564
+Mismatches                  67
+Recoverable mismatches      33
+Non recoverable mismatches  54
+Correspondences             271
+
+MOTP 0.0
+MOTA 0.008933654477775388
+FP IDs set()
+Evaluating Experiment: 79069c90-7852-404a-9e9d-e03f1fffbcf3
+Method: Tracking2DvExp9weightsEpoch16
+Ground truths               22835
+False positives             0
+Misses                      22716
+Mismatches                  77
+Recoverable mismatches      39
+Non recoverable mismatches  60
+Correspondences             119
+
+MOTP 0.0
+MOTA 0.001839281804247861
+FP IDs set()
+Evaluating Experiment: fbde3ce0-6fec-4435-97d7-bb340eeb7489
+Method: Tracking2DvExp9weightsEpoch17
+Ground truths               22835
+False positives             0
+Misses                      22722
+Mismatches                  73
+Recoverable mismatches      40
+Non recoverable mismatches  54
+Correspondences             113
+
+MOTP 0.0
+MOTA 0.0017516969564265183
+FP IDs set()
+Evaluating Experiment: 35e3939f-fb98-4faf-adcb-9017d0792849
+Method: Tracking2DvExp9weightsEpoch18
+Ground truths               22835
+False positives             0
+Misses                      22710
+Mismatches                  88
+Recoverable mismatches      46
+Non recoverable mismatches  66
+Correspondences             125
+
+MOTP 0.0
+MOTA 0.00162031968469456
+FP IDs set()
+Evaluating Experiment: a4691ad4-4965-43fa-aa79-f089bdaa7972
+Method: Tracking2DvExp9weightsEpoch19
+Ground truths               22835
+False positives             0
+Misses                      22722
+Mismatches                  72
+Recoverable mismatches      42
+Non recoverable mismatches  54
+Correspondences             113
+
+MOTP 0.0
+MOTA 0.0017954893803372451
+FP IDs set()
+Evaluating Experiment: 561550e7-96fb-477e-afcb-951d561d37a4
+Method: Tracking2DvExp9weightsEpoch2
+Ground truths               22835
+False positives             0
+Misses                      8555
+Mismatches                  1651
+Recoverable mismatches      1186
+Non recoverable mismatches  1593
+Correspondences             14280
+
+MOTP 0.0
+MOTA 0.5530545215677688
+FP IDs set()
+Evaluating Experiment: bd960e75-b7cc-475e-ae50-1135a3101fed
+Method: Tracking2DvExp9weightsEpoch20
+Ground truths               22835
+False positives             0
+Misses                      22706
+Mismatches                  95
+Recoverable mismatches      56
+Non recoverable mismatches  70
+Correspondences             129
+
+MOTP 0.0
+MOTA 0.0014889424129626017
+FP IDs set()
+Evaluating Experiment: 388a0701-c169-4624-bdc7-6bac62f79cae
+Method: Tracking2DvExp9weightsEpoch3
+Ground truths               22835
+False positives             0
+Misses                      3673
+Mismatches                  363
+Recoverable mismatches      230
+Non recoverable mismatches  324
+Correspondences             19162
+
+MOTP 0.0
+MOTA 0.8232537770965623
+FP IDs set()
+Evaluating Experiment: 358799b5-1c74-49cc-8653-eba28950dc04
+Method: Tracking2DvExp9weightsEpoch4
+Ground truths               22835
+False positives             0
+Misses                      8832
+Mismatches                  96
+Recoverable mismatches      43
+Non recoverable mismatches  83
+Correspondences             14003
+
+MOTP 0.0
+MOTA 0.6090212393255967
+FP IDs set()
+Evaluating Experiment: 96ebfaee-88dd-4874-be26-3f223a21bb5f
+Method: Tracking2DvExp9weightsEpoch5
+Ground truths               22835
+False positives             0
+Misses                      22104
+Mismatches                  31
+Recoverable mismatches      8
+Non recoverable mismatches  28
+Correspondences             731
+
+MOTP 0.0
+MOTA 0.03065469673746446
+FP IDs set()
+Evaluating Experiment: c41fc945-90c8-4fc6-9e7d-0cb8621c14a7
+Method: Tracking2DvExp9weightsEpoch6
+Ground truths               22835
+False positives             0
+Misses                      14719
+Mismatches                  235
+Recoverable mismatches      109
+Non recoverable mismatches  200
+Correspondences             8116
+
+MOTP 0.0
+MOTA 0.3451280928399387
+FP IDs set()
+Evaluating Experiment: 65ba6d0f-2571-44a1-aaf5-c0e76b74994c
+Method: Tracking2DvExp9weightsEpoch7
+Ground truths               22835
+False positives             0
+Misses                      11976
+Mismatches                  180
+Recoverable mismatches      95
+Non recoverable mismatches  152
+Correspondences             10859
+
+MOTP 0.0
+MOTA 0.467659294941975
+FP IDs set()
+Evaluating Experiment: b01af22e-c60d-410f-947b-58c28e3cf019
+Method: Tracking2DvExp9weightsEpoch8
+Ground truths               22835
+False positives             0
+Misses                      22364
+Mismatches                  25
+Recoverable mismatches      7
+Non recoverable mismatches  22
+Correspondences             471
+
+MOTP 0.0
+MOTA 0.01953142106415595
+FP IDs set()
+Evaluating Experiment: e284d36c-b688-4631-aada-21a9eb5396ac
+Method: Tracking2DvExp9weightsEpoch9
+Ground truths               22835
+False positives             0
+Misses                      22643
+Mismatches                  71
+Recoverable mismatches      29
+Non recoverable mismatches  60
+Correspondences             192
+
+MOTP 0.0
+MOTA 0.005298883293190282
+FP IDs set()
+None

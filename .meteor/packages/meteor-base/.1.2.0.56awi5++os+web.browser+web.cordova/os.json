@@ -1,0 +1,40 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    }
+  ],
+  "implies": [
+    {
+      "package": "meteor",
+      "constraint": ""
+    },
+    {
+      "package": "webapp",
+      "constraint": ""
+    },
+    {
+      "package": "underscore",
+      "constraint": ""
+    },
+    {
+      "package": "ddp",
+      "constraint": ""
+    },
+    {
+      "package": "livedata",
+      "constraint": ""
+    },
+    {
+      "package": "dynamic-import",
+      "constraint": ""
+    },
+    {
+      "package": "hot-code-push",
+      "constraint": ""
+    }
+  ],
+  "resources": []
+}

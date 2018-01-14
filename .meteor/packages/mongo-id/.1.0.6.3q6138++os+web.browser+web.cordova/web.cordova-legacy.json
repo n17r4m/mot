@@ -1,0 +1,32 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "ejson"
+    },
+    {
+      "package": "id-map"
+    },
+    {
+      "package": "random"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "web.cordova-legacy/packages/mongo-id.js",
+      "length": 11118,
+      "offset": 0,
+      "servePath": "/packages/mongo-id.js"
+    }
+  ],
+  "packageVariables": [
+    {
+      "name": "MongoID",
+      "export": true
+    }
+  ]
+}

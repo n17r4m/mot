@@ -1,0 +1,39 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "ReactiveMethod",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "tracker",
+      "constraint": "1.0.5"
+    },
+    {
+      "package": "meteor",
+      "constraint": "1.1.4"
+    },
+    {
+      "package": "ddp",
+      "constraint": "1.0.14"
+    },
+    {
+      "package": "ejson",
+      "constraint": "1.0.5"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/packages/simple_reactive-method.js",
+      "length": 17242,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "/packages/simple_reactive-method.js",
+      "hash": "22d25034b5bace4ef365bccb19796e78b24639e1"
+    }
+  ]
+}

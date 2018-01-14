@@ -1,0 +1,62 @@
+{
+  "isopack-2": {
+    "name": "less",
+    "summary": "Leaner CSS language",
+    "version": "2.7.11",
+    "isTest": false,
+    "builds": [
+      {
+        "kind": "main",
+        "arch": "os",
+        "path": "os.json"
+      },
+      {
+        "kind": "main",
+        "arch": "web.browser",
+        "path": "web.browser.json"
+      },
+      {
+        "kind": "main",
+        "arch": "web.cordova",
+        "path": "web.cordova.json"
+      }
+    ],
+    "plugins": [
+      {
+        "name": "compileLessBatch",
+        "arch": "os",
+        "path": "plugin.compileLessBatch.os/program.json"
+      }
+    ]
+  },
+  "isopack-1": {
+    "name": "less",
+    "summary": "Leaner CSS language",
+    "version": "2.7.11",
+    "isTest": false,
+    "builds": [
+      {
+        "kind": "main",
+        "arch": "os",
+        "path": "os-legacy.json"
+      },
+      {
+        "kind": "main",
+        "arch": "web.browser",
+        "path": "web.browser-legacy.json"
+      },
+      {
+        "kind": "main",
+        "arch": "web.cordova",
+        "path": "web.cordova-legacy.json"
+      }
+    ],
+    "plugins": [
+      {
+        "name": "compileLessBatch",
+        "arch": "os",
+        "path": "plugin.compileLessBatch.os/program.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["/tools/fs/mini-files.js"],"names":["miniFiles","require","module","exports"],"mappings":"AAAA,IAAIA,YAAYC,QAAQ,uCAAR,CAAhB;;AACAC,OAAOC,OAAP,GAAiBH,SAAjB","file":"tools/fs/mini-files.js.map","sourcesContent":["var miniFiles = require('../static-assets/server/mini-files.js');\nmodule.exports = miniFiles;\n"]}

@@ -1,0 +1,43 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "CssTools",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore",
+      "constraint": "1.0.10"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/minification.js",
+      "length": 4776,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "minification.js",
+      "hash": "84cbb5a03d076aa6b905a5a7b1fe8f9ec17b90d6",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/minifier.js",
+      "length": 7943,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "minifier.js",
+      "hash": "ef8314babee75bbc265187656eef96a5fc620a7c",
+      "fileOptions": {}
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

@@ -1,0 +1,31 @@
+{
+  "name": "semantic:ui",
+  "summary": "Official Semantic UI Integration for Meteor",
+  "version": "2.2.6_5",
+  "isTest": false,
+  "plugins": [
+    {
+      "name": "generateSemanticUi",
+      "arch": "os",
+      "path": "plugin.generateSemanticUi.os/program.json"
+    }
+  ],
+  "unibuilds": [
+    {
+      "kind": "main",
+      "arch": "os",
+      "path": "os-legacy.json"
+    },
+    {
+      "kind": "main",
+      "arch": "web.browser",
+      "path": "web.browser-legacy.json"
+    },
+    {
+      "kind": "main",
+      "arch": "web.cordova",
+      "path": "web.cordova-legacy.json"
+    }
+  ],
+  "format": "unipackage-pre2"
+}

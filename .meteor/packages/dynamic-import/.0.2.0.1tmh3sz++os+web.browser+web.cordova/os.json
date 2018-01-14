@@ -1,0 +1,94 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "isobuild:dynamic-import",
+      "constraint": "1.5.0"
+    },
+    {
+      "package": "browser-policy-content",
+      "weak": true
+    },
+    {
+      "package": "modules"
+    },
+    {
+      "package": "promise"
+    },
+    {
+      "package": "ddp"
+    },
+    {
+      "package": "check"
+    },
+    {
+      "package": "ecmascript"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/server.js",
+      "length": 2097,
+      "offset": 0,
+      "path": "server.js",
+      "hash": "181db2c15405911a28c5acbf627785965cdd90d1",
+      "fileOptions": {
+        "mainModule": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/cache.js",
+      "length": 5747,
+      "offset": 0,
+      "path": "cache.js",
+      "hash": "4dda858169b4770cc4cb43338dd2542602ef0680",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/client.js",
+      "length": 4263,
+      "offset": 0,
+      "path": "client.js",
+      "hash": "629abcc9386c693bf467e23e8058bc79814ea548",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/dynamic-versions.js",
+      "length": 959,
+      "offset": 0,
+      "path": "dynamic-versions.js",
+      "hash": "88f77230a1f6189499b7d9da94ca3dbcfee3b73b",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/security.js",
+      "length": 1095,
+      "offset": 0,
+      "path": "security.js",
+      "hash": "ea86585b87952b3848ac2f21b73c5665c7c0f11d",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ]
+}

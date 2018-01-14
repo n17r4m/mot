@@ -1,0 +1,195 @@
+from mpyx.F import EZ, As, By, F
+from mpyx.F import Serial, Parallel, Broadcast, S, P, B
+from mpyx.F import Iter, Const, Print, Map, Filter, Batch, Seq, Zip, Read, Write
+
+
+# Example Process Function
+class Add(F):
+    def initialize(self, val = 0):
+        self.val = val
+    def do(self, item):
+        self.put(item + self.val)
+    def teardown(self):
+        pass
+    
+# Set up a simple data source.
+def Src(n = 5):
+    return Iter(range(1, (n+1)))
+
+# Print info for each demo
+def demo(description, ez):
+    print("\n")
+    print(description)
+    print("\n")
+    ez.printLayout()    
+    print(ez.graph())
+    #ez.watch(0.1)
+    ez.start().join()
+  
+demo("Sanity.", 
+    EZ(Src(), Print("Serial"))
+)
+
+demo("Generate constant values with Const",
+    EZ(Const(0, 5), Add(1), Print())
+)
+
+demo("In-Series processing uses [] or Serial() or S().", 
+    EZ([Src(), Print("Also Serial")])
+)
+    
+demo("Parallel Processing uses () or Parallel() or P().",
+    EZ(Src(), (Print("A"), Print("B")))
+)
+ 
+demo("Broadcast Processing uses {} or Broadcast() or B().",
+    EZ(Src(), {Print("A"), Print("B")})
+) 
+
+demo("Mix [], (), and {} with S(), P() and B() if you get a hash error.",
+    EZ(Src(), P([Add(1000),  Add(1000)], [Add(100), Add(100)]), Print())
+)
+
+demo("[] cannot be hashed. () and {} are ok.",
+    EZ(Src(), (Add(1000), Add(5000)), (Add(100), Add(500)), Print())
+)
+
+
+def adder(x, y = 10):
+    return x + y
+
+demo("Bare functions act as f(x) -> y maps",
+    EZ(Src(), adder, Print())
+)
+
+demo("Use Map to paramatize a bare function or lambda",
+    EZ(Src(), Map(adder, 100), Map(lambda x: x - 50), Print())
+)
+
+demo("Filter items out",
+    EZ(Src(), Filter(lambda x: x > 2), Print())
+)
+
+
+demo("Batch items together for handy group processing.",
+    EZ(Src(), Batch(2), Print())
+)
+
+demo("Use As() to go really parallel.",
+    EZ(Src(), As(5, Add, 10), Print())
+)
+
+
+demo("Use Seq() to preserve ordering during parallel execution.",
+    EZ(Src(), Seq(As(5, Add, 10)), Print())
+)
+
+demo("Use By() to do wide broadcasts.",
+    EZ(Src(2), By(5, Add, 10), Print())
+)
+
+
+
+demo("Use Zip() to merge broadcasted results into a group in-order.",
+    EZ(Src(), Zip(Add(10), Add(100)), Print())
+)
+
+
+print("\n\nOf course, it is easy to get results from the process chain using .items\n\n")
+
+for item in EZ(Src(), Add(5)).items():
+    print("Item:", item)
+
+
+
+print("\n\nOr use .list (actually is just list(ez.items()) ).\n\n")
+
+fived = EZ(Src(), Add(5)).list()
+print("Five:", fived)
+
+
+import time
+
+before = time.perf_counter()
+
+demo("And now for a big ugly pile of pachinko fun",
+    EZ(
+        Const(0, 5), 
+        (Add(1), Add(10), Add(100), Add(1000), Add(10000)), 
+        (Add(1), Add(10), Add(100), Add(1000), Add(10000)), 
+        (Add(1), Add(10), Add(100), Add(1000), Add(10000)), 
+        (Add(1), Add(10), Add(100), Add(1000), Add(10000)), 
+        (Add(1), Add(10), Add(100), Add(1000), Add(10000)), 
+        (Add(1), Add(10), Add(100), Add(1000), Add(10000)), 
+        (Add(1), Add(10), Add(100), Add(1000), Add(10000)), 
+        (Add(1), Add(10), Add(100), Add(1000), Add(10000)), 
+        Print()
+    )
+)
+
+print("Took {} ms to run ~40 processes".format((time.perf_counter() - before) * 1000))
+
+
+
+print("\n\nCan also read and write files.\n\n")
+print("".join(EZ(Read("/etc/issue.logo")).list()))
+
+
+"""
+demo()
+"""
+
+
+
+
+""" Current works up to here.... maybe.. continue here
+### todo, remove ascii control, [the '-', '|', '*', stuff.]
+### use [] for series
+### use {} for parallel (note: non indexible. Perfect!), 
+### and () for broadcast (note: immutable. Perfect!).
+
+# so, must adhere to no indexing, and immutability.
+# refactor hasn't happened yet.
+
+
+# P.S. current interface looks like.. (  [] = '-', {} = '|', and () = '*',
+    as the first element of the list)
+
+l = EZ(
+    ['-', 
+        ['-', Itr(range(5)), ['|', Print("A"), Print("Z")]],
+        ['|', Print("B"), ['|', Print("C"), Print("X")]],
+        ['-', Print("D")]
+    ]
+)
+
+"""
+
+#demo("Parallel Processing uses {}.", 
+#    EZ(Src(), {Print("~50% Parallel Fn A"), Print("~50% Parallel Fn B")}))
+
+
+
+"""
+l = EZ((Itr(range(10)), Itr(range(20,30))), Print("0-9 and 20-29, ooo"))
+l = EZ(Src(), (Print("A"), Print("B")))
+l = EZ(Src(), {Mul(10), Mul(10), Mul(10)}, Print("x10"))
+
+"""
+
+
+"""
+l = EZ(
+    ['-', 
+        ['-', Itr(range(5)), ['|', Print("A"), Print("Z")]],
+        ['|', Print("B"), ['|', Print("C"), Print("X")]],
+        ['-', Print("D")]
+    ]
+)
+"""
+
+
+
+
+
+

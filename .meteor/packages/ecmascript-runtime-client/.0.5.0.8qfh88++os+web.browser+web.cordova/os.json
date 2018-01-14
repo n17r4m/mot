@@ -1,0 +1,14 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "es5-shim",
+      "weak": true
+    }
+  ],
+  "resources": []
+}

@@ -1,0 +1,40 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "meteorBabelHelpers",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "es5-shim",
+      "weak": true
+    },
+    {
+      "package": "modules"
+    },
+    {
+      "package": "promise"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/babel-runtime.js",
+      "length": 1681,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "babel-runtime.js",
+      "hash": "ec71f73fbe6d56a31f61dbb7afc1ce6e1c9a23da",
+      "fileOptions": {
+        "mainModule": true
+      }
+    }
+  ],
+  "node_modules": "npm/node_modules"
+}

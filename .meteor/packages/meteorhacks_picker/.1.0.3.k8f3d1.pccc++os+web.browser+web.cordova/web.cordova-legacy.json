@@ -1,0 +1,23 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "meteor"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "web.cordova-legacy/packages/meteorhacks_picker/packages/meteorhacks_picker.js",
+      "length": 0,
+      "offset": 0,
+      "servePath": "/packages/meteorhacks_picker/packages/meteorhacks_picker.js"
+    }
+  ],
+  "packageVariables": [
+    {
+      "name": "Picker",
+      "export": true
+    }
+  ]
+}

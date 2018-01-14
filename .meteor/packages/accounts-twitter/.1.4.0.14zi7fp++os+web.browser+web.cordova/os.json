@@ -1,0 +1,66 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "accounts-base"
+    },
+    {
+      "package": "accounts-oauth"
+    },
+    {
+      "package": "twitter-oauth"
+    },
+    {
+      "package": "http"
+    },
+    {
+      "package": "accounts-ui",
+      "weak": true
+    },
+    {
+      "package": "twitter-config-ui",
+      "weak": true
+    }
+  ],
+  "implies": [
+    {
+      "package": "accounts-base",
+      "constraint": ""
+    },
+    {
+      "package": "twitter-oauth",
+      "constraint": ""
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/notice.js",
+      "length": 374,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "notice.js",
+      "hash": "c63ba4b0756650677e78389cd319f8e5cc269bf0",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/twitter.js",
+      "length": 1007,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "twitter.js",
+      "hash": "b165eb8c181506d2ef37719bd13a78519d44c630",
+      "fileOptions": {}
+    }
+  ]
+}

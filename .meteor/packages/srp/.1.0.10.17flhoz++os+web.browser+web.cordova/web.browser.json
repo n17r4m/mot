@@ -1,0 +1,50 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "SRP",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "random"
+    },
+    {
+      "package": "check"
+    },
+    {
+      "package": "sha"
+    },
+    {
+      "package": "underscore"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/biginteger.js",
+      "length": 35831,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "biginteger.js",
+      "hash": "bec6a5b2c481b1fbff381837e2fe6c2b4bb1f07e",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/srp.js",
+      "length": 3119,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "srp.js",
+      "hash": "5cc8a00c4976892978979d5e08f6bb6a31f35c17",
+      "fileOptions": {}
+    }
+  ]
+}

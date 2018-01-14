@@ -1,0 +1,21 @@
+{
+  "format": "javascript-image-pre1",
+  "arch": "os",
+  "load": [
+    {
+      "node_modules": "npm/node_modules/meteor/meteor/node_modules",
+      "path": "packages/meteor.js"
+    },
+    {
+      "path": "packages/underscore.js"
+    },
+    {
+      "node_modules": "npm/node_modules/meteor/minifier-css/node_modules",
+      "path": "packages/minifier-css.js"
+    },
+    {
+      "node_modules": "npm/node_modules/meteor/minifyStdCSS/node_modules",
+      "path": "packages/minifyStdCSS_plugin.js"
+    }
+  ]
+}

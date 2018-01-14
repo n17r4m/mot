@@ -1,0 +1,43 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Showdown",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "templating",
+      "constraint": "1.3.1",
+      "weak": true
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/showdown.js",
+      "length": 37991,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "showdown.js",
+      "hash": "f3445a2ccfc8a4b345f360165c80354800d9f1bb",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/template-integration.js",
+      "length": 545,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "template-integration.js",
+      "hash": "80f33397372977855093925754a1192d8017f22d",
+      "fileOptions": {}
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "OAuth1Binding",
+      "testOnly": false
+    },
+    {
+      "name": "OAuth1Test",
+      "testOnly": true
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "random"
+    },
+    {
+      "package": "service-configuration"
+    },
+    {
+      "package": "oauth"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "check"
+    },
+    {
+      "package": "http"
+    },
+    {
+      "package": "mongo"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/oauth1_binding.js",
+      "length": 6053,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "oauth1_binding.js",
+      "hash": "19779b4bfdd5dc374fef1b1985a004e16f06c703",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/oauth1_server.js",
+      "length": 3853,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "oauth1_server.js",
+      "hash": "8f17b460f3f4f20f9ef4c1a7012dd13e0e130bfb",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/oauth1_pending_request_tokens.js",
+      "length": 3030,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "oauth1_pending_request_tokens.js",
+      "hash": "ea53b0ec69f26740479a9790e58dad734e28f858",
+      "fileOptions": {}
+    }
+  ]
+}

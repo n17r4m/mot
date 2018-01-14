@@ -1,0 +1,27 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Base64",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.cordova/base64.js",
+      "length": 3173,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "base64.js",
+      "hash": "acfe8654ef887aaec0874fc2c6ae8397b7cde02c",
+      "fileOptions": {}
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Facts",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "templating",
+      "constraint": "1.2.13"
+    },
+    {
+      "package": "mongo"
+    },
+    {
+      "package": "ddp"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "html",
+      "file": "web.browser/facts.html",
+      "length": 270,
+      "offset": 0,
+      "path": "facts.html",
+      "hash": "0b90378b5309d3a8bce6262a37abcce277abc9a4",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/facts.js",
+      "length": 2933,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "facts.js",
+      "hash": "3b23026076482d7cf077d06fa2c6cfd68f38f240",
+      "fileOptions": {}
+    }
+  ]
+}

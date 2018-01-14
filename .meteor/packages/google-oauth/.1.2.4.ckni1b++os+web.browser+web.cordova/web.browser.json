@@ -1,0 +1,82 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Google",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "ecmascript",
+      "constraint": "0.7.3"
+    },
+    {
+      "package": "oauth2",
+      "constraint": "1.1.11"
+    },
+    {
+      "package": "oauth",
+      "constraint": "1.1.13"
+    },
+    {
+      "package": "service-configuration",
+      "constraint": "1.0.11"
+    },
+    {
+      "package": "random",
+      "constraint": "1.0.10"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/google_client.js",
+      "length": 3129,
+      "offset": 0,
+      "path": "google_client.js",
+      "hash": "aa31c891e26eb79fdc6da6e144f55d36acf9e77b",
+      "fileOptions": {}
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/namespace.js",
+      "length": 212,
+      "offset": 0,
+      "path": "namespace.js",
+      "hash": "e7062dbeee43d66bbb4978718599a915b213b653",
+      "fileOptions": {
+        "mainModule": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/google_server.js",
+      "length": 4328,
+      "offset": 0,
+      "path": "google_server.js",
+      "hash": "c38725edbcfebea11e579db6a3d10acf012dbda7",
+      "fileOptions": {
+        "lazy": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "web.browser/google_sign-in.js",
+      "length": 2272,
+      "offset": 0,
+      "path": "google_sign-in.js",
+      "hash": "977473f8b213f304268a4e54dcdb037e83226c7f",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ]
+}

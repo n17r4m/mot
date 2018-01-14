@@ -1,0 +1,38 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "Facts",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "underscore"
+    },
+    {
+      "package": "autopublish",
+      "weak": true
+    },
+    {
+      "package": "ddp",
+      "unordered": true
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/facts.js",
+      "length": 2933,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "facts.js",
+      "hash": "3b23026076482d7cf077d06fa2c6cfd68f38f240",
+      "fileOptions": {}
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "format": "unipackage-unibuild-pre1",
+  "uses": [
+    {
+      "package": "tracker",
+      "constraint": "1.0.5"
+    },
+    {
+      "package": "meteor",
+      "constraint": "1.1.4"
+    },
+    {
+      "package": "ddp",
+      "constraint": "1.0.14"
+    },
+    {
+      "package": "ejson",
+      "constraint": "1.0.5"
+    }
+  ],
+  "resources": [
+    {
+      "type": "prelink",
+      "file": "web.browser-legacy/packages/simple_reactive-method/packages/simple_reactive-method.js",
+      "length": 17242,
+      "offset": 0,
+      "servePath": "/packages/simple_reactive-method/packages/simple_reactive-method.js"
+    }
+  ],
+  "packageVariables": [
+    {
+      "name": "ReactiveMethod",
+      "export": true
+    }
+  ]
+}

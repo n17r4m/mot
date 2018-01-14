@@ -1,0 +1,39 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "ecmascript",
+      "constraint": "0.9.0"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/main.js",
+      "length": 165,
+      "offset": 0,
+      "path": "main.js",
+      "hash": "0e5f6d941a5a3f8889a27c42d7760d0ae3e81976",
+      "fileOptions": {
+        "mainModule": true
+      }
+    },
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/shell-server.js",
+      "length": 12797,
+      "offset": 0,
+      "path": "shell-server.js",
+      "hash": "13d68db0b1c41181618bfe3e3c372720992e5bda",
+      "fileOptions": {
+        "lazy": true
+      }
+    }
+  ]
+}

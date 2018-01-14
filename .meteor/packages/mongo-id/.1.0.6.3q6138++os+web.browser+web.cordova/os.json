@@ -1,0 +1,36 @@
+{
+  "format": "isopack-2-unibuild",
+  "declaredExports": [
+    {
+      "name": "MongoID",
+      "testOnly": false
+    }
+  ],
+  "uses": [
+    {
+      "package": "meteor"
+    },
+    {
+      "package": "ejson"
+    },
+    {
+      "package": "id-map"
+    },
+    {
+      "package": "random"
+    }
+  ],
+  "resources": [
+    {
+      "type": "source",
+      "extension": "js",
+      "file": "os/id.js",
+      "length": 2696,
+      "offset": 0,
+      "usesDefaultSourceProcessor": true,
+      "path": "id.js",
+      "hash": "2ed814a13466ebf75078a5d517328b5940b81fef",
+      "fileOptions": {}
+    }
+  ]
+}
