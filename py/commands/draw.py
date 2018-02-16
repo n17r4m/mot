@@ -91,8 +91,9 @@ async def draw_tracks(args):
                 if not prev_frame is None:
                     frame_bytes.put(im.tobytes())
                     frame_count += 1
-                    print("frame {frame}, drew {count} tracks"
-                          .format(frame = prev_frame, count = count))
+                    if prev_frame % 10 == 0:
+                        print("frame {frame}, drew {count} tracks"
+                              .format(frame = prev_frame, count = count))
                     # print("{frame}".format(frame=prev_frame), end=' ')
                     count = 0
                 

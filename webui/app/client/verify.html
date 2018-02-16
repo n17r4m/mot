@@ -1,0 +1,132 @@
+<template name="verify">
+    
+    <div class="section">
+        {{#with experiment}}
+            <h1>{{day}} {{name}} {{method}}</h1>
+            <p>{{this.experiment}}</p>
+            <p>{{notes}}</p>
+            <button class="ui button icon return">
+                <i class="icon arrow left"></i>
+                Return to Video
+            </button>
+    
+        {{/with}}
+        
+        
+        <div class="ui form segment">
+            
+            <h3>Segment</h3>
+            
+            <div class="inline fields">
+                
+                <select name="segment" class="ui selection dropdown">
+                    <option class="item" value="">Select an segment</option>
+                    {{#each segments}}    
+                        <option class="item" value={{_id}}>{{number}}</option>
+                    {{/each}}
+                </select>
+                
+                <button class="ui icon button refresh">
+                    <i class="refresh icon"></i>
+                </button>
+                
+            </div>
+            <div class="inline fields">
+                    
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input name="val_filter" value="all" checked class="hidden" type="radio" id="val_all">
+                        <label for="val_all">All</label>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input name="val_filter" value="verified" class="hidden" type="radio" id="val_ver">
+                        <label for="val_ver">Verified</label>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input name="val_filter" value="unverified" class="hidden" type="radio" id="val_unv">
+                        <label for="val_unv">Unverified</label>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="ui radio checkbox">
+                        <input name="val_filter" value="invalid" class="hidden" type="radio" id="val_inv">
+                        <label for="val_inv">Invalid</label>
+                    </div>
+                </div>
+                
+                
+            </div>
+        </div>
+        
+        {{#with experiment}}
+        
+            {{#each categories}}
+                <h4>{{label}}</h4>
+                
+                {{#each particles category}}
+                    {{#if viewing}}
+                        <div class="ui segment" style="padding: 1em; margin: 0 -1em 1.5em -1em;">
+                            <div>
+                                {{#each particles_track ../category @index}}
+                                    <img class="particle" 
+                                        data-particle={{particle}} 
+                                        data-idx={{@index}} 
+                                        data-category={{../category}}
+                                        src={{particleN_url experiment frame track}}>
+                                {{/each}}
+                            </div>
+                            <div>
+                                <div style="float: right;" class="ui buttons">
+                                    {{#each categories}}
+                                        
+                                            <button class="ui button change_category 
+                                                {{#if equals label ../../label}}active{{/if}}"
+                                                data-category={{category}}
+                                                data-particle={{../particle}}>
+                                                {{label}}
+                                            </button>
+                                        
+                                    {{/each}}
+                                </div>
+                                <div class="ui buttons">
+                                    <button class="ui button {{#if equals valid true}}active{{/if}}" name="valid" data-particle={{particle}}>Valid</button>
+                                    <button class="ui button {{#if equals valid false}}active{{/if}}" name="invalid" data-particle={{particle}}>Invalid</button>
+                                </div>
+                                
+                            </div>
+                        </div>
+                            
+                    {{else}}
+                        <img class="particle" 
+                            data-particle={{particle}} 
+                            data-category={{../category}}
+                            data-idx={{@index}} 
+                            src={{particle1_url experiment this}}>
+                    {{/if}}
+                {{/each}}
+                
+                
+            {{/each}}
+            
+        {{/with}}
+        
+        <br>
+        <hr>
+        <p>
+            Hint: Use left/right arrow keys to switch between particles and 
+            <strong style="text-decoration:underline;">p</strong>rev and 
+            <strong style="text-decoration:underline;">n</strong>ext to switch between segments
+        </p>
+        <br>
+    </div>
+    
+    
+    
+</template>

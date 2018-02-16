@@ -1,6 +1,6 @@
 from mpyx.F import EZ, As, By, F
 from mpyx.F import Serial, Parallel, Broadcast, S, P, B
-from mpyx.F import Iter, Const, Print, Map, Filter, Batch, Seq, Zip, Read, Write
+from mpyx.F import Iter, Const, Print, Stamp, Map, Filter, Batch, Seq, Zip, Read, Write
 
 
 # Example Process Function
@@ -135,9 +135,86 @@ print("\n\nCan also read and write files.\n\n")
 print("".join(EZ(Read("/etc/issue.logo")).list()))
 
 
+
+print("Let's try cross cutting between workflows")
+
+
+class Worker(F):
+    def do(self, item):
+        self.put(item * 2)
+        self.logger.put(("Hello from worker. I did 2 x", item, "=", item * 2))
+
+logger = EZ(Print())
+workflow = EZ(Src(), Worker())
+
+workflow.xcut("logger", logger)
+
+
+workflow.start().join()
+
+
+
+
 """
-demo()
+print("Let's try reading and writing some video!")
+
+
+from mpyx.Vid import FFmpeg
+import numpy as np
+
+class StaticFrameGenerator(F):
+    def setup(self, shape):
+        for _ in range(20):
+            self.put(np.random.randint(0, 255, shape, dtype="uint8"))
+        self.stop()
+
+
+frame_shape = (1920, 1080, 3)
+
+EZ(
+    StaticFrameGenerator(frame_shape), 
+    FFmpeg(frame_shape, [], "test.avi", ['-c:v libx264 -preset slow -crf 22'], ["-y"])
+).start().join()
+
+
+print("Let's try a more complicated ffmpeg pipeline.")
+
+
+
+#import cv2
+
+class Intensify(F):
+    def do(self, frame): 
+        
+        frame_mod = (127 + frame / 2).astype('uint8')
+        #cv2.imshow("show", frame_mod)
+        #cv2.waitKey(1)
+        
+        self.put(frame_mod)
+        
+
+
+EZ(
+    FFmpeg("test.avi", [], (1920,1080,3), []),
+    Stamp(),
+    FFmpeg((1920,1080,3), [], (1280,720,3), ["-vf scale=1280:720"]),
+    Intensify(),
+    FFmpeg((1280,720,3), [], "test2.avi", ['-c:v libx264 -preset slow -crf 22'], ["-y"])
+).start().join()
+
+
+
+print("Transcode from file to file.")
+
+
+EZ(
+    FFmpeg("test2.avi", [], "test3.avi",  ['-c:v libx264 -preset slow -crf 30'], ["-y"])
+).start().join()
+
 """
+
+
+
 
 
 

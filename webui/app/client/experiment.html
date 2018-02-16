@@ -6,6 +6,11 @@
         
         <video id="video" controls loop autoplay style="width:100%;" src="/mot/data/experiments/{{_id}}/detection.mp4"></video>
         
+        <div style="float:right;">
+            <button class="verify">View Tracks</button>
+        </div>
+        
+        
         <select id="video_select">
             <option value="detection.mp4">Detection</option>
             {{#if startsWith method "tracking"}}

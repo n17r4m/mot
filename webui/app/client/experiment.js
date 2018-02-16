@@ -26,6 +26,11 @@ Template.experiment.events({
     "change,click #rate_select": function(e) {
         r = parseFloat(e.currentTarget.value)
         $("#video")[0].playbackRate = r
+    },
+    "click button.verify": function(e) {
+        FlowRouter.go("/app/verify/:experiment", {
+            experiment: Session.get("experiment")
+        })
     }
 })
 

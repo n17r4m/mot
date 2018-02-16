@@ -13,14 +13,14 @@
     <select name="day" class="ui selection dropdown">
       <option class="item" value="">Select an experiment day</option>
       {{#each dayList}}
-      <option value={{this}} class="item">{{this}}</option>
+      <option value={{day}} class="item">{{day}}</option>
       {{/each}}
     </select>    
     
-    <select name="bag" class="ui selection dropdown">
-      <option class="item" value="">Select a bag</option>
-      {{#each bagList}}
-      <option value={{this}} class="item">{{this}}</option>
+    <select name="experiment" class="ui selection dropdown">
+      <option class="item" value="">Select a experiment</option>
+      {{#each nameList}}
+      <option value={{_id}} class="item">{{name}}</option>
       {{/each}}
     </select>
     
@@ -36,7 +36,7 @@
     <div class="ui segments">
     {{#each experiment}}
       <div class="ui segment">
-        {{day}}/{{bag}} 
+        {{day}}/{{name}} 
         <a class="remove button" data-index={{@index}}><i class="remove icon"></i></a>
       </div>
     {{/each}}
@@ -50,11 +50,10 @@
     <div id="crop_loader" class="ui loader"></div>
     <div id="crops">
       {{#each crops}}
-        <h3>{{name}}</h3>
-        {{#each list}}
+        <h3>{{category}}</h3>
+        {{#each particles}}
         <div style="position: relative; display: inline-block;">
-          <img src={{crop}}>
-          <span style="display: inline-block; position: absolute; left: 0; bottom:0;">{{id}}</span>
+          <img src={{url}} title={{particle}}>
         </div>
         {{/each}}
       {{/each}}

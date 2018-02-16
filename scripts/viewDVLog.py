@@ -65,7 +65,11 @@ while True:
 		testTime.append(time)
 		testAcc.append(acc)	
 
-		
+best = np.max(testAcc)
+mean = np.mean(testAcc)
+std = np.std(testAcc)
+print("Mean:", mean, " Std: ", std)	
+print("Best:", best, "Epoch:", testAcc.index(best)+1)		
 
 
 # np.save('trainLoss', trainLoss)
@@ -128,7 +132,7 @@ plt.scatter(xTest, testMSE)
 plt.waitforbuttonpress(0)
 
 plt.clf()
-plt.title("Training Acc")
+plt.title("Test Acc")
 plt.scatter(xTest, testAcc)
 plt.show()
 plt.waitforbuttonpress(0)

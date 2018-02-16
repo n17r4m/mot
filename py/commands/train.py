@@ -55,11 +55,11 @@ async def train_DeepVelocity(args):
     else:
         debug = False
         print("DEBUG:", debug)
-        os.environ["CUDA_VISIBLE_DEVICES"]="2"
-        print('Parent CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
+    os.environ["CUDA_VISIBLE_DEVICES"]="2"
+    print('Parent CUDA',os.environ["CUDA_VISIBLE_DEVICES"])
         
     dataGenerator = DVDataGen(debug=debug)
-    DV = DeepVelocity(lr=0.0003)
+    DV = DeepVelocity()
     name = args[0]
     
     experimentPath = os.path.join(config.training_dir, name)
@@ -102,7 +102,7 @@ async def train_DeepVelocity(args):
             else:
                 DV.compile()
             model = DV.probabilityNetwork 
-                
+            logger.info("Learning Rate"+str(DV.lr))
             await trainer(args[1:], 
                           model=model,
                           dataGenerator=dataGenerator,
@@ -494,7 +494,7 @@ class DVDataGen(object):
         self.numTrainBatch = None
         self.numTestBatch = None
         self.splitPercent = 0.8
-        self.method =  "simulation_tracking2"
+        self.method =  "simulation2Corrupt_tracking"
         self.debug = debug
         self.db = Database()
         self.logger = logging.getLogger('dvTraining')
@@ -517,12 +517,13 @@ class DVDataGen(object):
         self.batchSize = batchSize
         self.epochs = epochs
         print("running DVDataGen setup")
-        
+        self.logger.info("batch size "+str(self.batchSize))
         await self._numDataPoints()
         print("number of datapoints computed", self.numDataPoints)
-        
+        self.logger.info("number of datapoints computed "+ str(self.numDataPoints))
         self._split()
         print("split computed")
+        self.logger.info("split computed "+str(self.split))
         
         self.numTrainBatch = int((self.splitPercent*self.numDataPoints) / self.batchSize)
         print("num training batches computed", self.numTrainBatch)
@@ -628,6 +629,7 @@ class DVDataGen(object):
             AND UPPER(experiment.method) LIKE  UPPER('{method}')
             ORDER BY random()
             """
+            
         s = q.format(split=self.split,
                      method=self.method)
         return s
@@ -758,6 +760,8 @@ class DVDataGen(object):
             
             frameMean = np.mean(frames)
             frameStd = np.std(frames)
+            # print("overriding frame std to 1")
+            # frameStd = 1.0
             locationMean = np.mean(locations)
             locationStd = np.std(locations)
         
@@ -785,6 +789,7 @@ class DVDataGen(object):
         s = q.format(method=self.method)
         async for result in self.db.query(s):
             self.numDataPoints = result['numdatapoints']
+        
         
     async def trainBatch(self):
         return self.trainBatchQueue.get()
@@ -862,6 +867,9 @@ class DVQueryProcessor(multiprocessing.Process):
                                                   '64x64.png')
                         frame2 = io.imread(frameFile2, as_grey=True)
                         
+                        # frame1 = np.random.normal(0, 0.1, frame1.shape)
+                        # frame2 = np.random.normal(0, 0.1, frame2.shape)
+                        
                         latent1_string = result["lat1"][1:-1].split(',')
                         latent1 = [float(i) for i in latent1_string]
                         
@@ -923,8 +931,11 @@ class DVPredictionProcessor(multiprocessing.Process):
                 weightFile = self.weightsQueue.get()
                 model.load_weights(weightFile)
                 print("Loaded new weights...")
-            # if not self.inputQueue.empty():
-            d = self.inputQueue.get()
+            if not self.inputQueue.empty():
+                d = self.inputQueue.get()
+            else:
+                time.sleep(0.1)
+                continue
 
             probs = model.predict(d)
             self.outputQueue.put(probs)
@@ -1024,7 +1035,7 @@ class DVBatchProcessor(multiprocessing.Process):
                 outputQueue = self.queues["output"][self.mode]
 
                 if self.mode == "test":
-                    self.genNegSamples = False
+                    self.genNegSamples = True
                     pass
                 elif self.mode == "train":                    
                     self.genNegSamples = True
@@ -1082,6 +1093,8 @@ class DVBatchProcessor(multiprocessing.Process):
                         break
                     bias = probs[i][0]
                     addData = int(np.random.random() + bias)
+                    # KG: > exp 16 mod
+                    addData = 1.0
                     total+=1
                     if addData:
                         d = dataBatchTmp1.getDataPoint(i)

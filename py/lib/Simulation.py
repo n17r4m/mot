@@ -7,7 +7,7 @@ import traceback
 
 class Simulation:
     @store_args
-    def __init__(self, model = "linear", profile = "simple", frames = 1000, width = 2336, height = 1729, segment_size = 10, method='simulation'):
+    def __init__(self, model = "linear", profile = "simple", frames = 150, width = 2336, height = 1729, segment_size = 10, method='simulation3'):
         self.motion = getattr(Motion, model)(profile, width, height)
         self.method = method
         
@@ -20,15 +20,27 @@ class Simulation:
             latent_samples = []
             for c in range(5):
                 latent_cat_samples = []
+                curr_particle = None
+                prev_particle = None
                 async for track in tx.cursor("""
-                    SELECT latent 
+                    SELECT particle, latent
                     FROM Track LEFT JOIN Particle USING(particle) 
-                    WHERE category = $1 
-                    AND experiment = '5a9b6f60-dcae-40ad-8bc8-c19c14854836'
+                    WHERE category = $1
+                    AND experiment = '727ca46c-6c35-4d5a-85b9-59dc716674fd'
+                    ORDER BY particle
                     """, c):
-                    latent_cat_samples.append(track["latent"])
+                    curr_particle = str(track["particle"])
+                    if curr_particle != prev_particle:
+                        if prev_particle is not None:
+                            latent_cat_samples.append(particle_latents)
+                        prev_particle = curr_particle
+                        particle_latents = []
+                    particle_latents.append(track["latent"])
+                        
                 latent_samples.append(latent_cat_samples)
         
+        
+            
             experiment_name = str(uuid4())
             
             experiment_detection = (uuid4(), experiment_name, self.method+"_detection", " ".join((self.model, self.profile)))
@@ -65,7 +77,7 @@ class Simulation:
                     # particle_latents = []
                     # for p in self.motion.particles:
                     #     particle_latents.append(np.random.choice(latent_samples[int(p[6])]))
-                    ### New code to get latents - faster?
+                    ### New code to get latents - faster?... YES -kg
                     nParticles = len(self.motion.particles)
                    
                     particle_latents = [0]*nParticles
@@ -76,7 +88,8 @@ class Simulation:
                         particleCats = self.motion.particles[:,6][bParticleCats]
 
                         latents = np.random.choice(latent_samples[cat],
-                                                   size=particleCats.shape)
+                                                   size=particleCats.shape,
+                                                   replace=False)
                         
                         count = 0
                         for i in range(nParticles):
@@ -97,7 +110,7 @@ class Simulation:
                     VALUES ($1, $2, $3, $4)
                 """, [frame_detection, frame_tracking])
                 
-                self.motion.tick()
+                self.motion.tick(segment_number)
                 
                 
                 
@@ -112,7 +125,9 @@ class Simulation:
                         area = np.pi * radius ** 2
                         perimeter = 2 * np.pi * radius
                         intensity = min(254, max(1, np.random.normal(127, 50)))
-                        latent = particle_latents[i]
+                        
+                        lat_idx = np.random.randint(0,len(particle_latents[i]))
+                        latent = particle_latents[i][lat_idx]
                         location = (p[0], p[1])
                         bbox = ((p[0]-radius, p[1]-radius), (p[0]+radius, p[1]+radius))
                         
@@ -174,7 +189,7 @@ class Motion:
                 self.particles[c:c+p.quantity, 6] = p.category
                 c += p.quantity
 
-        def tick(self):
+        def tick(self, segment):
             self.particles[:, 2:4] += self.particles[:, 4:6]
             self.particles[:, 0:2] += self.particles[:, 2:4]
 
@@ -218,5 +233,46 @@ class Motion:
                 PC("bubble",  4,   100, 0.0, 1.0, 10.0, 4.0,  0.0, 0.1,  0.2, 0.1)]
             
 
+    class go_faster:
+        @store_args
+        def __init__(self, profile = "monotonic", width = 2336, height = 1729):
+            self.profiles = getattr(self.profiles, profile)(self.profiles) 
+            self.quantity = sum([p.quantity for p in self.profiles])
 
+        def initialize(self):
+            self.particles = np.zeros((self.quantity, 7))
+            self.particles[:, 0] = np.random.uniform(0, self.width, (self.quantity,))
+            #messy 
+            self.particles[:, 1] = np.random.uniform(-self.height, self.height*2, (self.quantity,))
+            c = 0; 
+            for p in self.profiles:
+                self.particles[c:c+p.quantity, 2] = np.random.normal(p.dxμ, p.dxσ, (p.quantity,))
+                self.particles[c:c+p.quantity, 3] = np.random.normal(p.dyμ, p.dyσ, (p.quantity,))
+                self.particles[c:c+p.quantity, 4] = np.random.normal(p.axμ, p.axσ, (p.quantity,))
+                self.particles[c:c+p.quantity, 5] = np.random.normal(p.ayμ, p.ayσ, (p.quantity,))
+                self.particles[c:c+p.quantity, 6] = p.category
+                c += p.quantity
+
+        def tick(self, segment):
+            self.particles[:, 2:4] += self.particles[:, 4:6]
+            self.particles[:, 0] += self.particles[:, 2]                # x
+            self.particles[:, 1] += self.particles[:, 3] + (-2*segment)  # y
+
+        class profiles: # overwritten on instantiation by return of below return
+            
+            class ParticleClass:
+                @store_args
+                def __init__(self, name = "undefined", 
+                               category = 0, quantity = 0, 
+                                    dxμ = 0, dxσ = 0, dyμ = 0, dyσ = 0,
+                                    axμ = 0, axσ = 0, ayμ = 0, ayσ = 0):
+                    pass
+            
+                
+            def monotonic(self):
+                PC = self.ParticleClass; return [
+                #   name      c   qty  dxμ  dxσ    dyμ  dyσ  axμ  axσ  ayμ  ayσ 
+                PC("bitumen", 2,  200, 0.0, 0.5, -1.0, 2.0, 0.0, 0.0, 0.0, 0.0),
+                PC("sand",    3,  200, 0.0, 0.5,  1.0, 2.0, 0.0, 0.0, 0.0, 0.0),
+                PC("bubble",  4,   50, 0.0, 0.5, -5.0, 4.0, 0.0, 0.0, 0.0, 0.0)]
 

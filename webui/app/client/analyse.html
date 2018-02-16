@@ -13,7 +13,7 @@
     <select name="day" class="ui selection dropdown">
       <option class="item" value="">Select an experiment day</option>
       {{#each dayList}}
-      <option value={{_id}} class="item">{{_id}}</option>
+      <option value={{day}} class="item">{{day}}</option>
       {{/each}}
     </select>    
     
@@ -39,11 +39,10 @@
     <div id="crop_loader" class="ui loader"></div>
     <div id="crops">
       {{#each crops}}
-        <h3>{{name}}</h3>
-        {{#each list}}
+        <h3>{{category}}</h3>
+        {{#each particles}}
         <div style="position: relative; display: inline-block;">
-          <img src={{crop}}>
-          <span style="display: inline-block; position: absolute; left: 0; bottom:0;">{{particle}}</span>
+          <img src={{url}} title={{particle}}>
         </div>
         {{/each}}
       {{/each}}

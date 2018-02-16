@@ -7,8 +7,8 @@ export const Queries = {
                 {
                     "class": "threshold",
                     label: "Intensity threshold",
-                    type: "range",
-                    value: 110,
+                    type: "number",
+                    value: 130,
                     min: 0,
                     max: 255
                 }
@@ -21,8 +21,8 @@ export const Queries = {
                 {
                     "class": "threshold",
                     label: "Intensity threshold",
-                    type: "range",
-                    value: 110,
+                    type: "number",
+                    value: 130,
                     min: 0,
                     max: 255
                 }
@@ -30,7 +30,17 @@ export const Queries = {
         },
         flow_vs_intensity_violin: { 
             type: "analyse", 
-            label: "Flow vs. Intensity (violin)" 
+            label: "Flow vs. Intensity (violin)",
+            args: [
+                {
+                    "class": "threshold",
+                    label: "Intensity threshold",
+                    type: "number",
+                    value: 130,
+                    min: 0,
+                    max: 255
+                }
+            ]
         },
         flow_vs_category_histogram: { 
             type: "analyse", 
@@ -44,6 +54,7 @@ export const Queries = {
             type: "analyse", 
             label: "Flow vs. Category (violin)" 
         },
+        
         compare_flow_vs_category_violin2: {
             type: "compare",
             label: "Compare Flow"
@@ -85,19 +96,19 @@ export const Queries = {
 var isolateParticleMaps = {
     histogram: function(p){ return {
         flow: p.x,
-        trace: p.curveNumber
+        category: p.curveNumber
     }},
     distribution: function(p){ return {
         flow: p.x,
-        trace: p.curveNumber % (this.length / 2)
+        category: p.curveNumber % (this.length / 2)
     }},
     violin: function(p){ return {
         flow: p.y,
-        trace: Math.floor(p.curveNumber/(this.length / 5)) 
+        category: Math.floor(p.curveNumber/(this.length / 5)) 
     }},
     violin2: function(p){ return {
         flow: p.y,
-        trace: Math.floor(p.curveNumber/10) 
+        category: Math.floor(p.curveNumber/10) 
     }}
 }
 

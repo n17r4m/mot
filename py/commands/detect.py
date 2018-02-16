@@ -10,8 +10,11 @@ from skimage.draw import circle
 
 import config
 
-from mpyx.Video import Video
-from mpyx.Process import F, By, ZueueList
+from mpyx.F import EZ, As, By, F
+from mpyx.F import Serial, Parallel, Broadcast, S, P, B
+from mpyx.F import Iter, Const, Print, Stamp, Map, Filter, Batch, Seq, Zip, Read, Write
+from mpyx.Vid import BG, FFmpeg
+
 from mpyx.Compress import VideoFile, VideoStream
 
 from lib.Database import Database, DBWriter
@@ -62,6 +65,32 @@ async def main(args):
 crop_side = 200
 
 
+
+
+import cv2
+
+class BGPlayer(F):
+    def do(self, frame_bg):
+        cv2.imshow("bg", frame_bg["bg"])
+        cv2.waitKey(1)
+        self.put(frame_bg)
+
+
+class VideoPlayer(F):
+    def do(self, frame):
+        cv2.imshow("frame", frame)
+        cv2.waitKey(1)
+        self.put(frame)
+
+
+
+
+
+
+
+
+
+
 async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
     # note: "NOW()" may not work.
     
@@ -87,50 +116,36 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
         wq = dbwriter.input()
         dbwriter.start()
         
-        raw_compressor = VideoFile(video_file, experiment_dir, "raw.mp4")
-        raw_compressor.start()
+                
+        scaleby = 1
+        w, h = int(2336/scaleby), int(1729/scaleby)
         
-        norm_compressor = VideoStream(experiment_dir, "extraction.mp4", pix_format="gray")
-        norm_q = norm_compressor.input()
-        norm_compressor.start()
+
+        video_reader = FFmpeg(video_file, "", (h, w,3), "-vf scale={}:{}".format(w,h))
+        raw_compressor = FFmpeg((h, w, 3), "", os.path.join(experiment_dir, "raw.mp4"), "-c:v libx264 -preset slow -crf 17 -movflags +faststart")
         
-        mask_compressor = VideoStream(experiment_dir, "mask.mp4", pix_format="gray")
-        mask_q = mask_compressor.input()
-        mask_compressor.start()
-        
-        detection_compressor = VideoStream(experiment_dir, "detection.mp4", pix_format="rgb24")
-        det_q = detection_compressor.input()
-        detection_compressor.start()
+        bg_model = Seq(As(6, BG, model='splitmedian', window_size=20, img_shape=(h, w,3)))
         
         
-        print("Inserting experiment", name, "(", experiment_uuid, ") into database.")
-        wq.push(("execute", """
-            INSERT INTO Experiment (experiment, day, name, method, notes) 
-            VALUES ($1, $2, $3, $4, $5)
-            """, experiment))
         
         
-        cuda_envs = [{"CUDA_VISIBLE_DEVICES": str(i)} for i in range(config.GPUs)]
         
+        EZ(
+            video_reader, {raw_compressor,
+            VideoPlayer()}
+        ).start().watch().join()
         
-       
+        """
+        # TODO:
+        EZ(video_reader, {raw_compressor, 
+            [segment_detector, bg_model, foreground_extraction, {extraction_compressor,
+                [segmentation_mask, {mask_compressor,
+                    [segmentation_properties, get_crops, {crop_writer, 
+                        [crop_classifier, write_crops]
+                    ]}]}]]}}).start().watch().join()
         
-        print("Starting processor pipeline.")
-        (   FrameIter(wq, norm_q, video_file, experiment_uuid)
-            .sequence()
-            .into(By(4, FrameProcessor, experiment_dir, mask_q))
-            .into(By(4, PropertiesProcessor))
-            .into([CropProcessor(env=e) for e in cuda_envs])
-            .order()
-            .split(ZueueList([
-                DetectionProcessor(experiment_dir, det_q),
-                ParticleCommitter(wq).into(CropWriter(experiment_dir))
-            ]))
-            .merge()
-            .stamp("Output Frame")
-            .watchdog(5, [dbwriter, norm_compressor, mask_compressor, detection_compressor])
-            .execute()
-        )
+        """
+        
     
     except Exception as e:
         
@@ -154,6 +169,38 @@ async def detect_video(video_file, date = "NOW()", name = "Today", notes = ""):
         print("Fin.")
         
     return experiment_uuid
+
+
+class SegmentDetector(F):
+    def setup(self):
+        self.magic_pixel = 255
+        self.magic_pixel_delta = 0.1
+        self.segment_number = -1
+        self.frame_number = 0
+    def do(frame):
+        frame_magic_pixel = frame[0,4,0]
+        self.frame_number += 1
+        if abs(this_frame_magic_pixel - self.magic_pixel) > self.magic_pixel_delta:
+            print("Segment Boundry Detected:", self.frame_number)
+            segment_number += 1
+            segment = (uuid4(), experiment_uuid, segment_number)
+            wq.push(("execute", """
+                INSERT INTO Segment (segment, experiment, number)
+                VALUES ($1, $2, $3)
+            """, segment))
+        self.magic_pixel = this_frame_magic_pixel
+        
+        frame_uuid = uuid4()
+        self.meta["frame_uuid"] = frame_uuid
+        self.meta["frame_number"] = i
+        
+        wq.push(("execute", """
+            INSERT INTO Frame (frame, experiment, segment, number)
+            VALUES ($1, $2, $3, $4)
+        """, (frame_uuid, experiment_uuid, segment[0], self.frame_number)))
+                
+                
+        self.put(frame)
 
 
 

@@ -9,25 +9,24 @@ async def main(args):
         if   args[0] == "experiment":  print(await simulation(*args[1:]))
         elif args[0] == "video":       print(await create_video(*args[1:]))
         elif args[0] == "corruption":  print(await corruption(*args[1:]))
+        elif args[0] == "linescan":    print(await linescan(*args[1:]))
         else:                          print("Invalid simulate sub-command")
 
-    
 
-
-
-
-async def corruption(model = "linear", profile = "simple", method="simulationCorrupt", frames = 150, width = 2336, height = 1729, segment_size = 10):
+async def corruption(model = "go_faster", profile = "monotonic", method="simulation3Corrupt", frames = 500, width = 2336, height = 1729, segment_size = 10):
     from lib.Corruption import Corruption
     from lib.Simulation import Simulation
     experiment = await Simulation(model, profile, frames, width, height, segment_size, method).go()
-    return await Corruption(experiment, model, profile, frames, width, height, segment_size).go()
+    return await Corruption(experiment, "linear", "simple", frames, width, height, segment_size).go()
 
 
-async def simulation(model = "linear", profile = "simple", frames = 150, width = 2336, height = 1729, segment_size = 10):
+async def simulation(model = "go_faster", profile = "monotonic", frames = 500, width = 2336, height = 1729, segment_size = 10):
     from lib.Simulation import Simulation
     return await Simulation(model, profile, frames, width, height, segment_size).go()
     
-
+async def linescan(model = "linear", profile = "simple", frames = 1, width = 2336, time = 1):
+    from lib.LineScanSim import Simulation
+    return await Simulation(model, profile, frames, width, time).go()
 
 
 async def create_video(experiment_uuid, bg_file = "bg.png", out_file = "extraction.mp4"):

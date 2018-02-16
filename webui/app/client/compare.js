@@ -7,14 +7,19 @@ import './compare.html';
 
 
 Template.compare.onCreated(function makeVars(){
+    
     this.queries = new ReactiveVar([])
-    this.bagList = new ReactiveVar([])
-    this.bagName = new ReactiveVar()
-    this.dayList = new ReactiveVar([])
-    this.dayName = new ReactiveVar()
+    this.days = new ReactiveVar([])
+    this.day = new ReactiveVar()
     this.experiments = new ReactiveVar([])
+    this.selectedExperiments = new ReactiveVar([])
     this.query = new ReactiveVar()
     this.crops = new ReactiveVar([])
+    
+    Meteor.call('experiment_days', (err, res) => { 
+        if (err){ alert(err) }
+        else { this.days.set(res.rows) }
+    })
     
 })
 
@@ -22,17 +27,14 @@ Template.compare.onCreated(function makeVars(){
 Template.compare.onRendered(function updateDayList(){
     this.$("select.dropdown").dropdown()
     this.queries.set(Queries.filter((q) => q.type == "compare"))
-    Meteor.call("dayList", (err, list) => {
-        return err ? this.dayList.set("Error") : this.dayList.set(list)
-    })
-    
 })
 
 Template.compare.helpers({
-    queries()    { return Template.instance().queries.get()     },
-    dayList()    { return Template.instance().dayList.get()     },
-    bagList()    { return Template.instance().bagList.get()     },
-    experiment() { return Template.instance().experiments.get() },
+    queries()  { return Template.instance().queries.get()     },
+    dayList()  { return Template.instance().days.get()        },
+    nameList() { return Template.instance().experiments.get() },
+    
+    experiment() { return Template.instance().selectedExperiments.get() },
     crops()      { return Template.instance().crops.get()       },
     arg()        {  
         let q = Queries.get(Template.instance().query.get())
@@ -46,21 +48,22 @@ Template.compare.events({
         updateChart(instance)
     },
     "change select[name=day]": function daySelect(event, instance){
-        instance.dayName.set(event.currentTarget.value)
-        Meteor.call("bagList", instance.dayName.get(), (err, list) => {
-            return err ? instance.bagList.set(["Error"]) : instance.bagList.set(list)
+        instance.day.set(event.currentTarget.value)
+        Meteor.call("experiments_on_day", instance.day.get(), (err, res) => {
+            if (err) { alert(err) } 
+            else { instance.experiments.set(res.rows) }
         })
     },
-    "change select[name=bag]": function bagSelect(event, instance){
-        instance.bagName.set(event.currentTarget.value)
-        addExperiment(instance)
+    "change select[name=experiment]": function experimentSelect(event, instance){
+        
+        var name = event.currentTarget[event.currentTarget.selectedIndex].text
+        addExperiment(instance, event.currentTarget.value, name)
     },
     "click a.remove.button": function removeExperiment(event, instance){
-        const a = event.currentTarget
-        const index = a.dataset.index
-        var experiments = instance.experiments.get()
-        experiments.splice(index, 1)
-        instance.experiments.set(experiments)
+        const index = event.currentTarget.dataset.index
+        var selectedExperiments = instance.selectedExperiments.get()
+        selectedExperiments.splice(index, 1)
+        instance.selectedExperiments.set(selectedExperiments)
         updateChart(instance)
     }
 })
@@ -73,27 +76,38 @@ function fieldSorter(fields) {
     }).reduce((p,n) => p ? p : n, 0);
 }
 
-function addExperiment(instance){
-    const day = instance.dayName.get(),
-          bag = instance.bagName.get(),
+
+function addExperiment(instance, experiment, name){
+    const day = instance.day.get(),
           q  = instance.query.get()
-    if(day && bag && q){
-        var es = instance.experiments.get()
-        if (!es.some((ex) => ex.day == day && ex.bag == bag)){
-            es.push({day: day, bag: bag})
-            es.sort(fieldSorter(["day", "bag"]))
-            instance.experiments.set(es)
+    if(day && experiment && q){
+        var es = instance.selectedExperiments.get()
+        console.log(es)
+        if (!es.some((ex) => ex.day == day && ex.experiment == experiment)){
+            es.push({day, experiment, name})
+            es.sort(fieldSorter(["day", "name", "experiment"]))
+            instance.selectedExperiments.set(es)
             updateChart(instance)
         }
         $("select[name=bag]").dropdown('clear')
     }
 }
 
+
+
+function flowNearestZero(fcs){
+    return fcs.reduce((min, fc) => {
+        return Math.abs(fc.flow) < Math.abs(min) ? fc.flow : min
+    }, Infinity)
+}
+
+
 function updateChart(instance){
     const q = instance.query.get(),
-       exps = instance.experiments.get().map((e) => ({day: e.day, bag: e.bag}))
+       exps = instance.selectedExperiments.get().map((e) => e.experiment)
     console.info(exps, exps == true)
     if(exps.length && q){
+        
         Meteor.call("getPlots", exps, q, (err, res) => {
             if(err){ alert(err); return }
             var query = Queries[q]
@@ -104,6 +118,56 @@ function updateChart(instance){
                 $('#compare_plot a[data-title="Autoscale"]')[0].click() // hack
                 plt.on("plotly_click", (data) => {
                     
+                    
+                    
+                    $("#crop_loader").addClass("active")
+                    
+                    
+                    const flow = flowNearestZero(data.points.map(query.isolate, plt.data))
+                    var points = data.points.map(query.isolate, plt.data)
+                    
+                    
+                    
+                    var experiment = exps[points[0].category]
+                    
+                    
+                    console.info(plt, points, flow, experiment, exps)
+                    
+                    
+                    Meteor.call("experiment_particles_with_flow_near", experiment, flow, (err, res) => {
+                        $("#crop_loader").removeClass("active")
+                        if(err){
+                            console.info(err)
+                        } else {
+                            console.info(res)
+                            cat_groups = res.rows.reduce((grps, p) => {
+                                p.url = `/mot/data/experiments/${p.path}`
+                                if (!grps[p.category]){
+                                    grps[p.category] = [p]
+                                } else {
+                                    grps[p.category].push(p)
+                                }
+                                return grps
+                            }, {})
+                            console.info(cat_groups)
+                            merged = []
+                            //try{
+                            for (let cat in cat_groups){
+                                merged.push({category: cat, particles: cat_groups[cat]})
+                            }
+                            //} catch(e){
+                            //    console.info(e)
+                            //}
+                            
+                            console.info(merged)
+                            instance.crops.set(merged)
+                        }
+                            
+                    })
+                    
+                    
+                    
+                    /*
                     $("#crop_loader").addClass("active")
                     
                     if (q == "compare_flow_vs_category_violin2"){
@@ -120,10 +184,13 @@ function updateChart(instance){
                         $("#crop_loader").removeClass("active")
                         instance.crops.set(res)
                     })
+                    */
+                    
                 })
                 
             })
         })
+        
     }
 }
 

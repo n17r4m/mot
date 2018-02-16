@@ -77,11 +77,11 @@ async def main(args):
         if args[0] == "deep":
             if args[1] == "all_models":
                 start = time.time()
-                await track_allModels(*args[1:])
+                await track_allModels(*args[2:])
                 print('Total time:',time.time()-start)
             else:
                 start = time.time()
-                await track_model(*args[1:])
+                print(await track_model(*args[1:]))
                 print('Total time:',time.time()-start)
         else:    
             start = time.time()
@@ -111,7 +111,7 @@ async def track_model(experiment_uuid, method, modelName, epoch):
     model.load_weights(weightFile)
     methodTmp = method+weightEpoch.split(".")[0]
     print("tracking", methodTmp)
-    await track_experiment(experiment_uuid, methodTmp, model)
+    return await track_experiment(experiment_uuid, methodTmp, model)
 
 async def track_allModels(experiment_uuid, method, modelName):
     from lib.models.DeepVelocity import DeepVelocity
@@ -193,18 +193,22 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                        p1.category as category1, p2.category as category2,
                        p1.perimeter as perimeter1, p2.perimeter as perimeter2,
                        tr1, tr2,
-                       cost                       
+                       cost1,
+                       cost2,
+                       cost3
                 FROM frame f1, frame f2,track t1, track t2, particle p1, particle p2
                 JOIN LATERAL (
-                    SELECT t3.track AS tr1, tr2, cost          
+                    SELECT t3.track AS tr1, tr2, cost1, cost2, cost3     
                     FROM track t3
                     JOIN LATERAL (
                         SELECT t4.track AS tr2,
                                ((1 + (t3.latent <-> t4.latent))
-                               *(1 + (t3.location <-> t4.location))) AS cost
+                               *(1 + (t3.location <-> t4.location))) AS cost1,
+                               (1 + (t3.location <-> t4.location)) AS cost2,
+                               (1 + (t3.latent <-> t4.latent)) AS cost3
                         FROM track t4
                         WHERE t4.frame = f2.frame
-                        ORDER BY cost ASC
+                        ORDER BY cost1 ASC
                         LIMIT 5
                     ) C ON TRUE
                     WHERE t3.frame = f1.frame
@@ -256,7 +260,7 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                     darker = 0
                     area = edge_data[edges["tr1"]]["area"] 
                     intensity = edge_data[edges["tr1"]]["intensity"]
-                    nodeCi = Ci * (1 + (area / larger) * ((255-intensity) / 255))
+                    nodeCi = Ci *(1 + (area / larger) * ((255-intensity) / 255))
                     # if not edge_data[edges["tr1"]]["category"]:
                         # nodeCi = 10
                     # End heuristic reward
@@ -283,7 +287,7 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                     mcf_graph.add_edge(v2, "END", capacity=1, weight=Cex)
                 
                 # Cij = -Log(Plink(xi|xj)), Plink = Psize*Pposiiton*Pappearance*Ptime
-                Cij = int(edges["cost"])
+                Cij = int(edges["cost1"])
                 costs.append(Cij)
                 
                 if not model:
@@ -837,9 +841,16 @@ class DataBatch():
                           self.data["location"]["B"])
         locStd = np.std(self.data["location"]["A"] + 
                         self.data["location"]["B"])
-                         
+        
+        # print("######   Frame std normalize param set to 1.0 -KG    ######")
+        # frameStd = 1.0
+        
         d["frame"] = (frameMean, frameStd)
         d["location"] = (locMean, locStd)
+        # print("Computed norms", (frameMean, frameStd), (locMean, locStd))
+        # print("######   Manual normalize params set. -KG    ######")
+        # d["frame"] = (118.67253073730468, 30.679692465465511)
+        # d["location"] = (1026.3889721524438, 611.5679274993953)
         
         self.normalizeParams = d
             

@@ -36,3 +36,10 @@ FlowRouter.route('/app/experiment/:experiment', {
         BlazeLayout.render("app", {main: "experiment"});
     }
 });
+
+FlowRouter.route('/app/verify/:experiment', {
+    action(params) {
+        Session.set("experiment", params.experiment)
+        BlazeLayout.render("app", {main: "verify"});
+    }
+});

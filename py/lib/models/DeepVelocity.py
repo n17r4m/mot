@@ -6,6 +6,7 @@ two states belonging to eachother.
 """
 
 import os
+# import numpy as np
 
 from tensorflow.python.keras.models import Model, load_model
 from tensorflow.python.keras.layers import Input, Dense, Activation
@@ -28,7 +29,7 @@ from lib.models.util.make_parallel import make_parallel
 # computes their probability of matching
 class DeepVelocity(object):
     
-    def __init__(self, lr=0.002, lat_input_shape=(64,), screen_input_shape=(64,64,), structured_input_shape=(2,), verbose=False):
+    def __init__(self, lr=0.00017654, lat_input_shape=(64,), screen_input_shape=(64,64,), structured_input_shape=(2,), verbose=False):
         """
         https://keras.io/getting-started/functional-api-guide/#multi-input-and-multi-output-models
         https://keras.io/gett ing-started/functional-api-guide/#shared-layers
@@ -136,13 +137,15 @@ class DeepVelocity(object):
         self.probabilityNetwork = Model(inputs=eng_state_a+eng_state_b, outputs=[prob_output])
     
     def compile(self):
+        # print("LR: ",self.lr)
+        # self.lr = 10**np.random.uniform(-2.2, -3.8)
         optimizer = Nadam(lr=self.lr, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004)
         # optimizer = SGD()
         # self.probabilityNetwork = make_parallel(self.probabilityNetwork, 2)
         self.probabilityNetwork.compile(
             optimizer=optimizer, 
-            loss='mse',
-            metrics=['acc', 'mse'])
+            loss='categorical_crossentropy',
+            metrics=['acc', 'mse', 'categorical_crossentropy'])
         
     def save_weights(self, path):
         self.probabilityNetwork.save_weights(path)

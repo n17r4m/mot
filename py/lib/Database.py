@@ -7,7 +7,7 @@ Author: Martin Humphreys
 
 import asyncpg
 import asyncio
-from mpyx.Process import F
+from mpyx.F import F
 
 DATABASE = "mot"
 USERNAME = "martin"
@@ -119,7 +119,8 @@ class Database(object):
                 intensity REAL,
                 perimeter REAL,
                 radius REAL,
-                category SMALLINT
+                category SMALLINT,
+                valid BOOLEAN
             );
             ALTER TABLE Particle ADD CONSTRAINT particle_pk PRIMARY KEY (particle);
             ALTER TABLE Particle ADD CONSTRAINT particle_experiment_fk FOREIGN KEY (experiment) REFERENCES Experiment(experiment) ON UPDATE CASCADE ON DELETE CASCADE;
@@ -211,16 +212,21 @@ class DBWriter(F):
         self.commit_event = self.Event()
 
     def setup(self):
+        print("DBWriter meta", self.meta)
         self.tx, self.transaction = self.async(Database().transaction())
+        print("DBWriter tx", self.tx)
         
     def do(self, sql):
         method, query, args = sql
         self.async(getattr(self.tx, method)(query, *args))
         
     def teardown(self):
+        print("db dying")
         if self.commit_event.is_set():
+            print("db commiting")
             self.async(self.transaction.commit())
         else:
+            print("db rollback")
             self.async(self.transaction.rollback())
     
     def commit(self):

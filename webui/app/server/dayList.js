@@ -7,14 +7,18 @@ const fs = Npm.require('fs');
 // TODO: OMG fix this.
 const path = "/local/scratch/mot/data/bags/"
 
+// This should be deleted and removed.
+// See server/lib/db_methods.js
+
 Meteor.methods({
     dayList: function dayList(file){
         
         var future = new Future();
-        fs.readdir(path, function(err, res){                         //  *\|/*  only .db files
-            res = res.filter(function(file){ return fs.statSync(path+file).isDirectory() }).sort()
-            err ? future.throw(err) : future.return(res);
-            console.info(err, res)
+        fs.readdir(path, function(err, res){    
+            err ? future.throw(err) 
+                : future.return(res.filter(function(file){ 
+                    return fs.statSync(path+file).isDirectory() 
+                }).sort());
         })
         return future.wait();
     }

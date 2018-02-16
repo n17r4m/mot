@@ -16,7 +16,10 @@ Template.analyse.onCreated(function makeVars(){
     this.query = new ReactiveVar()
     this.crops = new ReactiveVar([])
     
-    Meteor.call('experiment_days', (err, res) => { this.days.set(res.rows) })
+    Meteor.call('experiment_days', (err, res) => { 
+        if (err){ alert(err) }
+        else { this.days.set(res.rows) }
+    })
     
     
     
@@ -45,24 +48,42 @@ Template.analyse.events({
     },
     "change select[name=day]": function daySelect(event, instance){
         Meteor.call("experiments_on_day", event.currentTarget.value, (err, res) => {
-            instance.experiments.set(res.rows)
+            if (err) { alert(err) } 
+            else { instance.experiments.set(res.rows) }
         })
     },
-    "change select[name=experiment]": function bagSelect(event, instance){
+    "change select[name=experiment]": function experimentSelect(event, instance){
         instance.experiment.set(event.currentTarget.value)
+        updateChart(instance)
+    },
+    "change input": function argChange(event, instance){
         updateChart(instance)
     }
 })
 
 
 
+function flowNearestZero(fcs){
+    return fcs.reduce((min, fc) => {
+        return Math.abs(fc.flow) < Math.abs(min) ? fc.flow : min
+    }, Infinity)
+}
+
+
 function updateChart(instance){
     const experiment = instance.experiment.get(),
           q  = instance.query.get()
     if(experiment && q){
-        Meteor.call("getPlot", experiment, q, (err, res) => {
+        
+        var query = Queries[q]
+        var args = (query.args || []).map((props) => {
+            return $("input." + props["class"]).val()
+        })
+        console.info(args)
+        
+        Meteor.call("getPlot", experiment, q, args, (err, res) => {
             if(err){ alert(err); return }
-            var query = Queries[q]
+            
             
             Plotly.newPlot($('#analysis_plot')[0], res.data, res.layout).then((plt) => {
                 
@@ -72,11 +93,40 @@ function updateChart(instance){
                     $("#crop_loader").addClass("active")
                     console.info(plt, data.points)
                     console.info(data.points.map(query.isolate, plt.data))
-                    Meteor.call("getCrops", experiment, q, data.points.map(query.isolate, plt.data), (err, res) => {
+                    
+                    const flow = flowNearestZero(data.points.map(query.isolate, plt.data))
+                    Meteor.call("experiment_particles_with_flow_near", experiment, flow, (err, res) => {
                         $("#crop_loader").removeClass("active")
-                        console.info(err, res)
-                        instance.crops.set(res)
+                        if(err){
+                            console.info(err)
+                        } else {
+                            console.info(res)
+                            cat_groups = res.rows.reduce((grps, p) => {
+                                p.url = `/mot/data/experiments/${p.path}`
+                                if (!grps[p.category]){
+                                    grps[p.category] = [p]
+                                } else {
+                                    grps[p.category].push(p)
+                                }
+                                return grps
+                            }, {})
+                            console.info(cat_groups)
+                            merged = []
+                            //try{
+                            for (let cat in cat_groups){
+                                merged.push({category: cat, particles: cat_groups[cat]})
+                            }
+                            //} catch(e){
+                            //    console.info(e)
+                            //}
+                            
+                            console.info(merged)
+                            instance.crops.set(merged)
+                        }
+                            
                     })
+                    
+                    
                 })
                 
             })

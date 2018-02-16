@@ -130,12 +130,15 @@ class Corruption:
                         
                         
                         particle_detection = (uuid4(), detectionExperiment, area, intensity, perimeter, radius, p[6])
-                        particle_tracking = (particle_tracking_uuids[i], trackingExperiment, area, intensity, perimeter, radius, p[6])
+                        # We don't want to add  corrupted particles to ground truth
+                        # particle_tracking = (particle_tracking_uuids[i], trackingExperiment, area, intensity, perimeter, radius, p[6])
                         
                         particle_inserts = [particle_detection]
-                        if particle_tracking[0] not in particles_uuids_inserted:
-                            particle_inserts.append(particle_tracking)
-                            particles_uuids_inserted.append(particle_tracking[0])
+                        
+                        # We don't want to add  corrupted tracks to ground truth
+                        # if particle_tracking[0] not in particles_uuids_inserted:
+                        #     particle_inserts.append(particle_tracking)
+                        #     particles_uuids_inserted.append(particle_tracking[0])
                         # start = time.time()
                         await tx.executemany("""
                             INSERT INTO Particle (particle, experiment, area, intensity, perimeter, radius, category)
@@ -145,13 +148,16 @@ class Corruption:
                             
                         
                         track_detection = (uuid4(), fd_uuid, particle_detection[0], location, bbox, latent)
-                        track_tracking = (uuid4(), ft_uuid, particle_tracking[0], location, bbox, latent)
+                        # We don't want to add  corrupted tracks to ground truth
+                        # track_tracking = (uuid4(), ft_uuid, particle_tracking[0], location, bbox, latent)
+                        
+                        
                         
                         # start = time.time()
                         await tx.executemany("""
                             INSERT INTO Track (track, frame, particle, location, bbox, latent)
                             VALUES ($1, $2, $3, $4, $5, $6)
-                        """, [track_detection, track_tracking])
+                        """, [track_detection])
                         # print("5", start-time.time())
                         
                         
