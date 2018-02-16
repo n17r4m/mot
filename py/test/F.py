@@ -127,7 +127,7 @@ demo("And now for a big ugly pile of pachinko fun",
     )
 )
 
-print("Took {} ms to run ~40 processes".format((time.perf_counter() - before) * 1000))
+print("Took {} ms to run ~45 processes".format((time.perf_counter() - before) * 1000))
 
 
 
@@ -136,21 +136,37 @@ print("".join(EZ(Read("/etc/issue.logo")).list()))
 
 
 
-print("Let's try cross cutting between workflows")
+print("\n\nLet's try cross cutting between workflows")
 
 
 class Worker(F):
+    def setup(self, name):
+        self.name = name
     def do(self, item):
-        self.put(item * 2)
-        self.logger.put(("Hello from worker. I did 2 x", item, "=", item * 2))
-
-logger = EZ(Print())
-workflow = EZ(Src(), Worker())
-
-workflow.xcut("logger", logger)
+        res = item * 10
+        self.put(res)
+        self.logger.put(("Hello from", self.name, "I put", res))
 
 
-workflow.start().join()
+EZ(
+    Src(), (Worker("1"), Worker("2"))
+).xcut("logger", EZ(Print())
+).start().join()
+
+
+
+
+
+e1 = EZ(Src())
+e2 = EZ(Print())
+print("\n\nWhat happens when we try and merge to instances of Induration?")
+print("Hint: It works, but add a tiny bit of overhead")
+e3 = EZ(e1, e2)
+e3.printLayout()
+print(e3.graph())
+e3.start().join()
+
+
 
 
 
