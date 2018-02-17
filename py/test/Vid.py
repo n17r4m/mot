@@ -1,7 +1,7 @@
 
-from mpyx.F import EZ, As, By, F
-from mpyx.F import Serial, Parallel, Broadcast, S, P, B
-from mpyx.F import Iter, Const, Print, Stamp, Map, Filter, Batch, Seq, Zip, Read, Write
+from mpyx import EZ, As, By, F
+from mpyx import Serial, Parallel, Broadcast, S, P, B
+from mpyx import Iter, Const, Print, Stamp, Map, Filter, Batch, Seq, Zip, Read, Write
 
 from mpyx.Vid import FFmpeg, BG
 
