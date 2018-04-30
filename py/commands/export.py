@@ -25,6 +25,8 @@ async def main(args):
             await exportParticles(args[1:])
         if args[0] == "particlesVelocitiesLatents":
             await exportParticlesVelocitiesLatents(args[1:])            
+        if args[0] == "Syncrude2018":
+            await exportSyncrude2018(args[1:])
         else:                         print("Invalid export sub-command")
 
 
@@ -170,3 +172,86 @@ async def exportSyncrude(args):
             l = [r["fnum"], r["pid"], r["area"], r["intensity"], dx, dy, categoryName]
             sl = [str(i) for i in l]
             f.write("{}\n".format(", ".join(sl)))
+
+async def exportSyncrude2018(args):
+    """
+    experiment outputDir
+    
+    Requested
+    CSV Headers: Frame ID, Particle ID, Particle Area, Particle Velocity, Particle Intensity, Particle Perimeter, X Position, Y Position, Major Axis Length, Minor Axis Length, Orientation, Solidity, Eccentricity.
+    
+    Actual 
+    Modified:
+    CSV Headers: SegmentNum, FrameNum, Particle ID, Particle Area, Mean Particle Velocity, Particle Intensity, Particle Perimeter, Major Axis Length, Minor Axis Length, Orientation, Solidity, Eccentricity.
+    """
+    experiment_uuid = args[0]
+    directory = args[1]
+
+    # print("Currently Exporting valid particles only...")
+        
+    
+    db = Database()
+    
+    q = """
+        SELECT *
+        FROM experiment
+        WHERE experiment = $1
+        """
+    day, name, method = None, None, None
+    async for record in db.query(q, UUID(experiment_uuid)):
+        day = str(record["day"])
+        name = record["name"].strip()
+        method = record["method"].strip()
+    
+    
+    file = name+"_"+method+".txt"
+    
+    if not os.path.exists(directory):
+        print("created new day directory", directory)
+        os.mkdir(directory)
+    
+    categoryMap = await db.category_map()
+    
+    s = """
+        SELECT min(f2.number) as fnum, 
+               min(s.number) as snum,
+               p.particle as pid, 
+               p.area as area,
+               p.intensity as intensity, 
+               p.perimeter as perimeter,
+               AVG(t2.location[1]-t1.location[1]) as delta_y
+        FROM frame f1, frame f2, track t1, track t2, particle p, segment s
+        WHERE f1.number = f2.number-1
+        AND f1.frame = t1.frame
+        AND f2.frame = t2.frame
+        AND t1.particle = t2.particle
+        AND t2.particle = p.particle
+        AND s.segment = f1.segment
+        AND f1.experiment = '{experiment}'
+        GROUP BY pid
+        ORDER BY fnum ASC
+        """
+    q = s.format(experiment=experiment_uuid)
+    
+    l = "{snum},{fnum},{pid},{area},{vel},{inten},{per},{majAx},{minAx},{ori},{solid},{ecc}\n"
+    
+    # Continue from here...
+    
+    outfile = os.path.join(directory, file)
+    with open(outfile, 'w+') as f:
+        async for r in db.query(q):
+            
+            s = l.format(snum = r["snum"],
+                         fnum = r["fnum"],
+                         pid = r["pid"],
+                         area = r["area"],
+                         vel = r["delta_y"],
+                         inten = r["intensity"],
+                         per = r["perimeter"],
+                         majAx = -1,
+                         minAx = -1,
+                         ori = -1,
+                         solid = -1,
+                         ecc = -1)
+                     
+            f.write(s)

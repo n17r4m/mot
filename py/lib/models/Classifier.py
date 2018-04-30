@@ -167,11 +167,11 @@ class Classifier(object):
         optimizer = Nadam(lr=0.0002, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004, clipnorm=0.618)
         #         = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, clipnorm=1.0)
         
-        # classycoder.compile(
-        #     optimizer=optimizer,
-        #     loss=[vae_objective, 'categorical_crossentropy'],
-        #     loss_weights=[0.1, 1.0],
-        #     metrics=['acc'])
+        classycoder.compile(
+            optimizer=optimizer,
+            loss=[vae_objective, 'categorical_crossentropy'],
+            loss_weights=[0.1, 0.9],
+            metrics=['acc'])
         
         
         

@@ -85,7 +85,7 @@ Meteor.methods({
             AND f1.number = f2.number - 1
             AND f1.experiment = $2 AND f2.experiment = $2
             AND p.experiment = $2
-            GROUP BY f2.experiment, t2.particle, c.label
+            GROUP BY f2.experiment, t2.particle, c.label, p.valid
             ORDER BY dflow ASC 
             LIMIT $3`,
             [flow, experiment, limit || 50])

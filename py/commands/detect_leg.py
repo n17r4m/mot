@@ -247,6 +247,7 @@ class Watchdog(multiprocessing.Process):
 class VideoFrameGetter(multiprocessing.Process):
     def __init__(self, video_path, experiment_uuid, db_writer_queue, frame_queue, frame_bytes_norm):
         super(VideoFrameGetter, self).__init__()
+        print("VideoFrameGetter: path "+video_path)
         self.video_path = video_path
         self.experiment_uuid = experiment_uuid
         self.db_writer_queue = db_writer_queue
@@ -260,8 +261,11 @@ class VideoFrameGetter(multiprocessing.Process):
         
         experiment_dir = os.path.join(config.experiment_dir, str(self.experiment_uuid))
         io.imsave(os.path.join(experiment_dir, "bg.png"), video.extract_background().squeeze())
+            
         
         for i in range(len(video)):
+            if i==150:
+                self.stop()
             if self.stopped():
                 break
             else: 

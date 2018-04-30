@@ -7,7 +7,7 @@ import traceback
 
 class Simulation:
     @store_args
-    def __init__(self, model = "linear", profile = "simple", frames = 1, width = 2336, time = 1, method='simulation_linescan'):
+    def __init__(self, model = "linear", profile = "simple", frames = 1, width = 2336, time = 10, method='simulation_linescan'):
         self.motion = getattr(Motion, model)(profile, width, time)
         self.method = method
         
@@ -102,7 +102,11 @@ class Simulation:
                 area = particle_areas[i][lat_idx]
                 
                 radius = np.sqrt( area / np.pi )
-                perimeter = 2 * np.pi * radius
+                # perimeter = 2 * np.pi * radius
+                
+                # Let's just hack in a velocity parameter
+                # by overriding the perimeter
+                perimeter = p[3]
                 
                 intensity = min(254, max(1, np.random.normal(127, 50)))
                 
@@ -176,7 +180,7 @@ class Motion:
             def simple(self):
                 PC = self.ParticleClass; return [
                 #   name      c   qty  dxμ  dxσ    dyμ  dyσ  axμ  axσ  ayμ  ayσ 
-                PC("bitumen", 2,  200, 0.0, 0.2, -10.0, 2.0, 0.0, 0.0, 0.0, 0.0),
-                PC("sand",    3,  200, 0.0, 0.2,  10.0, 2.0, 0.0, 0.0, 0.0, 0.0),
-                PC("bubble",  4,   50, 0.0, 0.2, -50.0, 4.0, 0.0, 0.0, 0.0, 0.0)]
+                PC("bitumen", 2,  200, 0.0, 0.2, -100.0, 10.0, 0.0, 0.0, 0.0, 0.0),
+                PC("sand",    3,  200, 0.0, 0.2,  -50.0,  5.0, 0.0, 0.0, 0.0, 0.0),
+                PC("bubble",  4,   50, 0.0, 0.2, -200.0, 20.0, 0.0, 0.0, 0.0, 0.0)]
                 

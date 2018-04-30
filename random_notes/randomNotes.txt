@@ -9,7 +9,9 @@ run: env-update
 run: source /etc/profile
 
 
+ffmpeg with HW support
 
-
-
+ffmpeg -y -i MSBOT-010140000037.avi -c:v h264_nvenc -gpu 2 -preset slow -b:v 100M test3.avi
+                                # or nvenc_hevc / hevc_nvenc   for h265
+  
 

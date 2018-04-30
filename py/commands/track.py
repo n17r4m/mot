@@ -177,6 +177,7 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
             Ci = -100
             Cen = 150
             Cex = 150
+            
             edge_data = dict()
             dvEdges = []
             costs = []
@@ -209,6 +210,46 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                         FROM track t4
                         WHERE t4.frame = f2.frame
                         ORDER BY cost1 ASC
+                        LIMIT 5
+                    ) C ON TRUE
+                    WHERE t3.frame = f1.frame
+                ) E on true
+                WHERE f1.number = f2.number-1
+                AND t1.track = tr1 AND t2.track = tr2
+                AND t1.particle = p1.particle AND t2.particle = p2.particle
+                AND f1.segment = '{segment}'
+                AND f2.segment = '{segment}'
+                ORDER BY f1.number ASC;
+                """
+            # The following uses no deep learning
+            ## Developped on the Syncrude bead 200-300 um megaspeed camera video
+            q = """
+                SELECT f1.frame as fr1, f2.frame as fr2,
+                       t1.location as location1, t2.location as location2,
+                       t1.bbox as bbox1, t2.bbox as bbox2,
+                       t1.latent as latent1, t2.latent as latent2,
+                       p1.area as area1, p2.area as area2,
+                       p1.intensity as intensity1, p2.intensity as intensity2,
+                       p1.radius as radius1, p2.radius as radius2,
+                       p1.category as category1, p2.category as category2,
+                       p1.perimeter as perimeter1, p2.perimeter as perimeter2,
+                       tr1, tr2,
+                       cost1,
+                       cost2,
+                       cost3
+                FROM frame f1, frame f2,track t1, track t2, particle p1, particle p2
+                JOIN LATERAL (
+                    SELECT t3.track AS tr1, tr2, cost1, cost2, cost3     
+                    FROM track t3
+                    JOIN LATERAL (
+                        SELECT t4.track AS tr2,
+                               ((1 + (t3.latent <-> t4.latent))
+                               *(1 + (t3.location <-> t4.location))) AS cost1,
+                               (1 + (t3.location <-> t4.location)) AS cost2,
+                               (1 + (t3.latent <-> t4.latent)) AS cost3
+                        FROM track t4
+                        WHERE t4.frame = f2.frame
+                        ORDER BY cost2 ASC
                         LIMIT 5
                     ) C ON TRUE
                     WHERE t3.frame = f1.frame
@@ -287,7 +328,7 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                     mcf_graph.add_edge(v2, "END", capacity=1, weight=Cex)
                 
                 # Cij = -Log(Plink(xi|xj)), Plink = Psize*Pposiiton*Pappearance*Ptime
-                Cij = int(edges["cost1"])
+                Cij = int(2*edges["cost2"])
                 costs.append(Cij)
                 
                 if not model:
