@@ -26,7 +26,7 @@ async def main(args):
         if args[0] == "particlesVelocitiesLatents":
             await exportParticlesVelocitiesLatents(args[1:])            
         if args[0] == "Syncrude2018":
-            await exportSyncrude2018(args[1:])
+            await exportSyncrude2018(*args[1:])
         else:                         print("Invalid export sub-command")
 
 
@@ -173,7 +173,7 @@ async def exportSyncrude(args):
             sl = [str(i) for i in l]
             f.write("{}\n".format(", ".join(sl)))
 
-async def exportSyncrude2018(args):
+async def exportSyncrude2018(experiment_uuid, directory):
     """
     experiment outputDir
     
@@ -184,8 +184,6 @@ async def exportSyncrude2018(args):
     Modified:
     CSV Headers: SegmentNum, FrameNum, Particle ID, Particle Area, Mean Particle Velocity, Particle Intensity, Particle Perimeter, Major Axis Length, Minor Axis Length, Orientation, Solidity, Eccentricity.
     """
-    experiment_uuid = args[0]
-    directory = args[1]
 
     # print("Currently Exporting valid particles only...")
         
@@ -213,13 +211,20 @@ async def exportSyncrude2018(args):
     categoryMap = await db.category_map()
     
     s = """
-        SELECT min(f2.number) as fnum, 
-               min(s.number) as snum,
+        SELECT f2.number as fnum,
+               f2.frame as fid,
                p.particle as pid, 
                p.area as area,
                p.intensity as intensity, 
                p.perimeter as perimeter,
-               AVG(t2.location[1]-t1.location[1]) as delta_y
+               t2.location[1]-t1.location[1] as delta_y,
+               t2.location[0] as xpos,
+               t2.location[1] as ypos,
+               p.major as major,
+               p.minor as minor,
+               p.orientation as ori,
+               p.solidity as solid,
+               p.eccentricity as ecc
         FROM frame f1, frame f2, track t1, track t2, particle p, segment s
         WHERE f1.number = f2.number-1
         AND f1.frame = t1.frame
@@ -228,12 +233,11 @@ async def exportSyncrude2018(args):
         AND t2.particle = p.particle
         AND s.segment = f1.segment
         AND f1.experiment = '{experiment}'
-        GROUP BY pid
-        ORDER BY fnum ASC
         """
     q = s.format(experiment=experiment_uuid)
+    # CSV Headers: Frame ID, Particle ID, Particle Area, Particle Velocity, Particle Intensity, Particle Perimeter, X Position, Y Position, Major Axis Length, Minor Axis Length, Orientation, Solidity, Eccentricity.
     
-    l = "{snum},{fnum},{pid},{area},{vel},{inten},{per},{majAx},{minAx},{ori},{solid},{ecc}\n"
+    l = "{fid},{pid},{area},{vel},{inten},{per},{xPos},{yPos},{major},{minor},{ori},{solid},{ecc}\n"
     
     # Continue from here...
     
@@ -241,17 +245,18 @@ async def exportSyncrude2018(args):
     with open(outfile, 'w+') as f:
         async for r in db.query(q):
             
-            s = l.format(snum = r["snum"],
-                         fnum = r["fnum"],
+            s = l.format(fid = r["fid"],
                          pid = r["pid"],
                          area = r["area"],
                          vel = r["delta_y"],
                          inten = r["intensity"],
                          per = r["perimeter"],
-                         majAx = -1,
-                         minAx = -1,
-                         ori = -1,
-                         solid = -1,
-                         ecc = -1)
+                         xPos = r["xpos"],
+                         yPos = r["ypos"],
+                         major = r["major"],
+                         minor = r["minor"],
+                         ori = r["ori"],
+                         solid = r["solid"],
+                         ecc = r["ecc"])
                      
             f.write(s)

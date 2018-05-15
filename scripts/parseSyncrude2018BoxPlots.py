@@ -33,6 +33,9 @@ def main():
 			header_offset = 0
 			pixelCal = LS_pixelCal
 			timeCal = LS_timeCal
+			
+		if p.find('BGTest2.5_Tracking') != -1:
+			header_offset = 0
 
 		x = []
 		areas = []

@@ -119,6 +119,11 @@ class Database(object):
                 intensity REAL,
                 perimeter REAL,
                 radius REAL,
+                major REAL,
+                minor REAL,
+                orientation REAL,
+                solidity REAL,
+                eccentricity REAL,
                 category SMALLINT,
                 valid BOOLEAN
             );

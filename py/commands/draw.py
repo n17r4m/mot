@@ -32,24 +32,26 @@ async def main(args):
 
 
 async def draw_tracks(args):
-    
+    verbose = False
     experiment_uuid = args[0]
     experiment_dir = os.path.join(config.experiment_dir, experiment_uuid)
     db = Database()
     
-    print("Starting compressor.")
+    if verbose:
+        print("Starting compressor.")
     frame_bytes = multiprocessing.Queue(5)
     #NOTE: Not enough memory if this is launched after we load the video.
     compressor = VideoStreamCompressor(frame_bytes, experiment_dir, "tracking.mp4", width=2336, height=1728, fps=300, pix_format="rgb24" )
     compressor.start()
     
-    
-    print("Opening extraction video")
+    if verbose:
+        print("Opening extraction video")
     
     video = Video(os.path.join(experiment_dir, "extraction.mp4"), gray=False)
     raw = video.reader
     
-    print("Drawing Tracks onto video.")
+    if verbose:
+        print("Drawing Tracks onto video.")
     # note: frame["number"] may not match frame number from loaded video if only a subset was detected.
     curr_frame = None
     prev_frame = None
@@ -92,8 +94,9 @@ async def draw_tracks(args):
                     frame_bytes.put(im.tobytes())
                     frame_count += 1
                     if prev_frame % 10 == 0:
-                        print("frame {frame}, drew {count} tracks"
-                              .format(frame = prev_frame, count = count))
+                        if verbose:
+                            print("frame {frame}, drew {count} tracks"
+                                .format(frame = prev_frame, count = count))
                     # print("{frame}".format(frame=prev_frame), end=' ')
                     count = 0
                 
@@ -102,7 +105,8 @@ async def draw_tracks(args):
                     raw_image = video.frame(frame_count)
                     im = Image.fromarray(raw_image)
                     frame_bytes.put(im.tobytes())
-                    print("frame {frame} added".format(frame=frame_count))
+                    if verbose:
+                        print("frame {frame} added".format(frame=frame_count))
                     frame_count += 1
                 
                 prev_frame = curr_frame
@@ -114,10 +118,13 @@ async def draw_tracks(args):
             p2 = (int(round(track["l2"].x)), int(round(track["l2"].y)))
             draw.line([p1, p2], (0,255,0), 3)
             
-    print("Generation complete.")
+    if verbose:
+        print("Generation complete.")
     frame_bytes.put(None)
     compressor.join()
-    print("Done.")
+    
+    if verbose:
+        print("Done.")
 
 def draw_detections(args):
     print("Not implemented")
@@ -130,11 +137,14 @@ class VideoStreamCompressor(multiprocessing.Process):
         self.edir = experiment_dir
         self.fname = fname
         self.stop_event = multiprocessing.Event()
+        # ' -c:v libx264 -crf 15 -preset fast',
+        # ' -c:v h264_nvenc -gpu 2 -preset slow -b:v 30M ',
         self.cmd = ''.join(('ffmpeg',
           ' -f rawvideo -pix_fmt {}'.format(pix_format),
           ' -video_size {}x{}'.format(width,height),
           ' -framerate {}'.format(fps),
           ' -i -',
+          ' -vf scale=800:-1 ',
           ' -c:v libx264 -crf 15 -preset fast',
           ' -pix_fmt yuv420p',
           ' -filter:v "setpts={}*PTS'.format(fps/rate),

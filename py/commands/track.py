@@ -78,14 +78,14 @@ async def main(args):
             if args[1] == "all_models":
                 start = time.time()
                 await track_allModels(*args[2:])
-                print('Total time:',time.time()-start)
+                # print('Total time:',time.time()-start)
             else:
                 start = time.time()
-                print(await track_model(*args[1:]))
-                print('Total time:',time.time()-start)
+                await track_model(*args[1:])
+                # print('Total time:',time.time()-start)
         else:    
             start = time.time()
-            print(await track_experiment(*args))
+            await track_experiment(*args)
             print('Total time:',time.time()-start)
 
 
@@ -135,6 +135,7 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
     '''
     
     '''
+    verbose = False
     cpus = multiprocessing.cpu_count()
     loop = asyncio.get_event_loop()
     db = Database()
@@ -153,7 +154,8 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
         tx, transaction = await db.transaction()
         new_experiment_uuid, frame_uuid_map, track_uuid_map = await clone_experiment(experiment_uuid, tx, testing=False, method=method)
         new_experiment_dir = os.path.join(config.experiment_dir, str(new_experiment_uuid))
-        print('clone time:', time.time()-start)
+        if verbose:
+            print('clone time:', time.time()-start)
         
         # End Cloning
         
@@ -169,7 +171,8 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                                 ORDER BY number ASC
                                 """, experiment_uuid):
                                     
-            print('tracking segment', segment['number'])
+            if verbose:
+                print('tracking segment', segment['number'])
             mcf_graph = MCF_GRAPH_HELPER()
             mcf_graph.add_node('START')
             mcf_graph.add_node('END')
@@ -222,7 +225,7 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                 ORDER BY f1.number ASC;
                 """
             # The following uses no deep learning
-            ## Developped on the Syncrude bead 200-300 um megaspeed camera video
+            ## Developed on the Syncrude bead 200-300 um megaspeed camera video
             q = """
                 SELECT f1.frame as fr1, f2.frame as fr2,
                        t1.location as location1, t2.location as location2,
@@ -233,6 +236,11 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                        p1.radius as radius1, p2.radius as radius2,
                        p1.category as category1, p2.category as category2,
                        p1.perimeter as perimeter1, p2.perimeter as perimeter2,
+                       p1.major as major1, p2.major as major2,
+                       p1.minor as minor1, p2.minor as minor2,
+                       p1.eccentricity as eccentricity1, p2.eccentricity as eccentricity2,
+                       p1.orientation as orientation1, p2.orientation as orientation2,
+                       p1.solidity as solidity1, p2.solidity as solidity2,
                        tr1, tr2,
                        cost1,
                        cost2,
@@ -273,6 +281,11 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                                                'intensity': edges['intensity1'],
                                                'radius': edges['radius1'],
                                                'perimeter': edges['perimeter1'],
+                                               'major': edges["major1"],
+                                               'minor': edges["minor1"],
+                                               'orientation': edges["orientation1"],
+                                               'solidity': edges["solidity1"],
+                                               'eccentricity': edges["eccentricity1"],
                                                'category': edges['category1']
                                               }
                 edge_data[edges['tr2']] = {'track': edges['tr2'],
@@ -284,6 +297,11 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                                            'intensity': edges['intensity2'],
                                            'radius': edges['radius2'],
                                            'perimeter': edges['perimeter2'],
+                                           'major': edges["major2"],
+                                           'minor': edges["minor2"],
+                                           'orientation': edges["orientation2"],
+                                           'solidity': edges["solidity2"],
+                                           'eccentricity': edges["eccentricity2"],
                                            'category': edges['category2']
                                           }                                          
                 
@@ -337,7 +355,8 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                     dvEdges.append((v1,u2))
 
             if mcf_graph.n_nodes == 2: # only START and END nodes present (empty)
-                print("Nothing in segment")    
+                if verbose:
+                    print("Nothing in segment")    
                 continue
             
             if model:
@@ -389,16 +408,21 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                     dvCosts.append(Cij)
                     mcf_graph.add_edge(v1, u2, weight=Cij, capacity=1)
                         
-                print('dvCt', np.min(dvCosts), np.mean(dvCosts), np.max(dvCosts))
-            print('cost', np.min(costs), np.mean(costs), np.max(costs))
+                if verbose:
+                    print('dvCt', np.min(dvCosts), np.mean(dvCosts), np.max(dvCosts))
+            if verbose:
+                print('cost', np.min(costs), np.mean(costs), np.max(costs))
 
-            print("Solving min-cost-flow for segment")
+            if verbose:
+                print("Solving min-cost-flow for segment")
 
             demand = goldenSectionSearch(mcf_graph, 0, mcf_graph.n_nodes//4, mcf_graph.n_nodes//2, 10, memo=None)
             
-            print("Optimal number of tracks", demand)
+            if verbose:
+                print("Optimal number of tracks", demand)
             min_cost = mcf_graph.solve(demand)
-            print("Min cost", min_cost)
+            if verbose:
+                print("Min cost", min_cost)
             
             mcf_flow_dict = mcf_graph.flowdict()
             mcf_graph = None
@@ -416,8 +440,26 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                 
                 tracks[new_particle_uuid] = track
            
-            print('Tracks reconstructed', len(tracks))
+            if verbose:
+                print('Tracks reconstructed', len(tracks))
             
+            '''
+            Headers for Syncrude 2018
+            
+            Frame ID, 
+            Particle ID, 
+            Particle Area, 
+            Particle Velocity, 
+            Particle Intensity, 
+            Particle Perimeter, 
+            X Position, 
+            Y Position, 
+            Major Axis Length, 
+            Minor Axis Length, 
+            Orientation, 
+            Solidity, 
+            Eccentricity.
+            '''
             
             start = time.time()
             particle_inserts = []
@@ -426,14 +468,24 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                 mean_area = 0.0
                 mean_intensity = 0.0
                 mean_perimeter = 0.0
-                mean_radius = 0.0
+                # mean_radius = 0.0
+                mean_major = 0.0
+                mean_minor = 0.0
+                mean_orientation = 0.0
+                mean_solidity = 0.0
+                mean_eccentricity = 0.0
                 category = []
                 
                 for data in [edge_data[i] for i in track]:
                     mean_area += data["area"] / len(track)
                     mean_intensity += data["intensity"] / len(track)
                     mean_perimeter += data["perimeter"] / len(track)
-                    mean_radius += data["radius"] / len(track)
+                    # mean_radius += data["radius"] / len(track)
+                    mean_major += data["major"] / len(track)
+                    mean_minor += data["minor"] / len(track)
+                    mean_orientation += data["orientation"] / len(track)
+                    mean_solidity += data["solidity"] / len(track)
+                    mean_eccentricity += data["eccentricity"] / len(track)
                     category.append(data["category"])
                     
                     new_frame_uuid = frame_uuid_map[data["frame"]]
@@ -447,11 +499,32 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                                          data["latent"]))
 
                 category = np.argmax(np.bincount(category))
-                particle_inserts.append((new_particle_uuid, new_experiment_uuid, mean_area, mean_intensity, mean_perimeter, mean_radius, category))
+                
+                particle_inserts.append((new_particle_uuid, 
+                                         new_experiment_uuid, 
+                                         mean_area, 
+                                         mean_intensity, 
+                                         mean_perimeter, 
+                                         mean_major,
+                                         mean_minor,
+                                         mean_orientation,
+                                         mean_solidity,
+                                         mean_eccentricity,
+                                         category))
                 
             await tx.executemany("""
-                INSERT INTO Particle (particle, experiment, area, intensity, perimeter, radius, category)
-                VALUES ($1, $2, $3, $4 ,$5, $6, $7)
+                INSERT INTO Particle (particle, 
+                                      experiment, 
+                                      area, 
+                                      intensity, 
+                                      perimeter, 
+                                      major,
+                                      minor,
+                                      orientation,
+                                      solidity,
+                                      eccentricity,
+                                      category)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             """, particle_inserts)
             
             await tx.executemany("""
@@ -459,7 +532,8 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
                 VALUES ($1, $2, $3, $4, $5, $6)
             """, track_inserts)
                 
-            print('Tracks inserted', time.time()-start, 's')
+            if verbose:
+                print('Tracks inserted', time.time()-start, 's')
 
         
     except Exception as e: ### ERROR: UNDO EVERYTHING !    #################
@@ -474,10 +548,11 @@ async def track_experiment(experiment_uuid, method='Tracking', model=None):
     
     else:  
     ##################  OK: COMMIT DB TRANSACTRION    ###############
-        print('made it! :)')            
+        if verbose:
+            print('made it! :)')            
         await transaction.commit()
         
-    return new_experiment_uuid
+    return str(new_experiment_uuid)
 
     
 async def clone_experiment(experiment_uuid, tx, method, testing=False):

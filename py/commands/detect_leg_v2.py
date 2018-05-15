@@ -7,6 +7,7 @@ It's construction is for validating linescan / megaspeed data.
 It's designed to be fast, and use the previous multiprocessing facilities.
 
 I reverted to this older code because I had trouble with mpyx library. 
+    (except where I use it for a video reader / frame processor)
 
 The mpyx.Video video reader (skvideo.io.vread) loads the entire video into 
 memory - this takes about 30 seconds. Also, the MegaSpeed videos have a last 
@@ -91,6 +92,7 @@ async def main(args):
 
 
 async def detect_video(video_fpath, date = "NOW()", name = "Today", notes = ""):
+    verbose = True
     # note: "NOW()" may not work.
     
     cpus = multiprocessing.cpu_count()
@@ -107,15 +109,18 @@ async def detect_video(video_fpath, date = "NOW()", name = "Today", notes = ""):
     try:
         
         
-        print("Creating data directory", experiment_dir)
+        if verbose:
+            print("Creating data directory", experiment_dir)
         os.mkdir(experiment_dir)
         
-        print("Launching Database Writer")
+        if verbose:
+            print("Launching Database Writer")
         db_writer_queue = multiprocessing.Queue(db_queue_max_size) # (method, query, args)
         db_writer = DBWriter(db_writer_queue)
         db_writer.start()
         
-        print("Inserting experiment", name, "(", experiment_uuid, ") into database.")
+        if verbose:
+            print("Inserting experiment", name, "(", experiment_uuid, ") into database.")
         db_writer_queue.put(("execute", """
             INSERT INTO Experiment (experiment, day, name, method, notes) 
             VALUES ($1, $2, $3, $4, $5)
@@ -123,28 +128,33 @@ async def detect_video(video_fpath, date = "NOW()", name = "Today", notes = ""):
         
         
         
-        print("Launching ffmpeg for raw video compression")
+        if verbose:
+            print("Launching ffmpeg for raw video compression")
         compressor_raw = VideoFileCompressor(video_fpath, experiment_dir, "raw.mp4", vwidth, vheight)
         compressor_raw.start()
         
-        print("Launching ffmpeg for extracted video compression")
+        if verbose:
+            print("Launching ffmpeg for extracted video compression")
         frame_bytes_norm = multiprocessing.Queue(queue_max_size) # bytes
-        compressor_norm = VideoStreamCompressor(frame_bytes_norm, experiment_dir, "extraction.mp4", vwidth, vheight, fps, pix_format="gray")
+        compressor_norm = VideoStreamCompressor(frame_bytes_norm, experiment_dir, "extraction.mp4", vwidth, vheight, fps, pix_format="gray", gpu=-1)
         compressor_norm.start()
         
-        print("Launching ffmpeg for binary mask visualization")
+        if verbose:
+            print("Launching ffmpeg for binary mask visualization")
         frame_bytes_mask = multiprocessing.Queue(queue_max_size)  # bytes 
-        compressor_mask = VideoStreamCompressor(frame_bytes_mask, experiment_dir, "mask.mp4", vwidth, vheight, fps, pix_format="gray" )
+        compressor_mask = VideoStreamCompressor(frame_bytes_mask, experiment_dir, "mask.mp4", vwidth, vheight, fps, pix_format="gray", gpu=-1)
         compressor_mask.start()
         
         
-        print("Launching Frame Getter")
+        if verbose:
+            print("Launching Frame Getter")
         frame_queue = multiprocessing.Queue(queue_max_size) # (frame_uuid, normal_frame)
         frame_getter = VideoFrameGetter(video_fpath, experiment_uuid, db_writer_queue, frame_queue, frame_bytes_norm)
         frame_getter.start()
         
     
-        print("Launching Frame Processor")
+        if verbose:
+            print("Launching Frame Processor")
         frame_properties_queue = multiprocessing.Queue(queue_max_size) # (frame_uuid, frame, properties)
         frame_processors = []
         
@@ -157,12 +167,14 @@ async def detect_video(video_fpath, date = "NOW()", name = "Today", notes = ""):
             frame_processors.append(frame_processor)
         
         
-        print("Launching Crop Writer")
+        if verbose:
+            print("Launching Crop Writer")
         crop_writer_queue = multiprocessing.Queue(queue_max_size) # (frame_uuid, track_uuids, crops)
         crop_writer = CropWriter(experiment_dir, crop_writer_queue)
         crop_writer.start()
         
-        print("Launching Crop Processor")
+        if verbose:
+            print("Launching Crop Processor")
         frame_crops_queue = multiprocessing.Queue(queue_max_size) # (frame_uuid, frame, crops, pcrops, properties, coords, bboxes)
         crop_processors = []
         for g in range(config.GPUs):
@@ -171,7 +183,8 @@ async def detect_video(video_fpath, date = "NOW()", name = "Today", notes = ""):
             crop_processors.append(crop_processor)
         
         
-        print("Launching Classification Engine")
+        if verbose:
+            print("Launching Classification Engine")
         lcp_queue = multiprocessing.Queue(queue_max_size) # (frame_uuid, crops, latents, categories, properties)
         classifiers = []
         for g in range(config.GPUs):
@@ -182,7 +195,8 @@ async def detect_video(video_fpath, date = "NOW()", name = "Today", notes = ""):
             
         
         
-        print("Launching Particle Commmitter")
+        if verbose:
+            print("Launching Particle Commmitter")
         particle_commiter = ParticleCommitter(experiment_uuid, lcp_queue, crop_writer_queue, db_writer_queue)
         particle_commiter.start()
         
@@ -195,7 +209,8 @@ async def detect_video(video_fpath, date = "NOW()", name = "Today", notes = ""):
         all_processors = processors + compressors
         all_buffers = proc_buffers + frame_buffers
         
-        print("Launching Watchdog")
+        if verbose:
+            print("Launching Watchdog")
         watchdog = Watchdog(all_buffers)
         watchdog.start()
            
@@ -217,13 +232,15 @@ async def detect_video(video_fpath, date = "NOW()", name = "Today", notes = ""):
         
     else:
         
-        print("Waiting for all processes to complete.")
+        if verbose:
+            print("Waiting for all processes to complete.")
         [c.join() for c in all_processors]
         watchdog.stop()
         watchdog.join()
         
     finally:
-        print("Fin.")
+        if verbose:
+            print("Fin.")
         
     return experiment[0]
 
@@ -238,7 +255,7 @@ class Watchdog(multiprocessing.Process):
             if self.stopped():
                 return
             print([q.qsize() for q in self.queues])
-            time.sleep(5)
+            time.sleep(10)
         
     def stop(self):
         self.stop_event.set()
@@ -251,6 +268,7 @@ class VideoFrameGetter(multiprocessing.Process):
     def __init__(self, video_path, experiment_uuid, db_writer_queue, frame_queue, frame_bytes_norm):
         super(VideoFrameGetter, self).__init__()
         print("VideoFrameGetter: path "+video_path)
+        self.verbose = False
         self.video_path = video_path
         self.experiment_uuid = experiment_uuid
         self.db_writer_queue = db_writer_queue
@@ -259,11 +277,13 @@ class VideoFrameGetter(multiprocessing.Process):
         self.stop_event = multiprocessing.Event()
         
     def run(self):
-        
         # video = Video(self.video_path)
-        print("Hello, World!")
+        if self.verbose:
+            print("Hello, World!")
+        # print("TESTING: FFMPEG options for video sample enabled!!")
         w, h = 2336, 1729
-        video_reader = FFmpeg(self.video_path, "", (1729, 2336, 1), "-vf scale={}:{}".format(w,h))
+        # -ss 00:00:02.00 -t 00:00:00.50
+        video_reader = FFmpeg(self.video_path, "", (1729, 2336, 1), " -vf scale={}:{}".format(w,h))
         bg_modeler = BG(model='simpleMax', window_size=50, img_shape=(h, w, 1))
         fg_modeler = FG(passThrough=True)
         
@@ -281,7 +301,8 @@ class VideoFrameGetter(multiprocessing.Process):
             if self.stopped():
                 break
             else: 
-                print("Processing frame", i)
+                if self.verbose:
+                    print("Processing frame", i)
                 
                 # raw_frame = video.frame(i)
                 # frame = video.normal_frame(i)
@@ -295,7 +316,8 @@ class VideoFrameGetter(multiprocessing.Process):
                 if config.use_magic_pixel_segmentation:
                     this_frame_magic_pixel = raw_frame[0,4,0]
                     if abs(this_frame_magic_pixel - magic_pixel) > magic_pixel_delta:
-                        print("Segment Boundry Detected:", i)
+                        if self.verbose:
+                            print("Segment Boundry Detected:", i)
                         segment_number += 1
                         segment = (uuid4(), self.experiment_uuid, segment_number)
                         self.db_writer_queue.put(("execute", """
@@ -313,6 +335,8 @@ class VideoFrameGetter(multiprocessing.Process):
                 """, frame_insert))
                 
                 # frame = frame[:, crop_side:-crop_side]
+                # import cv2
+                # cv2.imwrite('/home/mot/tmp/fg_'+str(uuid4())+'.png',frame)
                 self.frame_bytes_norm.put(frame.tobytes())
                 self.frame_queue.put((frame_uuid, i, frame))
         
@@ -320,7 +344,8 @@ class VideoFrameGetter(multiprocessing.Process):
         for g in range(config.GPUs):
             self.frame_queue.put(None) 
         
-        print("VideoFrameGetter Exiting")
+        if self.verbose:
+            print("VideoFrameGetter Exiting")
         
     def stop(self):
         self.stop_event.set()
@@ -332,7 +357,7 @@ class VideoFrameGetter(multiprocessing.Process):
 class VideoFrameProcessor(multiprocessing.Process):
     def __init__(self, frame_queue, frame_properties_queue, frame_processor_mask_queue):
         super(VideoFrameProcessor, self).__init__()
-
+        self.verbose = False
         self.frame_queue = frame_queue
         self.frame_properties_queue = frame_properties_queue
         self.frame_processor_mask_queue = frame_processor_mask_queue
@@ -355,7 +380,7 @@ class VideoFrameProcessor(multiprocessing.Process):
             sframe = frame.squeeze()
             
             thresh  = threshold(sframe)
-            binary  = binary_opening((sframe < thresh), square(1))
+            binary  = binary_opening((sframe < thresh), square(3))
             cleared = clear_border(binary)
             labeled = label(cleared)
             # filtered = remove_small_objects(labeled, 64)
@@ -364,14 +389,20 @@ class VideoFrameProcessor(multiprocessing.Process):
             WIDTH_FILTER = 5
             # bbox: (min_row, min_col, max_row, max_col)
             # properties = [i for i in properties if i.bbox[3]-i.bbox[1] > WIDTH_FILTER]
-            
-            self.frame_processor_mask_queue.put((i, (filtered.squeeze().astype("uint8") * 255).tobytes()))
+            # import cv2
+            # cv2.imwrite('/home/mot/tmp/mask_'+str(uuid4())+'.png',(255*cleared).astype("uint8"))
+            mask_frame = (cleared*255).astype('uint8')
+            mask_frame = np.expand_dims(mask_frame, axis=-1)
+            if self.verbose:
+                print("Frame: "+str(i)+" emmitted from frame processor")
+            self.frame_processor_mask_queue.put((i, mask_frame.tobytes()))
             self.frame_properties_queue.put((frame_uuid, i, frame, properties))
             
         
         self.frame_processor_mask_queue.put(None)
         self.frame_properties_queue.put(None)
-        print("VideoFrameProcessor Exiting")
+        if self.verbose:
+            print("VideoFrameProcessor Exiting")
             
     def stop(self):
         self.stop_event.set()
@@ -383,6 +414,7 @@ class VideoFrameProcessor(multiprocessing.Process):
 class FrameCropProcessor(multiprocessing.Process):
     def __init__(self, frame_properties_queue, frame_crops_queue):
         super(FrameCropProcessor, self).__init__()
+        self.verbose = False
         self.frame_properties_queue = frame_properties_queue
         self.frame_crops_queue = frame_crops_queue
         self.stop_event = multiprocessing.Event()
@@ -412,7 +444,8 @@ class FrameCropProcessor(multiprocessing.Process):
         
         self.frame_crops_queue.put(None)
         
-        print("FrameCropProcessor Exiting")
+        if self.verbose:
+            print("FrameCropProcessor Exiting")
             
     def stop(self):
         self.stop_event.set()
@@ -424,6 +457,7 @@ class FrameCropProcessor(multiprocessing.Process):
 class Classy(multiprocessing.Process):
     def __init__(self, crop_queue, latents_categories_properties_queue):
         super(Classy, self).__init__()
+        self.verbose = False
         self.crop_queue = crop_queue
         self.lcp_queue = latents_categories_properties_queue 
         self.stop_event = multiprocessing.Event()
@@ -435,7 +469,8 @@ class Classy(multiprocessing.Process):
             yield iterable[ndx:min(ndx + n, l)]
 
     def run(self):
-        print("Classifier disabled, using this node as a pass-through")
+        if self.verbose:
+            print("Classifier disabled, using this node as a pass-through")
         # classifier = Classifier().load()
         batchSize = 512
         while True:
@@ -465,7 +500,8 @@ class Classy(multiprocessing.Process):
             self.lcp_queue.put((frame_uuid, crops, latents, categories, properties, coords, bboxes))
         
         self.lcp_queue.put(None)
-        print("Classy Exiting")
+        if self.verbose:
+            print("Classy Exiting")
     
     def stop(self):
         self.stop_event.set()
@@ -477,6 +513,7 @@ class Classy(multiprocessing.Process):
 class ParticleCommitter(multiprocessing.Process):
     def __init__(self, experiment_uuid, lcp_queue, crop_writer_queue, db_writer_queue):
         super(ParticleCommitter, self).__init__()
+        self.verbose = False
         self.experiment_uuid = experiment_uuid
         self.lcp_queue = lcp_queue
         self.crop_writer_queue = crop_writer_queue
@@ -498,7 +535,32 @@ class ParticleCommitter(multiprocessing.Process):
             frame_uuid, crops, latents, categories, properties, coords, bboxes = lcp
             
             DEFAULT_CATEGORY=1 # set to unknown for now
-            particles = [(uuid4(), self.experiment_uuid, p.area, p.mean_intensity, p.perimeter, p.major_axis_length, DEFAULT_CATEGORY) 
+            '''
+            Frame ID, 
+            Particle ID, 
+            Particle Area, 
+            Particle Velocity, 
+            Particle Intensity, 
+            Particle Perimeter, 
+            X Position, 
+            Y Position, 
+            Major Axis Length, 
+            Minor Axis Length, 
+            Orientation, 
+            Solidity, 
+            Eccentricity.
+            '''
+            particles = [(uuid4(), 
+                          self.experiment_uuid, 
+                          p.area, 
+                          p.mean_intensity, 
+                          p.perimeter, 
+                          p.major_axis_length,
+                          p.minor_axis_length,
+                          p.orientation,
+                          p.solidity,
+                          p.eccentricity,
+                          DEFAULT_CATEGORY) 
                 for i, p in enumerate(properties)]
             
             track_uuids = [uuid4() for i in range(len(properties))]
@@ -507,8 +569,18 @@ class ParticleCommitter(multiprocessing.Process):
                 for i, p in enumerate(properties)]
             
             self.db_writer_queue.put(("executemany", """
-                INSERT INTO Particle (particle, experiment, area, intensity, perimeter, radius, category)
-                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                INSERT INTO Particle (particle, 
+                                      experiment, 
+                                      area, 
+                                      intensity, 
+                                      perimeter, 
+                                      major,
+                                      minor,
+                                      orientation,
+                                      solidity,
+                                      eccentricity,
+                                      category)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             """, (particles,)))
             
             
@@ -522,7 +594,8 @@ class ParticleCommitter(multiprocessing.Process):
         
         self.db_writer_queue.put(None)
         self.crop_writer_queue.put(None)
-        print("ParticleCommitter Exiting")
+        if self.verbose:
+            print("ParticleCommitter Exiting")
     
     def stop(self):
         self.stop_event.set()
@@ -534,9 +607,12 @@ class ParticleCommitter(multiprocessing.Process):
 class VideoFileCompressor(multiprocessing.Process):
     def __init__(self, video_fpath, experiment_dir, fname, width=2336, height=1729, fps=300., rate=24.):
         super(VideoFileCompressor, self).__init__()
+        self.verbose = False
         self.edir = experiment_dir
         self.fname = fname
         self.stop_event = multiprocessing.Event()
+        # ' -c:v libx264 -crf 15 -preset fast',
+        # ' -c:v h264_nvenc -gpu 2 -preset slow',
         self.cmd = ''.join(('ffmpeg -i "{}"'.format(video_fpath),
           ' -c:v libx264 -crf 15 -preset fast',
           ' -pix_fmt yuv420p',
@@ -560,7 +636,8 @@ class VideoFileCompressor(multiprocessing.Process):
                 time.sleep(0.25)
                 if self.stopped():
                     proc.kill()
-        print("VideoFileCompressor Exiting")
+        if self.verbose:
+            print("VideoFileCompressor Exiting")
         
     
     def stop(self):
@@ -571,18 +648,25 @@ class VideoFileCompressor(multiprocessing.Process):
     
     
 class VideoStreamCompressor(multiprocessing.Process):
-    def __init__(self, queue, experiment_dir, fname, width=2336, height=1729, fps=300., rate=24., pix_format="gray"):
+    def __init__(self, queue, experiment_dir, fname, width=2336, height=1729, fps=300., rate=24., pix_format="gray", gpu=0):
         super(VideoStreamCompressor, self).__init__()
+        self.verbose = False
         self.queue = queue
         self.edir = experiment_dir
         self.fname = fname
         self.stop_event = multiprocessing.Event()
+
+        if gpu < 0:
+            s = ' -c:v libx264 -crf 15 -preset fast'      
+        else:
+            s = ' -c:v h264_nvenc -gpu {} -preset slow'.format(gpu)
+            
         self.cmd = ''.join(('ffmpeg',
           ' -f rawvideo -pix_fmt {}'.format(pix_format),
           ' -video_size {}x{}'.format(width,height),
           ' -framerate {}'.format(fps),
           ' -i -',
-          ' -c:v libx264 -crf 15 -preset fast',
+          s,
           ' -pix_fmt yuv420p',
           ' -filter:v "setpts={}*PTS'.format(fps/rate),
           ', crop={}:{}:0:0"'.format(width, height-1) if height % 2 else '"',
@@ -609,8 +693,15 @@ class VideoStreamCompressor(multiprocessing.Process):
                         self.close(proc)
                         break
                     else:
-                        proc.stdin.write(frame_bytes)
-        print("VideoStreamCompressor Exiting")
+                        try:
+                            proc.stdin.write(frame_bytes)
+                        except:
+                            print("VideoStreamCompressor is borked")
+                            log_file.write(proc.stdout.read())
+                            
+            
+        if self.verbose:
+            print("VideoStreamCompressor Exiting")
 
     def close(self, proc):
         proc.stdin.close()
@@ -626,6 +717,7 @@ class VideoStreamCompressor(multiprocessing.Process):
 class CropWriter(multiprocessing.Process):
     def __init__(self, experiment_dir, crop_queue):
         super(CropWriter, self).__init__()
+        self.verbose = False
         self.crop_queue = crop_queue
         self.edir = experiment_dir
         self.stop_event = multiprocessing.Event()
@@ -650,7 +742,8 @@ class CropWriter(multiprocessing.Process):
                          with warnings.catch_warnings(): # suppress warnings about low contrast images
                             warnings.simplefilter("ignore")
                             io.imsave(os.path.join(frame_dir, str(track_uuids[i]) + ".jpg"), crop.squeeze(), quality=90) 
-        print("CropWriter Exiting")
+        if self.verbose:
+            print("CropWriter Exiting")
         
     def stop(self):
         self.stop_event.set()
@@ -662,6 +755,7 @@ class CropWriter(multiprocessing.Process):
 class DBWriter(multiprocessing.Process):
     def __init__(self, queue):
         super(DBWriter, self).__init__()
+        self.verbose = False
         self.queue = queue
         self.stop_event = multiprocessing.Event()
         self.commit_event = multiprocessing.Event()
@@ -676,7 +770,8 @@ class DBWriter(multiprocessing.Process):
     # dun know if this works or not.. todo: test.
     async def inner_loop(self, queue):
         tx, transaction = await Database().transaction()
-        print("DBWriter ready.")
+        if self.verbose:
+            print("DBWriter ready.")
         # print("DBWriter is a file-writing pass through!!!.")
         # with open("dbWriteFile.log","w") as f:
         while True:
@@ -698,13 +793,16 @@ class DBWriter(multiprocessing.Process):
                 
             else:
                 if self.commit_event.is_set():
-                    print("Comitting changes to database.")
+                    if self.verbose:
+                        print("Comitting changes to database.")
                     await transaction.commit()
                 else:
-                    print("Rolling back database.")
+                    if self.verbose:
+                        print("Rolling back database.")
                     await transaction.rollback()
                 break
-        print("DBWriter Exiting")
+        if self.verbose:
+            print("DBWriter Exiting")
         
     def commit(self):
         self.commit_event.set()
@@ -720,6 +818,7 @@ class DBWriter(multiprocessing.Process):
 class OrderProcessor(multiprocessing.Process):
     def __init__(self, input_queue, output_queue):
         super(OrderProcessor, self).__init__()
+        self.verbose = False
         self.input_queue = input_queue
         self.output_queue = output_queue
         self.stop_event = multiprocessing.Event()
@@ -747,7 +846,8 @@ class OrderProcessor(multiprocessing.Process):
             else:
                 pq.put((p, out))
         self.output_queue.put(None)
-        print("OrderProcessor Exiting")
+        if self.verbose:
+            print("OrderProcessor Exiting")
         
     def stop(self):
         self.stop_event.set()
