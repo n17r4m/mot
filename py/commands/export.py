@@ -210,34 +210,77 @@ async def exportSyncrude2018(experiment_uuid, directory):
     
     categoryMap = await db.category_map()
     
+    # s = """
+    #     SELECT f2.number as fnum,
+    #           f2.frame as fid,
+    #           p.particle as pid, 
+    #           p.area as area,
+    #           p.intensity as intensity, 
+    #           p.perimeter as perimeter,
+    #           t2.location[1]-t1.location[1] as delta_y,
+    #           t2.location[0] as xpos,
+    #           t2.location[1] as ypos,
+    #           p.major as major,
+    #           p.minor as minor,
+    #           p.orientation as ori,
+    #           p.solidity as solid,
+    #           p.eccentricity as ecc
+    #     FROM frame f1, frame f2, track t1, track t2, particle p, segment s
+    #     WHERE f1.number = f2.number-1
+    #     AND f1.frame = t1.frame
+    #     AND f2.frame = t2.frame
+    #     AND t1.particle = t2.particle
+    #     AND t2.particle = p.particle
+    #     AND s.segment = f1.segment
+    #     AND f1.experiment = '{experiment}'
+    #     """
+
+    
+    # q = s.format(experiment=experiment_uuid)
+    # # CSV Headers: Frame ID, Particle ID, Particle Area, Particle Velocity, Particle Intensity, Particle Perimeter, X Position, Y Position, Major Axis Length, Minor Axis Length, Orientation, Solidity, Eccentricity.
+    
+    # l = "{fid},{pid},{area},{vel},{inten},{per},{xPos},{yPos},{major},{minor},{ori},{solid},{ecc}\n"
+    
+    # # Continue from here...
+    
+    # outfile = os.path.join(directory, file)
+    # with open(outfile, 'w+') as f:
+    #     async for r in db.query(q):
+            
+    #         s = l.format(fid = r["fid"],
+    #                      pid = r["pid"],
+    #                      area = r["area"],
+    #                      vel = r["delta_y"],
+    #                      inten = r["intensity"],
+    #                      per = r["perimeter"],
+    #                      xPos = r["xpos"],
+    #                      yPos = r["ypos"],
+    #                      major = r["major"],
+    #                      minor = r["minor"],
+    #                      ori = r["ori"],
+    #                      solid = r["solid"],
+    #                      ecc = r["ecc"])
+                     
+    #         f.write(s)
+
+
+    file = name+"_"+method+"_particleCounts.txt"
     s = """
-        SELECT f2.number as fnum,
-               f2.frame as fid,
-               p.particle as pid, 
-               p.area as area,
-               p.intensity as intensity, 
-               p.perimeter as perimeter,
-               t2.location[1]-t1.location[1] as delta_y,
-               t2.location[0] as xpos,
-               t2.location[1] as ypos,
-               p.major as major,
-               p.minor as minor,
-               p.orientation as ori,
-               p.solidity as solid,
-               p.eccentricity as ecc
-        FROM frame f1, frame f2, track t1, track t2, particle p, segment s
-        WHERE f1.number = f2.number-1
-        AND f1.frame = t1.frame
-        AND f2.frame = t2.frame
-        AND t1.particle = t2.particle
-        AND t2.particle = p.particle
-        AND s.segment = f1.segment
-        AND f1.experiment = '{experiment}'
+        SELECT
+            f.number as number,
+            count(*) as count
+        FROM frame f
+        LEFT JOIN track t USING (frame)
+        LEFT JOIN particle p USING (particle)
+        WHERE f.experiment = '{experiment}'
+        GROUP BY f.frame
+        ORDER BY f.number ASC
         """
+    
     q = s.format(experiment=experiment_uuid)
     # CSV Headers: Frame ID, Particle ID, Particle Area, Particle Velocity, Particle Intensity, Particle Perimeter, X Position, Y Position, Major Axis Length, Minor Axis Length, Orientation, Solidity, Eccentricity.
     
-    l = "{fid},{pid},{area},{vel},{inten},{per},{xPos},{yPos},{major},{minor},{ori},{solid},{ecc}\n"
+    l = "{segment},{count}\n"
     
     # Continue from here...
     
@@ -245,18 +288,7 @@ async def exportSyncrude2018(experiment_uuid, directory):
     with open(outfile, 'w+') as f:
         async for r in db.query(q):
             
-            s = l.format(fid = r["fid"],
-                         pid = r["pid"],
-                         area = r["area"],
-                         vel = r["delta_y"],
-                         inten = r["intensity"],
-                         per = r["perimeter"],
-                         xPos = r["xpos"],
-                         yPos = r["ypos"],
-                         major = r["major"],
-                         minor = r["minor"],
-                         ori = r["ori"],
-                         solid = r["solid"],
-                         ecc = r["ecc"])
+            s = l.format(segment=r["number"],
+                         count=r["count"])
                      
             f.write(s)

@@ -4,6 +4,7 @@ cd /home/mot/py/
 
 
 ./mot.py linescan_detect_tf "/home/mot/data/source/Water, NaOH and Oil Sand/LineScan01111" "/home/mot/data/results-new/Water, NaOH and Oil Sand/LineScan01111"
+./mot.py linescan_detect_tf "/home/mot/data/source/Calibration/LineScan01003" "/home/mot/data/results-new/Calibration/LineScan01003"
 ./mot.py linescan_detect_tf "/home/mot/data/source/Glass.Bead.Tests/150.to.180.um/LineScan01020" "/home/mot/data/results-new/Glass.Bead.Tests/150.to.180.um/LineScan01020"
 ./mot.py linescan_detect_tf "/home/mot/data/source/Glass.Bead.Tests/150.to.180.um/LineScan01029" "/home/mot/data/results-new/Glass.Bead.Tests/150.to.180.um/LineScan01029"
 ./mot.py linescan_detect_tf "/home/mot/data/source/Glass.Bead.Tests/150.to.180.um/LineScan01030" "/home/mot/data/results-new/Glass.Bead.Tests/150.to.180.um/LineScan01030"
@@ -64,7 +65,7 @@ cd /home/mot/py/
 ./mot.py linescan_detect_tf "/home/mot/data/source/BU-2018-02-08/LineScan/LineScan01135" "/home/mot/data/results-new/BU-2018-02-08/LineScan/LineScan01135"
 ./mot.py linescan_detect_tf "/home/mot/data/source/BU-2018-02-08/LineScan/LineScan01136" "/home/mot/data/results-new/BU-2018-02-08/LineScan/LineScan01136"
 ./mot.py linescan_detect_tf "/home/mot/data/source/BU-2018-02-08/LineScan/LineScan01139" "/home/mot/data/results-new/BU-2018-02-08/LineScan/LineScan01139"
-./mot.py linescan_detect_tf "/home/mot/data/source/Calibration/LineScan01003" "/home/mot/data/results-new/Calibration/LineScan01003"
+
 ./mot.py linescan_detect_tf "/home/mot/data/source/Water and Test Sand/LineScan01069" "/home/mot/data/results-new/Water and Test Sand/LineScan01069"
 ./mot.py linescan_detect_tf "/home/mot/data/source/Water and Test Sand/LineScan01070" "/home/mot/data/results-new/Water and Test Sand/LineScan01070"
 ./mot.py linescan_detect_tf "/home/mot/data/source/Water, Clay and Test Sand/LineScan01072" "/home/mot/data/results-new/Water, Clay and Test Sand/LineScan01072"

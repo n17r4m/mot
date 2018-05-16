@@ -14,6 +14,8 @@ from skimage.feature import peak_local_max
 from skimage import measure
 
 from scipy import ndimage
+
+
 from scipy.misc import imresize
 
 import cv2
@@ -162,12 +164,6 @@ async def detect_linescan(path, dump_path=None, *args):
     figsize, dpi = (7,5), 300
     
     
-    th_fig, th_ax1 = plt.subplots(figsize=figsize, dpi=dpi, tight_layout=True)
-    th_ax1.set_title(f"Thresholds (0-255) n={n_str}")
-    th_ax1.hist(ls.th[mask], 50, (0, 255))
-    th_ax1.set_xlabel("Value")
-    th_fig.savefig(dump_path / "threshold.png")
-    
     areasp_fig, areasp_ax1 = plt.subplots(figsize=figsize, dpi=dpi, tight_layout=True)
     areasp_ax1.set_title(f"Areas (prop) n={n_str}")
     areasp_ax1.hist(areas_prop[mask], 50, (0, 25e4))
@@ -221,6 +217,14 @@ async def detect_linescan(path, dump_path=None, *args):
     count_ax1.set_xlabel("Frame #")
     count_ax1.plot(f_counts)
     count_fig.savefig(dump_path / "particle-counts.png")
+    
+    
+    th_fig, th_ax1 = plt.subplots(figsize=figsize, dpi=dpi, tight_layout=True)
+    th_ax1.set_title(f"Thresholds n={n_str}")
+    th_ax1.set_xlabel("Frame #")
+    th_ax1.plot(ls.th)
+    th_fig.savefig(dump_path / "threshold.png")
+    
     
     Ap_x_V_fig, Ap_x_V_ax1 = plt.subplots(figsize=figsize, dpi=dpi, tight_layout=True)
     Ap_x_V_ax1.set_title(f"Area (prop) / Velocites n={n_str}")

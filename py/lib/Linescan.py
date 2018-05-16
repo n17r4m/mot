@@ -30,9 +30,10 @@ class LoadLinescanSegment(F):
         self.crop = crop
         self.debug = debug
         print("Linescan loader running on GPU", os.environ["CUDA_VISIBLE_DEVICES"])
-        tf.enable_eager_execution()
         tf_config = tf.ConfigProto()
         tf_config.gpu_options.allow_growth = True
+        tf.enable_eager_execution()
+        
 
 
     
@@ -188,12 +189,12 @@ class Linescan2:
         self.im = np.concatenate(self.im)
         self.dv = np.concatenate(self.dv)
         self.mk = np.concatenate(self.mk)
-        self.th = np.concatenate(self.th)
+        self.th = np.array(self.th)
         
         print("concat took", time.time() - start, "seconds")
         
         start = time.time()
-        self.mk = binary_erosion(closing(self.mk)).astype('bool')
+        self.mk = binary_erosion(binary_erosion(closing(self.mk))).astype('bool')
         print("morphology took", time.time() - start, "seconds")
         
         
