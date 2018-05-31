@@ -8767,3 +8767,850 @@
 2018/05/16 00:00:31 [info] 2367#2367: *2640 client 52.91.224.1 closed keepalive connection
 2018/05/16 00:09:21 [info] 2367#2367: *2641 client 77.46.163.158 closed keepalive connection
 2018/05/16 00:15:24 [info] 2367#2367: *2642 client 195.136.5.44 closed keepalive connection
+2018/05/16 00:57:56 [info] 2367#2367: *2643 client 103.254.167.141 closed keepalive connection
+2018/05/16 01:13:18 [info] 2367#2367: *2644 client 107.170.195.8 closed keepalive connection
+2018/05/16 02:08:18 [info] 2367#2367: *2651 client 46.29.8.194 closed keepalive connection
+2018/05/16 02:08:25 [info] 2367#2367: *2648 client timed out (110: Connection timed out) while waiting for request, client: 103.207.36.223, server: 0.0.0.0:80
+2018/05/16 02:08:31 [info] 2367#2367: *2649 client timed out (110: Connection timed out) while waiting for request, client: 103.207.36.223, server: 0.0.0.0:80
+2018/05/16 02:08:37 [info] 2367#2367: *2650 client timed out (110: Connection timed out) while waiting for request, client: 103.207.36.223, server: 0.0.0.0:80
+2018/05/16 03:25:42 [info] 2367#2367: *2652 client 209.126.136.4 closed keepalive connection
+2018/05/16 03:30:42 [info] 2367#2367: *2653 client 152.250.73.37 closed keepalive connection
+2018/05/16 04:38:22 [info] 2367#2367: *2654 client 95.143.134.31 closed keepalive connection
+2018/05/16 04:45:37 [info] 2367#2367: *2655 client 201.92.119.236 closed keepalive connection
+2018/05/16 05:26:36 [info] 2367#2367: *2657 client 41.59.21.221 closed keepalive connection
+2018/05/16 05:30:24 [info] 2367#2367: *2658 client 179.98.181.193 closed keepalive connection
+2018/05/16 06:39:43 [info] 2367#2367: *2659 client 88.202.117.122 closed keepalive connection
+2018/05/16 08:11:25 [info] 2367#2367: *2660 client 177.189.126.65 closed keepalive connection
+2018/05/16 08:57:39 [info] 2367#2367: *2661 client 191.254.108.210 closed keepalive connection
+2018/05/16 10:58:17 [info] 2367#2367: *2663 client 177.102.200.185 closed keepalive connection
+2018/05/16 11:02:05 [info] 2367#2367: *2664 client 58.84.34.230 closed keepalive connection
+2018/05/16 11:33:38 [info] 2367#2367: *2665 client 180.97.106.39 closed keepalive connection
+2018/05/16 11:41:21 [info] 2367#2367: *2666 client 177.136.213.120 closed keepalive connection
+2018/05/16 12:30:03 [info] 2367#2367: *2668 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/16 12:30:08 [info] 2367#2367: *2670 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/16 12:30:08 [info] 2367#2367: *2669 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/16 12:47:23 [info] 2367#2367: *2671 client 45.228.94.172 closed keepalive connection
+2018/05/16 13:29:49 [info] 2367#2367: *2673 client 95.161.175.246 closed keepalive connection
+2018/05/16 14:27:58 [info] 2367#2367: *2675 client closed connection while waiting for request, client: 142.244.0.147, server: 0.0.0.0:80
+2018/05/16 14:42:56 [info] 2367#2367: *2677 client 127.0.0.1 closed keepalive connection
+2018/05/16 14:43:06 [info] 2367#2367: *2683 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/16 14:44:44 [info] 2367#2367: *2684 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/16 14:49:47 [info] 2367#2367: *2685 client 201.49.227.70 closed keepalive connection
+2018/05/16 15:12:25 [info] 2367#2367: *2681 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 127.0.0.1, server: localhost, request: "GET /mot/sockjs/986/81n2873x/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/986/81n2873x/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/16 15:18:37 [info] 2367#2367: *2686 client 127.0.0.1 closed keepalive connection
+2018/05/16 15:23:13 [info] 2367#2367: *2690 client 189.68.112.141 closed keepalive connection
+2018/05/16 15:28:00 [info] 2367#2367: *2691 client 200.148.42.58 closed keepalive connection
+2018/05/16 15:39:08 [info] 2367#2367: *2688 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 127.0.0.1, server: localhost, request: "GET /mot/sockjs/010/2uxufq5o/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/010/2uxufq5o/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/16 15:46:17 [info] 2367#2367: *2692 client 189.146.174.128 closed keepalive connection
+2018/05/16 15:47:10 [info] 2367#2367: *2693 client 189.146.174.128 closed keepalive connection
+2018/05/16 16:12:51 [info] 2367#2367: *2694 client 127.0.0.1 closed keepalive connection
+2018/05/16 19:09:41 [info] 2207#2207: *1 client 141.212.122.81 closed keepalive connection
+2018/05/16 19:22:24 [info] 2207#2207: *2 client 177.134.156.180 closed keepalive connection
+2018/05/16 20:46:31 [info] 2207#2207: *3 client 202.138.254.48 closed keepalive connection
+2018/05/16 21:23:58 [info] 2207#2207: *4 client 138.118.85.100 closed keepalive connection
+2018/05/16 22:51:03 [info] 2207#2207: *5 client 196.29.224.194 closed keepalive connection
+2018/05/16 23:51:06 [info] 2207#2207: *6 client 27.111.30.230 closed keepalive connection
+2018/05/17 00:24:08 [info] 2207#2207: *8 client closed connection while waiting for request, client: 66.222.207.242, server: 0.0.0.0:80
+2018/05/17 00:25:32 [info] 2207#2207: *7 client 66.222.207.242 closed keepalive connection
+2018/05/17 00:27:10 [info] 2207#2207: *9 client 66.222.207.242 closed keepalive connection
+2018/05/17 09:35:49 [info] 2195#2195: *1 client 81.139.231.239 closed keepalive connection
+2018/05/17 10:06:38 [info] 2195#2195: *2 client 89.28.30.117 closed keepalive connection
+2018/05/17 10:46:56 [info] 2195#2195: *3 client 177.9.13.71 closed keepalive connection
+2018/05/17 11:20:55 [info] 2195#2195: *4 client 91.213.59.1 closed keepalive connection
+2018/05/17 12:29:02 [info] 2195#2195: *6 client 189.250.133.167 closed keepalive connection
+2018/05/17 12:54:14 [info] 2195#2195: *7 client 192.241.218.203 closed keepalive connection
+2018/05/17 16:36:16 [info] 2203#2203: *1 client 187.10.162.72 closed keepalive connection
+2018/05/17 16:36:16 [info] 2203#2203: *2 client 187.10.162.72 closed keepalive connection
+2018/05/17 16:40:06 [info] 2203#2203: *3 client 189.172.44.78 closed keepalive connection
+2018/05/17 17:36:34 [info] 2203#2203: *4 client 87.252.171.6 closed keepalive connection
+2018/05/17 18:19:54 [info] 2203#2203: *6 client 152.249.215.145 closed keepalive connection
+2018/05/17 18:45:23 [info] 2203#2203: *7 client 115.236.71.44 closed keepalive connection (104: Connection reset by peer)
+2018/05/17 19:47:08 [info] 2203#2203: *8 client 170.247.19.171 closed keepalive connection
+2018/05/17 19:56:54 [info] 2203#2203: *9 client 1.20.118.114 closed keepalive connection
+2018/05/17 21:19:24 [info] 2203#2203: *10 client closed connection while waiting for request, client: 92.63.193.85, server: 0.0.0.0:80
+2018/05/17 21:19:24 [info] 2203#2203: *11 client 92.63.193.85 closed keepalive connection
+2018/05/17 21:25:33 [info] 2203#2203: *12 client 101.108.196.249 closed keepalive connection
+2018/05/17 23:33:20 [info] 2203#2203: *13 client closed connection while waiting for request, client: 193.112.190.175, server: 0.0.0.0:80
+2018/05/17 23:33:20 [info] 2203#2203: *14 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 193.112.190.175, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/17 23:50:05 [info] 2203#2203: *17 client closed connection while waiting for request, client: 139.199.27.47, server: 0.0.0.0:80
+2018/05/17 23:50:05 [info] 2203#2203: *18 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JBKLIX1yYpYpipS0ayhe01IBc4dKNrlptKoblL2k1BZtBk3BkxzoFWPJNFLqyomaI0FLml0acLLBLlMPgQHOZmIqWWHbZPObr7dKqBjpdK12MlM1Z0bkOPT8Qu5p0tnj9qz0pPRkNhmHRkOhKpKQVsHcmlMyDKnTRkM1Z601ioMaepvLva8OlMzaY7nXYP1eYdkSSMXxMksMKtT5ZBR8Rkr8Ktyq9Cc64KzlpKTK28mLiqJ3rkM42km1hP3Yq4ldO4QK1KPab9qJr1ioIPNxqOaJRkLRxkTFQMS8RNC5qdm0c81gpiPnPisYK6OdphPLbWlfzgKOj5P1IoaG0Wb7R7PVrHLzNvt9FGYoz5zK30okp1WYPQNqBJYs0QOaQZNpb3NpbHaGSYEOevKOwehkpOb9P1Z21BrH9pP2c0BdNrnraBoaNrb0BHxkr5nNmk9oZ53YwVpjJpQKqX3Pp39pIpBiWp0jJdb02JMO1FOxsENfeNavYoweLqYonwB7aGNwqFQXNMkVMHQkiovuauI045kvpKjoe4Rcm0m0ipJKvqiYETkPipKPk84lyoKOIoLoP..." while reading client request headers, client: 139.199.27.47, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/18 00:00:03 [info] 2203#2203: *21 client 103.83.205.74 closed keepalive connection
+2018/05/18 00:33:10 [info] 2203#2203: *22 client 177.200.86.211 closed keepalive connection
+2018/05/18 03:35:41 [info] 2203#2203: *25 client closed connection while waiting for request, client: 118.24.44.198, server: 0.0.0.0:80
+2018/05/18 03:35:41 [info] 2203#2203: *26 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 118.24.44.198, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/18 03:53:28 [info] 2203#2203: *29 client 103.78.182.47 closed keepalive connection
+2018/05/18 04:36:19 [info] 2203#2203: *30 client 106.45.1.217 closed keepalive connection
+2018/05/18 05:05:35 [info] 2203#2203: *31 client 92.60.23.230 closed keepalive connection
+2018/05/18 06:31:18 [info] 2203#2203: *32 client 103.61.103.179 closed keepalive connection
+2018/05/18 06:37:24 [info] 2203#2203: *33 client 64.114.250.133 closed keepalive connection
+2018/05/18 07:55:33 [info] 2203#2203: *34 client 94.143.42.132 closed keepalive connection
+2018/05/18 08:38:35 [info] 2203#2203: *35 client 177.152.64.216 closed keepalive connection
+2018/05/18 10:16:29 [info] 2203#2203: *37 client 186.224.32.30 closed keepalive connection
+2018/05/18 10:37:48 [info] 2203#2203: *38 client 94.188.3.117 closed keepalive connection
+2018/05/18 11:52:20 [info] 2203#2203: *39 client 181.225.100.58 closed keepalive connection
+2018/05/18 12:20:06 [info] 2203#2203: *40 client 82.129.55.2 closed keepalive connection
+2018/05/18 12:21:55 [info] 2203#2203: *41 client 202.162.197.214 closed keepalive connection
+2018/05/18 12:25:09 [info] 2203#2203: *42 client 138.36.192.133 closed keepalive connection
+2018/05/18 13:03:51 [info] 2203#2203: *43 client 189.159.99.58 closed keepalive connection
+2018/05/18 14:31:18 [info] 2203#2203: *44 client closed connection while waiting for request, client: 186.223.177.207, server: 0.0.0.0:80
+2018/05/18 14:31:21 [info] 2203#2203: *45 client 186.223.177.207 closed keepalive connection
+2018/05/18 14:31:24 [info] 2203#2203: *46 client 186.223.177.207 closed keepalive connection
+2018/05/18 14:31:27 [info] 2203#2203: *47 client 186.223.177.207 closed keepalive connection
+2018/05/18 14:31:30 [info] 2203#2203: *48 client 186.223.177.207 closed keepalive connection
+2018/05/18 14:31:40 [info] 2203#2203: *52 client 186.223.177.207 closed keepalive connection
+2018/05/18 14:31:41 [info] 2203#2203: *53 client 37.46.255.40 closed keepalive connection
+2018/05/18 14:41:30 [info] 2203#2203: *49 client timed out (110: Connection timed out) while waiting for request, client: 186.223.177.207, server: 0.0.0.0:80
+2018/05/18 14:41:33 [info] 2203#2203: *50 client timed out (110: Connection timed out) while waiting for request, client: 186.223.177.207, server: 0.0.0.0:80
+2018/05/18 14:45:24 [info] 2203#2203: *54 client 201.43.64.251 closed keepalive connection
+2018/05/18 14:45:59 [info] 2203#2203: *55 client 191.193.21.133 closed keepalive connection
+2018/05/18 14:56:06 [info] 2203#2203: *56 client 95.143.136.132 closed keepalive connection
+2018/05/18 15:01:43 [info] 2203#2203: *62 client 155.133.126.154 closed keepalive connection
+2018/05/18 15:06:55 [info] 2203#2203: *60 client timed out (110: Connection timed out) while waiting for request, client: 180.76.247.202, server: 0.0.0.0:80
+2018/05/18 15:07:01 [info] 2203#2203: *61 client timed out (110: Connection timed out) while waiting for request, client: 180.76.247.202, server: 0.0.0.0:80
+2018/05/18 16:35:26 [info] 2203#2203: *63 client 171.4.44.15 closed keepalive connection
+2018/05/18 18:08:42 [info] 2203#2203: *64 client 187.10.83.137 closed keepalive connection
+2018/05/18 18:35:48 [info] 2203#2203: *65 client 187.155.89.246 closed keepalive connection
+2018/05/18 19:14:32 [info] 2203#2203: *66 client sent HTTP/1.1 request without "Host" header while reading client request headers, client: 185.10.68.236, server: localhost, request: "GET / HTTP/1.1"
+2018/05/18 19:47:17 [info] 2203#2203: *68 client 170.78.181.64 closed keepalive connection
+2018/05/18 20:23:01 [info] 2203#2203: *69 client 54.87.134.95 closed keepalive connection
+2018/05/18 20:32:00 [info] 2203#2203: *70 client 189.236.10.11 closed keepalive connection
+2018/05/18 22:05:21 [info] 2203#2203: *71 client 195.211.240.100 closed keepalive connection
+2018/05/18 22:08:05 [info] 2203#2203: *72 client 84.22.154.221 closed keepalive connection
+2018/05/18 22:43:28 [info] 2203#2203: *73 client 179.111.114.62 closed keepalive connection
+2018/05/18 23:52:06 [info] 2203#2203: *75 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/18 23:52:19 [info] 2203#2203: *77 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/18 23:52:19 [info] 2203#2203: *76 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/18 23:53:05 [info] 2203#2203: *78 client 187.136.82.193 closed keepalive connection
+2018/05/18 23:53:05 [info] 2203#2203: *79 client 187.136.82.193 closed keepalive connection
+2018/05/19 00:36:10 [info] 2203#2203: *82 client 200.71.90.24 closed keepalive connection
+2018/05/19 00:37:17 [info] 2203#2203: *83 client 168.0.190.12 closed keepalive connection
+2018/05/19 00:40:26 [error] 2203#2203: *84 connect() failed (111: Connection refused) while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/ HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/", host: "notecc.cs.ualberta.ca"
+2018/05/19 00:40:46 [info] 2203#2203: *84 client 66.222.207.242 closed keepalive connection
+2018/05/19 00:46:54 [info] 2203#2203: *86 client 45.115.172.18 closed keepalive connection
+2018/05/19 01:50:18 [warn] 2203#2203: *92 an upstream response is buffered to a temporary file /var/lib/nginx/tmp/proxy/1/00/0000000001 while reading upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/vendor/plotly-latest.min.js HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/vendor/plotly-latest.min.js", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 01:50:18 [warn] 2203#2203: *95 an upstream response is buffered to a temporary file /var/lib/nginx/tmp/proxy/2/00/0000000002 while reading upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/packages/modules.js?hash=63cd54920c1a45b731caf0b286e719a73f845dbd HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/packages/modules.js?hash=63cd54920c1a45b731caf0b286e719a73f845dbd", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 01:50:40 [info] 2203#2203: *97 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:50:40 [info] 2203#2203: *92 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:50:40 [info] 2203#2203: *90 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:50:40 [info] 2203#2203: *94 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:50:40 [info] 2203#2203: *95 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:50:40 [info] 2203#2203: *87 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:50:56 [info] 2203#2203: *175 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:51:17 [info] 2203#2203: *184 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:51:17 [info] 2203#2203: *181 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:51:17 [info] 2203#2203: *185 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:51:17 [info] 2203#2203: *178 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:51:17 [info] 2203#2203: *180 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:51:18 [info] 2203#2203: *173 client 66.222.207.242 closed keepalive connection
+2018/05/19 01:57:23 [info] 2203#2203: *259 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/757/fl4x4it8/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/757/fl4x4it8/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/19 02:02:02 [info] 2203#2203: *261 client 157.119.212.43 closed keepalive connection
+2018/05/19 03:09:55 [info] 2203#2203: *262 client 200.232.240.147 closed keepalive connection
+2018/05/19 07:12:23 [info] 2203#2203: *264 client 201.93.117.161 closed keepalive connection
+2018/05/19 07:33:05 [info] 2203#2203: *265 client 27.54.176.146 closed keepalive connection
+2018/05/19 08:08:35 [info] 2203#2203: *266 client 176.113.128.63 closed keepalive connection
+2018/05/19 08:36:42 [info] 2203#2203: *267 client closed connection while waiting for request, client: 119.27.186.14, server: 0.0.0.0:80
+2018/05/19 08:36:43 [info] 2203#2203: *268 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JBKLIX1yYpYpipS0ayhe01IBc4dKNrlptKoblL2k1BZtBk3BkxzoFWPJNFLqyomaI0FLml0acLLBLlMPgQHOZmIqWWHbZPObr7dKqBjpdK12MlM1Z0bkOPT8Qu5p0tnj9qz0pPRkNhmHRkOhKpKQVsHcmlMyDKnTRkM1Z601ioMaepvLva8OlMzaY7nXYP1eYdkSSMXxMksMKtT5ZBR8Rkr8Ktyq9Cc64KzlpKTK28mLiqJ3rkM42km1hP3Yq4ldO4QK1KPab9qJr1ioIPNxqOaJRkLRxkTFQMS8RNC5qdm0c81gpiPnPisYK6OdphPLbWlfzgKOj5P1IoaG0Wb7R7PVrHLzNvt9FGYoz5zK30okp1WYPQNqBJYs0QOaQZNpb3NpbHaGSYEOevKOwehkpOb9P1Z21BrH9pP2c0BdNrnraBoaNrb0BHxkr5nNmk9oZ53YwVpjJpQKqX3Pp39pIpBiWp0jJdb02JMO1FOxsENfeNavYoweLqYonwB7aGNwqFQXNMkVMHQkiovuauI045kvpKjoe4Rcm0m0ipJKvqiYETkPipKPk84lyoKOIoLoP..." while reading client request headers, client: 119.27.186.14, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/19 09:08:22 [info] 2203#2203: *271 client 103.75.166.76 closed keepalive connection
+2018/05/19 11:13:01 [info] 2203#2203: *273 client 179.99.53.242 closed keepalive connection
+2018/05/19 11:56:24 [info] 2203#2203: *275 client 66.222.207.242 closed keepalive connection
+2018/05/19 12:45:10 [info] 2203#2203: *279 client 187.120.136.249 closed keepalive connection
+2018/05/19 14:24:48 [info] 2203#2203: *280 client 185.84.222.213 closed keepalive connection
+2018/05/19 15:18:56 [info] 2203#2203: *281 client 189.110.155.208 closed keepalive connection
+2018/05/19 15:57:57 [info] 2203#2203: *282 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=hmaxgfwz9g HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=hmaxgfwz9g", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 15:58:06 [info] 2203#2203: *284 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=mt09frzjez HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=mt09frzjez", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 15:58:22 [info] 2203#2203: *286 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=ic79aos0a0 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=ic79aos0a0", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 15:58:37 [info] 2203#2203: *288 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=a4w5cj7tg0 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=a4w5cj7tg0", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 15:59:09 [info] 2203#2203: *290 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=vvc0kysmrf HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=vvc0kysmrf", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:00:04 [info] 2203#2203: *292 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=rj0t98vaod HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=rj0t98vaod", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:02:08 [info] 2203#2203: *294 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=8i1g5ifcqx HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=8i1g5ifcqx", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:05:52 [info] 2203#2203: *296 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=osdgfhkatc HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=osdgfhkatc", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:10:26 [info] 2203#2203: *298 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=ja0inp1ecl HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=ja0inp1ecl", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:16:24 [info] 2203#2203: *300 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=0tgvw3vrdl HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=0tgvw3vrdl", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:21:34 [info] 2203#2203: *302 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=ok5rae1zal HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=ok5rae1zal", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:27:43 [info] 2203#2203: *304 client 66.222.207.242 closed keepalive connection
+2018/05/19 16:28:24 [info] 2203#2203: *308 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=fawj1wleim HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=fawj1wleim", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:28:45 [info] 2203#2203: *309 client 66.222.207.242 closed keepalive connection
+2018/05/19 16:29:42 [info] 2203#2203: *314 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=9bgkich8ch HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=9bgkich8ch", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:29:56 [info] 2203#2203: *316 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=utvyofex0o HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=utvyofex0o", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:30:07 [info] 2203#2203: *318 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=noqbnyfetd HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=noqbnyfetd", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:30:22 [info] 2203#2203: *320 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=wgxgabeshq HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=wgxgabeshq", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:30:51 [info] 2203#2203: *322 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=2sw1zpdhws HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=2sw1zpdhws", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:31:50 [info] 2203#2203: *324 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=j02xbyos1j HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=j02xbyos1j", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:34:03 [info] 2203#2203: *326 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=q353n78vb8 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=q353n78vb8", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 16:39:09 [info] 2203#2203: *328 client 66.222.207.242 closed keepalive connection
+2018/05/19 16:53:16 [info] 2203#2203: *332 client 187.10.187.215 closed keepalive connection
+2018/05/19 16:53:16 [info] 2203#2203: *333 client 187.10.187.215 closed keepalive connection
+2018/05/19 17:24:17 [info] 2203#2203: *334 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=_c9bxfu_xp HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=_c9bxfu_xp", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:24:28 [info] 2203#2203: *335 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=ab6woc7w1i HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=ab6woc7w1i", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:24:41 [info] 2203#2203: *338 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=wr_rk82v0y HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=wr_rk82v0y", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:24:59 [info] 2203#2203: *340 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=5sf0gm_swm HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=5sf0gm_swm", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:25:16 [info] 2203#2203: *342 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=4esb_47_9o HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=4esb_47_9o", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:26:13 [info] 2203#2203: *344 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=t5tov4lac8 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=t5tov4lac8", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:28:26 [info] 2203#2203: *346 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=at19sgfzwm HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=at19sgfzwm", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:32:46 [info] 2203#2203: *348 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=m6wiu25p6f HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=m6wiu25p6f", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:38:31 [info] 2203#2203: *350 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=pfnxt6fho6 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=pfnxt6fho6", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:44:34 [info] 2203#2203: *352 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=qwmfs0w_9p HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=qwmfs0w_9p", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:50:25 [info] 2203#2203: *354 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=0tz5zanfx4 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=0tz5zanfx4", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 17:54:55 [info] 2203#2203: *356 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=uhairr8bzs HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=uhairr8bzs", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 18:00:23 [info] 2203#2203: *358 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=28suapvohl HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=28suapvohl", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 18:04:37 [info] 2203#2203: *362 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=o95rfuycdd HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=o95rfuycdd", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 18:10:09 [info] 2203#2203: *364 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while connecting to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=ugmbxl5tia HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=ugmbxl5tia", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 18:14:37 [info] 2203#2203: *366 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=q3z5x1k_h4 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=q3z5x1k_h4", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 18:18:58 [info] 2203#2203: *368 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=j1hatvfkej HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=j1hatvfkej", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 18:23:30 [info] 2203#2203: *370 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/info?cb=hibwgd0l51 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/info?cb=hibwgd0l51", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/19 18:27:43 [info] 2203#2203: *372 client 66.222.207.242 closed keepalive connection
+2018/05/19 19:31:31 [info] 2203#2203: *376 client closed connection while waiting for request, client: 109.74.206.244, server: 0.0.0.0:80
+2018/05/19 20:34:12 [info] 2203#2203: *378 client closed connection while waiting for request, client: 118.24.148.80, server: 0.0.0.0:80
+2018/05/19 20:34:13 [info] 2203#2203: *379 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 118.24.148.80, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/19 20:35:58 [info] 2203#2203: *381 client 118.24.148.80 closed keepalive connection
+2018/05/19 20:45:42 [info] 2203#2203: *382 client sent invalid method while reading client request line, client: 75.165.166.161, server: localhost, request: "�   G�W���`�=o�Tx��u;4��n��8PB�Ep��(!N���	&��Ϸ�)� �M����V[�/[\��xiu:}0���r��jK]�,ƃ}w2"
+2018/05/19 20:46:48 [info] 2203#2203: *383 client 75.165.166.161 closed keepalive connection
+2018/05/19 21:06:52 [info] 2203#2203: *393 client 75.165.166.161 closed keepalive connection
+2018/05/19 21:08:48 [info] 2203#2203: *394 client 75.165.166.161 closed keepalive connection
+2018/05/19 21:26:59 [info] 2203#2203: *403 client 75.165.166.161 closed keepalive connection
+2018/05/19 21:28:52 [info] 2203#2203: *404 client 75.165.166.161 closed keepalive connection
+2018/05/19 21:30:48 [info] 2203#2203: *405 client 75.165.166.161 closed keepalive connection
+2018/05/19 21:34:06 [info] 2203#2203: *408 client 89.147.228.83 closed keepalive connection
+2018/05/19 21:49:00 [info] 2203#2203: *415 client 75.165.166.161 closed keepalive connection
+2018/05/19 21:50:52 [info] 2203#2203: *416 client 75.165.166.161 closed keepalive connection
+2018/05/19 22:07:38 [info] 2203#2203: *425 client 185.232.132.204 closed keepalive connection
+2018/05/19 22:11:04 [info] 2203#2203: *427 client 75.165.166.161 closed keepalive connection
+2018/05/19 22:31:11 [info] 2203#2203: *438 client 75.165.166.161 closed keepalive connection
+2018/05/19 22:33:08 [info] 2203#2203: *439 client 75.165.166.161 closed keepalive connection
+2018/05/19 22:49:42 [info] 2203#2203: *448 client 71.6.202.198 closed keepalive connection
+2018/05/19 22:51:43 [info] 2203#2203: *450 client 156.218.152.227 closed keepalive connection
+2018/05/19 22:53:14 [info] 2203#2203: *451 client 75.165.166.161 closed keepalive connection
+2018/05/19 22:55:01 [info] 2203#2203: *452 client 75.165.166.161 closed keepalive connection
+2018/05/19 23:03:04 [info] 2203#2203: *457 client closed connection while waiting for request, client: 103.224.250.160, server: 0.0.0.0:80
+2018/05/19 23:03:04 [info] 2203#2203: *458 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 103.224.250.160, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/19 23:04:14 [info] 2203#2203: *460 client 103.224.250.160 closed keepalive connection (104: Connection reset by peer)
+2018/05/19 23:15:11 [info] 2203#2203: *466 client 75.165.166.161 closed keepalive connection
+2018/05/19 23:17:08 [info] 2203#2203: *467 client 75.165.166.161 closed keepalive connection
+2018/05/19 23:35:19 [info] 2203#2203: *476 client 75.165.166.161 closed keepalive connection
+2018/05/19 23:37:18 [info] 2203#2203: *477 client 75.165.166.161 closed keepalive connection
+2018/05/19 23:39:08 [info] 2203#2203: *478 client 75.165.166.161 closed keepalive connection
+2018/05/19 23:51:50 [info] 2203#2203: *485 client closed connection while waiting for request, client: 118.24.134.200, server: 0.0.0.0:80
+2018/05/19 23:51:52 [info] 2203#2203: *486 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 118.24.134.200, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/19 23:57:21 [info] 2203#2203: *491 client 75.165.166.161 closed keepalive connection
+2018/05/19 23:59:18 [info] 2203#2203: *492 client 75.165.166.161 closed keepalive connection
+2018/05/20 00:26:49 [info] 2203#2203: *499 client 2.184.135.44 closed keepalive connection
+2018/05/20 00:46:39 [info] 2203#2203: *503 client 66.222.207.242 closed keepalive connection
+2018/05/20 00:47:01 [info] 2203#2203: *501 client 66.222.207.242 closed keepalive connection
+2018/05/20 01:19:38 [info] 2203#2203: *509 client 192.241.234.202 closed keepalive connection
+2018/05/20 01:45:16 [info] 2203#2203: *510 client 68.177.71.77 closed keepalive connection
+2018/05/20 01:47:36 [info] 2203#2203: *511 client 188.0.238.218 closed keepalive connection
+2018/05/20 03:05:55 [info] 2203#2203: *512 client 201.87.77.167 closed keepalive connection
+2018/05/20 04:19:14 [info] 2203#2203: *513 client 82.146.94.101 closed keepalive connection
+2018/05/20 05:44:44 [info] 2203#2203: *515 client 2.183.84.123 closed keepalive connection
+2018/05/20 05:46:47 [info] 2203#2203: *516 client 176.41.190.36 closed keepalive connection
+2018/05/20 06:49:46 [info] 2203#2203: *517 client 201.57.137.66 closed keepalive connection
+2018/05/20 07:01:45 [info] 2203#2203: *518 client sent HTTP/1.1 request without "Host" header while reading client request headers, client: 185.10.68.236, server: localhost, request: "GET / HTTP/1.1"
+2018/05/20 07:33:03 [info] 2203#2203: *519 client 157.25.133.209 closed keepalive connection
+2018/05/20 08:05:08 [info] 2203#2203: *520 client closed connection while waiting for request, client: 27.191.137.37, server: 0.0.0.0:80
+2018/05/20 08:05:08 [info] 2203#2203: *521 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JBKLIX1yYpYpipS0ayhe01IBc4dKNrlptKoblL2k1BZtBk3BkxzoFWPJNFLqyomaI0FLml0acLLBLlMPgQHOZmIqWWHbZPObr7dKqBjpdK12MlM1Z0bkOPT8Qu5p0tnj9qz0pPRkNhmHRkOhKpKQVsHcmlMyDKnTRkM1Z601ioMaepvLva8OlMzaY7nXYP1eYdkSSMXxMksMKtT5ZBR8Rkr8Ktyq9Cc64KzlpKTK28mLiqJ3rkM42km1hP3Yq4ldO4QK1KPab9qJr1ioIPNxqOaJRkLRxkTFQMS8RNC5qdm0c81gpiPnPisYK6OdphPLbWlfzgKOj5P1IoaG0Wb7R7PVrHLzNvt9FGYoz5zK30okp1WYPQNqBJYs0QOaQZNpb3NpbHaGSYEOevKOwehkpOb9P1Z21BrH9pP2c0BdNrnraBoaNrb0BHxkr5nNmk9oZ53YwVpjJpQKqX3Pp39pIpBiWp0jJdb02JMO1FOxsENfeNavYoweLqYonwB7aGNwqFQXNMkVMHQkiovuauI045kvpKjoe4Rcm0m0ipJKvqiYETkPipKPk84lyoKOIoLoP..." while reading client request headers, client: 27.191.137.37, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/20 08:06:23 [info] 2203#2203: *523 client 27.191.137.37 closed keepalive connection (104: Connection reset by peer)
+2018/05/20 08:11:03 [info] 2203#2203: *524 client 179.110.241.134 closed keepalive connection
+2018/05/20 09:22:37 [info] 2203#2203: *527 client sent HTTP/1.1 request without "Host" header while reading client request headers, client: 141.212.122.81, server: localhost, request: "GET /x HTTP/1.1"
+2018/05/20 13:00:27 [info] 2203#2203: *529 client 41.186.43.110 closed keepalive connection
+2018/05/20 13:01:05 [info] 2203#2203: *530 client 197.44.186.140 closed keepalive connection
+2018/05/20 13:11:10 [info] 2203#2203: *531 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/20 13:38:16 [info] 2203#2203: *532 client 41.190.95.73 closed keepalive connection
+2018/05/20 14:00:10 [info] 2203#2203: *533 client 187.192.232.142 closed keepalive connection
+2018/05/20 14:00:10 [info] 2203#2203: *534 client 187.192.232.142 closed keepalive connection
+2018/05/20 17:08:47 [info] 2203#2203: *536 client 79.21.43.224 closed keepalive connection
+2018/05/20 18:19:30 [info] 2203#2203: *537 client sent invalid method while reading client request line, client: 134.119.212.87, server: localhost, request: " "
+2018/05/20 18:58:28 [info] 2203#2203: *539 client 179.99.13.228 closed keepalive connection
+2018/05/20 19:03:38 [info] 2203#2203: *540 client sent invalid method while reading client request line, client: 134.119.212.87, server: localhost, request: " P�w�' "
+2018/05/20 19:06:38 [info] 2203#2203: *541 client closed connection while waiting for request, client: 164.15.28.41, server: 0.0.0.0:80
+2018/05/20 19:06:38 [info] 2203#2203: *542 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 164.15.28.41, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/20 19:07:49 [info] 2203#2203: *544 client 164.15.28.41 closed keepalive connection
+2018/05/20 19:59:26 [info] 2203#2203: *547 client 165.16.37.190 closed keepalive connection
+2018/05/20 20:14:25 [info] 2203#2203: *548 client closed connection while waiting for request, client: 139.199.199.144, server: 0.0.0.0:80
+2018/05/20 20:14:25 [info] 2203#2203: *549 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 139.199.199.144, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/20 20:54:29 [info] 2203#2203: *553 client 114.141.93.109 closed keepalive connection
+2018/05/20 22:40:13 [info] 2203#2203: *555 client 185.34.16.123 closed keepalive connection
+2018/05/20 23:22:25 [info] 2203#2203: *556 client 77.242.27.28 closed keepalive connection
+2018/05/20 23:56:16 [info] 2203#2203: *557 client 201.103.83.125 closed keepalive connection
+2018/05/21 00:06:22 [info] 2203#2203: *558 client 178.94.43.187 closed keepalive connection
+2018/05/21 00:34:03 [info] 2203#2203: *559 client 85.99.110.155 closed keepalive connection
+2018/05/21 00:56:25 [info] 2203#2203: *560 client 187.63.213.13 closed keepalive connection
+2018/05/21 02:36:35 [info] 2203#2203: *507 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/908/3drdl31r/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/908/3drdl31r/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/21 02:55:14 [info] 2203#2203: *561 client 36.69.12.109 closed keepalive connection
+2018/05/21 03:11:47 [info] 2203#2203: *562 client closed connection while waiting for request, client: 47.106.14.242, server: 0.0.0.0:80
+2018/05/21 03:11:48 [info] 2203#2203: *563 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JBKLIX1yYpYpipS0ayhe01IBc4dKNrlptKoblL2k1BZtBk3BkxzoFWPJNFLqyomaI0FLml0acLLBLlMPgQHOZmIqWWHbZPObr7dKqBjpdK12MlM1Z0bkOPT8Qu5p0tnj9qz0pPRkNhmHRkOhKpKQVsHcmlMyDKnTRkM1Z601ioMaepvLva8OlMzaY7nXYP1eYdkSSMXxMksMKtT5ZBR8Rkr8Ktyq9Cc64KzlpKTK28mLiqJ3rkM42km1hP3Yq4ldO4QK1KPab9qJr1ioIPNxqOaJRkLRxkTFQMS8RNC5qdm0c81gpiPnPisYK6OdphPLbWlfzgKOj5P1IoaG0Wb7R7PVrHLzNvt9FGYoz5zK30okp1WYPQNqBJYs0QOaQZNpb3NpbHaGSYEOevKOwehkpOb9P1Z21BrH9pP2c0BdNrnraBoaNrb0BHxkr5nNmk9oZ53YwVpjJpQKqX3Pp39pIpBiWp0jJdb02JMO1FOxsENfeNavYoweLqYonwB7aGNwqFQXNMkVMHQkiovuauI045kvpKjoe4Rcm0m0ipJKvqiYETkPipKPk84lyoKOIoLoP..." while reading client request headers, client: 47.106.14.242, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/21 03:49:41 [info] 2203#2203: *566 client 1.179.196.81 closed keepalive connection
+2018/05/21 04:10:18 [info] 2203#2203: *567 client 189.153.89.222 closed keepalive connection
+2018/05/21 04:45:10 [info] 2203#2203: *570 client 107.170.231.24 closed keepalive connection
+2018/05/21 04:48:45 [info] 2203#2203: *571 client 187.207.2.178 closed keepalive connection
+2018/05/21 05:12:55 [info] 2203#2203: *572 client sent invalid method while reading client request line, client: 164.52.24.140, server: localhost, request: "" ��l7*�w\� ����р�l?�a��  &��  ��0�,�(�$��"
+2018/05/21 05:12:55 [info] 2203#2203: *572 recv() failed (104: Connection reset by peer) while reading client request line, client: 164.52.24.140, server: localhost, request: "" ��l7*�w\� ����р�l?�a��  &��  ��0�,�(�$��"
+2018/05/21 05:12:58 [info] 2203#2203: *573 recv() failed (104: Connection reset by peer) while waiting for request, client: 164.52.24.140, server: 0.0.0.0:80
+2018/05/21 05:13:01 [info] 2203#2203: *574 client sent invalid request while reading client request line, client: 164.52.24.140, server: localhost, request: "USER test +iw test :Test Wuz Here"
+2018/05/21 05:13:01 [info] 2203#2203: *574 recv() failed (104: Connection reset by peer) while reading client request line, client: 164.52.24.140, server: localhost, request: "USER test +iw test :Test Wuz Here"
+2018/05/21 05:13:04 [info] 2203#2203: *575 client 164.52.24.140 closed keepalive connection (104: Connection reset by peer)
+2018/05/21 05:14:26 [info] 2203#2203: *576 client sent invalid method while reading client request line, client: 87.179.17.57, server: localhost, request: "�   	��rUӤydL+Nd".bZ_U�Vi��X _vw�q����>��p(��O�ʮ����Bh*k�F�Jd���`�:�?'v��)4���~ݪߞ�|Ԭ�뮵SQ�� �=k�|���-��t9��hI"
+2018/05/21 05:34:41 [info] 2203#2203: *577 client 223.196.67.1 closed keepalive connection
+2018/05/21 05:41:20 [info] 2203#2203: *578 client 94.40.60.47 closed keepalive connection
+2018/05/21 07:41:21 [info] 2203#2203: *579 client 187.95.16.105 closed keepalive connection
+2018/05/21 07:59:57 [info] 2203#2203: *580 client 177.138.205.226 closed keepalive connection
+2018/05/21 07:59:57 [info] 2203#2203: *581 client 177.138.205.226 closed keepalive connection
+2018/05/21 08:05:41 [info] 2203#2203: *582 client 200.114.173.14 closed keepalive connection
+2018/05/21 08:24:20 [info] 2203#2203: *584 client 108.174.122.70 closed keepalive connection
+2018/05/21 08:31:30 [info] 2203#2203: *586 client 196.207.16.122 closed keepalive connection
+2018/05/21 10:08:46 [info] 2203#2203: *587 client 201.103.30.235 closed keepalive connection
+2018/05/21 11:55:50 [info] 2203#2203: *588 client 181.143.4.194 closed keepalive connection
+2018/05/21 13:38:40 [info] 2203#2203: *589 client 180.234.222.158 closed keepalive connection
+2018/05/21 14:06:03 [info] 2203#2203: *591 client 187.110.212.153 closed keepalive connection
+2018/05/21 14:52:53 [info] 2203#2203: *592 client closed connection while waiting for request, client: 103.94.77.32, server: 0.0.0.0:80
+2018/05/21 14:52:53 [info] 2203#2203: *593 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 103.94.77.32, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/21 14:54:17 [info] 2203#2203: *595 client 103.94.77.32 closed keepalive connection (104: Connection reset by peer)
+2018/05/21 15:22:30 [info] 2203#2203: *596 client 177.53.44.247 closed keepalive connection
+2018/05/21 16:27:24 [info] 2203#2203: *598 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/21 16:28:11 [info] 2203#2203: *599 client 127.0.0.1 closed keepalive connection
+2018/05/21 17:02:43 [info] 2203#2203: *600 client 200.165.167.133 closed keepalive connection
+2018/05/21 17:09:42 [info] 2203#2203: *604 client 190.108.192.249 closed keepalive connection
+2018/05/21 17:15:03 [info] 2203#2203: *601 client timed out (110: Connection timed out) while waiting for request, client: 112.226.252.84, server: 0.0.0.0:80
+2018/05/21 17:46:26 [info] 2203#2203: *605 client 213.32.252.59 closed keepalive connection
+2018/05/21 18:44:55 [info] 2203#2203: *606 client 187.147.188.121 closed keepalive connection
+2018/05/21 19:37:58 [info] 2203#2203: *607 client 122.224.209.248 closed keepalive connection (104: Connection reset by peer)
+2018/05/21 19:55:51 [info] 2203#2203: *608 client 201.42.36.28 closed keepalive connection (104: Connection reset by peer)
+2018/05/21 22:03:33 [info] 2203#2203: *610 client 66.222.207.242 closed keepalive connection
+2018/05/21 22:56:57 [info] 2203#2203: *614 client 95.133.11.214 closed keepalive connection
+2018/05/22 00:35:43 [info] 2203#2203: *616 client 187.41.220.181 closed keepalive connection
+2018/05/22 00:40:09 [info] 2203#2203: *617 recv() failed (104: Connection reset by peer) while waiting for request, client: 89.243.198.85, server: 0.0.0.0:80
+2018/05/22 00:53:56 [info] 2203#2203: *618 client 179.99.129.17 closed keepalive connection
+2018/05/22 01:06:41 [info] 2203#2203: *619 client 185.10.68.218 closed keepalive connection
+2018/05/22 01:09:29 [info] 2203#2203: *620 client 181.196.249.62 closed keepalive connection
+2018/05/22 01:29:36 [info] 2203#2203: *621 client 94.139.225.127 closed keepalive connection
+2018/05/22 01:33:34 [info] 2203#2203: *622 client 193.106.27.103 closed keepalive connection
+2018/05/22 02:01:27 [info] 2203#2203: *627 client closed connection while waiting for request, client: 66.222.207.242, server: 0.0.0.0:80
+2018/05/22 02:01:41 [info] 2203#2203: *623 client 66.222.207.242 closed keepalive connection
+2018/05/22 02:07:44 [info] 2203#2203: *628 client 66.222.207.242 closed keepalive connection
+2018/05/22 02:18:46 [info] 2203#2203: *632 client 187.73.52.43 closed keepalive connection
+2018/05/22 02:21:25 [info] 2203#2203: *633 client 66.222.207.242 closed keepalive connection
+2018/05/22 03:16:45 [info] 2203#2203: *638 client sent invalid method while reading client request line, client: 103.236.252.88, server: localhost, request: " H  D[����LfH,����ʯ�ny��`rg.�·     "
+2018/05/22 03:16:46 [info] 2203#2203: *638 recv() failed (104: Connection reset by peer) while reading client request line, client: 103.236.252.88, server: localhost, request: " H  D[����LfH,����ʯ�ny��`rg.�·     "
+2018/05/22 03:16:46 [info] 2203#2203: *639 client sent invalid method while reading client request line, client: 103.236.252.88, server: localhost, request: " H  D[�����v��K��	�R�9]ĳ���c�:-�     "
+2018/05/22 03:16:46 [info] 2203#2203: *639 recv() failed (104: Connection reset by peer) while reading client request line, client: 103.236.252.88, server: localhost, request: " H  D[�����v��K��	�R�9]ĳ���c�:-�     "
+2018/05/22 03:17:43 [info] 2203#2203: *637 client 103.236.252.88 closed keepalive connection (104: Connection reset by peer)
+2018/05/22 03:59:18 [info] 2203#2203: *640 client 183.131.83.50 closed keepalive connection
+2018/05/22 06:08:14 [info] 2203#2203: *642 client 41.75.79.103 closed keepalive connection
+2018/05/22 06:59:31 [info] 2203#2203: *647 client timed out (110: Connection timed out) while waiting for request, client: 46.246.42.133, server: 0.0.0.0:80
+2018/05/22 06:59:36 [info] 2203#2203: *648 client timed out (110: Connection timed out) while waiting for request, client: 46.246.42.133, server: 0.0.0.0:80
+2018/05/22 06:59:42 [info] 2203#2203: *649 client timed out (110: Connection timed out) while waiting for request, client: 46.246.42.133, server: 0.0.0.0:80
+2018/05/22 08:20:38 [info] 2203#2203: *650 client 141.212.122.16 closed keepalive connection
+2018/05/22 08:21:47 [info] 2203#2203: *651 client 193.105.67.146 closed keepalive connection
+2018/05/22 08:38:14 [info] 2203#2203: *652 client 179.110.38.98 closed keepalive connection
+2018/05/22 09:29:30 [info] 2203#2203: *653 client 150.109.52.34 closed keepalive connection
+2018/05/22 09:37:14 [info] 2203#2203: *654 client sent invalid method while reading client request line, client: 67.173.181.196, server: localhost, request: "�    ��tŤPN��7dw��<D?�-S�r�N�%�A��ܑ`��(G�C�eW�-Q[�T� 1�T�ή�"
+2018/05/22 09:42:43 [info] 2203#2203: *655 client 200.105.240.114 closed keepalive connection
+2018/05/22 09:58:11 [info] 2203#2203: *656 client closed connection while waiting for request, client: 139.159.246.9, server: 0.0.0.0:80
+2018/05/22 09:58:11 [info] 2203#2203: *657 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 139.159.246.9, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/22 09:58:24 [info] 2203#2203: *659 client 139.159.246.9 closed keepalive connection (104: Connection reset by peer)
+2018/05/22 10:10:29 [info] 2203#2203: *660 client 85.108.65.152 closed keepalive connection
+2018/05/22 11:07:01 [info] 2203#2203: *661 client 181.210.47.3 closed keepalive connection
+2018/05/22 11:55:03 [info] 2203#2203: *662 client 191.5.188.223 closed keepalive connection
+2018/05/22 12:36:31 [info] 2203#2203: *635 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 66.222.207.242, server: localhost, request: "GET /mot/sockjs/851/ksr4ionb/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/851/ksr4ionb/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/22 12:57:14 [info] 2203#2203: *663 client 152.250.178.237 closed keepalive connection
+2018/05/22 13:45:04 [info] 2203#2203: *664 client closed connection while waiting for request, client: 129.128.164.36, server: 0.0.0.0:80
+2018/05/22 13:59:30 [info] 2203#2203: *667 client 189.232.39.218 closed keepalive connection
+2018/05/22 19:17:16 [error] 2203#2203: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 70.74.144.89, server: localhost, request: "GET /mot/ HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/", host: "notecc.cs.ualberta.ca"
+2018/05/22 19:17:24 [error] 2203#2203: *2 connect() failed (111: Connection refused) while connecting to upstream, client: 70.74.144.89, server: localhost, request: "GET /mot/ HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/", host: "notecc.cs.ualberta.ca"
+2018/05/22 19:17:29 [info] 2203#2203: *1 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:17:29 [info] 2203#2203: *6 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:17:29 [info] 2203#2203: *4 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:17:29 [info] 2203#2203: *5 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:17:29 [info] 2203#2203: *3 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:10 [info] 2203#2203: *2 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 70.74.144.89, server: localhost, request: "GET /mot/ HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/", host: "notecc.cs.ualberta.ca"
+2018/05/22 19:18:10 [info] 2203#2203: *13 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:10 [info] 2203#2203: *14 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:10 [info] 2203#2203: *10 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:10 [info] 2203#2203: *11 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:10 [info] 2203#2203: *9 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:13 [info] 2203#2203: *15 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 70.74.144.89, server: localhost, request: "GET /mot/ HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/", host: "notecc.cs.ualberta.ca"
+2018/05/22 19:18:23 [info] 2203#2203: *17 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 70.74.144.89, server: localhost, request: "GET /mot/ HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/", host: "notecc.cs.ualberta.ca"
+2018/05/22 19:18:23 [info] 2203#2203: *18 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:23 [info] 2203#2203: *19 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:23 [info] 2203#2203: *20 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:23 [info] 2203#2203: *16 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:40 [info] 2203#2203: *26 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:40 [info] 2203#2203: *28 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:40 [info] 2203#2203: *27 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:40 [info] 2203#2203: *29 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:40 [info] 2203#2203: *25 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/22 19:18:45 [info] 2203#2203: *23 client prematurely closed connection (32: Broken pipe) while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/c41009a3-d57b-4c34-9e97-d2f54159581a/mask.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/c41009a3-d57b-4c34-9e97-d2f54159581a"
+2018/05/22 19:18:46 [info] 2203#2203: *34 client prematurely closed connection while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/c41009a3-d57b-4c34-9e97-d2f54159581a/raw.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/c41009a3-d57b-4c34-9e97-d2f54159581a"
+2018/05/22 19:19:08 [info] 2203#2203: *36 client prematurely closed connection while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/1aef0d4f-1e76-4082-908f-102335cf8c7e/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/1aef0d4f-1e76-4082-908f-102335cf8c7e"
+2018/05/22 19:19:22 [info] 2203#2203: *37 client prematurely closed connection while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/1aef0d4f-1e76-4082-908f-102335cf8c7e/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/1aef0d4f-1e76-4082-908f-102335cf8c7e"
+2018/05/22 19:19:35 [info] 2203#2203: *35 client prematurely closed connection while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/c41009a3-d57b-4c34-9e97-d2f54159581a/raw.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/c41009a3-d57b-4c34-9e97-d2f54159581a"
+2018/05/22 19:20:42 [info] 2203#2203: *38 client prematurely closed connection while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/1aef0d4f-1e76-4082-908f-102335cf8c7e/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/1aef0d4f-1e76-4082-908f-102335cf8c7e"
+2018/05/22 19:58:19 [info] 2203#2203: *39 client 202.105.142.53 closed keepalive connection (104: Connection reset by peer)
+2018/05/22 20:06:00 [info] 2203#2203: *40 client 91.214.62.76 closed keepalive connection
+2018/05/22 20:20:04 [info] 2203#2203: *42 client 177.102.104.118 closed keepalive connection
+2018/05/22 20:39:09 [info] 2203#2203: *43 client 129.128.123.10 closed keepalive connection
+2018/05/22 20:39:14 [info] 2203#2203: *44 client 176.100.14.206 closed keepalive connection
+2018/05/22 21:13:01 [info] 2203#2203: *45 client 203.77.232.51 closed keepalive connection
+2018/05/22 21:39:46 [info] 2203#2203: *46 client 110.77.232.225 closed keepalive connection
+2018/05/22 21:41:51 [info] 2203#2203: *47 client 202.51.113.150 closed keepalive connection
+2018/05/22 22:19:37 [info] 2203#2203: *48 client closed connection while waiting for request, client: 103.55.26.170, server: 0.0.0.0:80
+2018/05/22 22:19:37 [info] 2203#2203: *49 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 103.55.26.170, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/22 22:36:36 [info] 2203#2203: *52 client 203.124.47.34 closed keepalive connection
+2018/05/22 22:46:26 [info] 2203#2203: *53 client closed connection while waiting for request, client: 123.206.175.81, server: 0.0.0.0:80
+2018/05/22 22:46:26 [info] 2203#2203: *54 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 123.206.175.81, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/22 23:31:07 [info] 2203#2203: *58 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 00:42:24 [info] 2203#2203: *59 client 179.50.138.240 closed keepalive connection
+2018/05/23 01:43:06 [info] 2203#2203: *60 client 187.228.236.86 closed keepalive connection
+2018/05/23 02:17:13 [info] 2203#2203: *61 client 195.22.240.214 closed keepalive connection
+2018/05/23 02:42:57 [info] 2203#2203: *63 client 89.38.150.110 closed keepalive connection
+2018/05/23 04:06:38 [info] 2203#2203: *64 client 209.126.136.4 closed keepalive connection
+2018/05/23 05:16:09 [info] 2203#2203: *66 client 109.73.182.6 closed keepalive connection
+2018/05/23 05:27:03 [info] 2203#2203: *67 client 185.123.233.159 closed keepalive connection
+2018/05/23 05:35:48 [info] 2203#2203: *69 client 71.6.135.131 closed keepalive connection
+2018/05/23 05:35:48 [info] 2203#2203: *70 client 71.6.135.131 closed keepalive connection (104: Connection reset by peer)
+2018/05/23 05:35:48 [info] 2203#2203: *71 client 71.6.135.131 closed keepalive connection (104: Connection reset by peer)
+2018/05/23 05:35:48 [info] 2203#2203: *72 client 71.6.135.131 closed keepalive connection (104: Connection reset by peer)
+2018/05/23 05:35:48 [info] 2203#2203: *73 client 71.6.135.131 closed keepalive connection
+2018/05/23 08:15:30 [info] 2203#2203: *75 client 178.70.241.215 closed keepalive connection
+2018/05/23 08:30:53 [info] 2203#2203: *76 client 185.213.49.210 closed keepalive connection
+2018/05/23 08:51:30 [info] 2203#2203: *77 client 181.191.8.42 closed keepalive connection
+2018/05/23 09:24:14 [info] 2203#2203: *78 client 194.33.127.80 closed keepalive connection
+2018/05/23 09:43:02 [info] 2203#2203: *79 client 103.83.178.54 closed keepalive connection
+2018/05/23 11:45:34 [info] 2203#2203: *81 client 178.173.40.240 closed keepalive connection
+2018/05/23 12:15:03 [info] 2203#2203: *82 client closed connection while waiting for request, client: 142.244.5.77, server: 0.0.0.0:80
+2018/05/23 12:30:49 [info] 2203#2203: *83 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/23 13:15:47 [info] 2203#2203: *84 client 186.248.77.177 closed keepalive connection
+2018/05/23 13:29:21 [warn] 2203#2203: *86 an upstream response is buffered to a temporary file /var/lib/nginx/tmp/proxy/1/00/0000000001 while reading upstream, client: 70.74.144.89, server: localhost, request: "GET /mot/vendor/plotly-latest.min.js HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/vendor/plotly-latest.min.js", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/23 13:29:38 [info] 2203#2203: *90 client prematurely closed connection (32: Broken pipe) while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/1aef0d4f-1e76-4082-908f-102335cf8c7e/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/1aef0d4f-1e76-4082-908f-102335cf8c7e"
+2018/05/23 13:29:43 [info] 2203#2203: *89 client prematurely closed connection while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/1aef0d4f-1e76-4082-908f-102335cf8c7e/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/1aef0d4f-1e76-4082-908f-102335cf8c7e"
+2018/05/23 13:32:02 [info] 2203#2203: *176 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 13:32:02 [info] 2203#2203: *173 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 13:32:02 [info] 2203#2203: *175 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 13:32:02 [info] 2203#2203: *171 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 13:32:02 [info] 2203#2203: *174 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 14:27:39 [info] 2203#2203: *182 client 109.73.180.128 closed keepalive connection
+2018/05/23 14:54:11 [warn] 2203#2203: *185 an upstream response is buffered to a temporary file /var/lib/nginx/tmp/proxy/2/00/0000000002 while reading upstream, client: 172.103.136.167, server: localhost, request: "GET /mot/vendor/plotly-latest.min.js HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/vendor/plotly-latest.min.js", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/1aef0d4f-1e76-4082-908f-102335cf8c7e"
+2018/05/23 14:54:11 [warn] 2203#2203: *193 an upstream response is buffered to a temporary file /var/lib/nginx/tmp/proxy/3/00/0000000003 while reading upstream, client: 172.103.136.167, server: localhost, request: "GET /mot/packages/modules.js?hash=63cd54920c1a45b731caf0b286e719a73f845dbd HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/packages/modules.js?hash=63cd54920c1a45b731caf0b286e719a73f845dbd", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/1aef0d4f-1e76-4082-908f-102335cf8c7e"
+2018/05/23 14:55:08 [info] 2203#2203: *186 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 172.103.136.167, server: localhost, request: "GET /mot/data/experiments/1aef0d4f-1e76-4082-908f-102335cf8c7e/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/1aef0d4f-1e76-4082-908f-102335cf8c7e"
+2018/05/23 15:50:34 [info] 2203#2203: *270 client 201.95.207.238 closed keepalive connection
+2018/05/23 16:28:25 [info] 2203#2203: *271 client 200.140.117.174 closed keepalive connection
+2018/05/23 16:51:38 [info] 2203#2203: *277 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 16:51:38 [info] 2203#2203: *272 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 16:51:38 [info] 2203#2203: *274 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 16:51:38 [info] 2203#2203: *275 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 16:51:38 [info] 2203#2203: *276 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 16:51:38 [info] 2203#2203: *273 client prematurely closed connection while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/ed2e1254-31a4-4c1b-bc0a-42a7be89b341/mask.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/ed2e1254-31a4-4c1b-bc0a-42a7be89b341"
+2018/05/23 16:51:41 [info] 2203#2203: *283 client 70.74.144.89 closed keepalive connection
+2018/05/23 16:51:53 [info] 2203#2203: *284 client prematurely closed connection while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/ed2e1254-31a4-4c1b-bc0a-42a7be89b341/extraction.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/ed2e1254-31a4-4c1b-bc0a-42a7be89b341"
+2018/05/23 16:52:15 [info] 2203#2203: *285 client prematurely closed connection while sending response to client, client: 70.74.144.89, server: localhost, request: "GET /mot/data/experiments/ed2e1254-31a4-4c1b-bc0a-42a7be89b341/extraction.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/ed2e1254-31a4-4c1b-bc0a-42a7be89b341"
+2018/05/23 17:38:03 [info] 2203#2203: *289 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:38:03 [info] 2203#2203: *288 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:38:03 [info] 2203#2203: *287 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:38:03 [info] 2203#2203: *291 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:38:03 [info] 2203#2203: *290 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:38:59 [info] 2203#2203: *293 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:38:59 [info] 2203#2203: *292 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:38:59 [info] 2203#2203: *294 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:38:59 [info] 2203#2203: *296 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:38:59 [info] 2203#2203: *295 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:41:13 [info] 2203#2203: *297 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:41:13 [info] 2203#2203: *301 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:41:13 [info] 2203#2203: *300 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:41:13 [info] 2203#2203: *299 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 17:41:13 [info] 2203#2203: *298 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/23 18:03:30 [info] 2203#2203: *308 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 18:03:30 [info] 2203#2203: *303 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 18:03:30 [info] 2203#2203: *306 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 18:03:30 [info] 2203#2203: *307 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 18:03:30 [info] 2203#2203: *305 client closed connection while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 18:21:23 [info] 2203#2203: *314 client 189.38.177.134 closed keepalive connection
+2018/05/23 19:02:05 [info] 2203#2203: *315 client 110.168.253.43 closed keepalive connection
+2018/05/23 19:19:41 [info] 2203#2203: *317 client 107.170.231.228 closed keepalive connection
+2018/05/23 20:01:06 [info] 2203#2203: *318 client 103.74.68.18 closed keepalive connection
+2018/05/23 20:09:30 [info] 2203#2203: *319 client 152.171.67.76 closed keepalive connection
+2018/05/23 22:47:25 [info] 2203#2203: *281 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 70.74.144.89, server: localhost, request: "GET /mot/sockjs/777/bi7o_c5s/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/777/bi7o_c5s/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/23 22:55:37 [info] 2203#2203: *320 client timed out (110: Connection timed out) while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 22:55:37 [info] 2203#2203: *321 client timed out (110: Connection timed out) while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 22:55:37 [info] 2203#2203: *322 client timed out (110: Connection timed out) while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 22:55:37 [info] 2203#2203: *324 client timed out (110: Connection timed out) while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 22:55:37 [info] 2203#2203: *325 client timed out (110: Connection timed out) while waiting for request, client: 70.74.144.89, server: 0.0.0.0:80
+2018/05/23 23:12:41 [info] 2203#2203: *331 client 201.110.141.48 closed keepalive connection
+2018/05/23 23:22:56 [warn] 2203#2203: *342 an upstream response is buffered to a temporary file /var/lib/nginx/tmp/proxy/4/00/0000000004 while reading upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/vendor/plotly-latest.min.js HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/vendor/plotly-latest.min.js", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/23 23:22:56 [warn] 2203#2203: *339 an upstream response is buffered to a temporary file /var/lib/nginx/tmp/proxy/5/00/0000000005 while reading upstream, client: 66.222.207.242, server: localhost, request: "GET /mot/packages/modules.js?hash=63cd54920c1a45b731caf0b286e719a73f845dbd HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/packages/modules.js?hash=63cd54920c1a45b731caf0b286e719a73f845dbd", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/23 23:23:18 [info] 2203#2203: *338 client 66.222.207.242 closed keepalive connection
+2018/05/23 23:23:18 [info] 2203#2203: *337 client 66.222.207.242 closed keepalive connection
+2018/05/23 23:23:18 [info] 2203#2203: *335 client 66.222.207.242 closed keepalive connection
+2018/05/23 23:23:19 [info] 2203#2203: *339 client 66.222.207.242 closed keepalive connection
+2018/05/23 23:23:19 [info] 2203#2203: *332 client 66.222.207.242 closed keepalive connection
+2018/05/23 23:23:19 [info] 2203#2203: *342 client 66.222.207.242 closed keepalive connection
+2018/05/24 00:16:40 [info] 2203#2203: *418 client 150.109.52.34 closed keepalive connection
+2018/05/24 00:48:12 [info] 2203#2203: *421 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 70.74.144.89, server: localhost, request: "GET /mot/sockjs/197/wc_4j6d_/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/197/wc_4j6d_/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 02:50:31 [info] 2203#2203: *425 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 70.74.144.89, server: localhost, request: "GET /mot/sockjs/006/gmyfzqpp/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/006/gmyfzqpp/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 03:30:41 [info] 2203#2203: *427 client sent invalid method while reading client request line, client: 206.189.126.40, server: localhost, request: "��ˬ����S"tCu#x��	��!7� .��yL	��m�Z"
+2018/05/24 03:57:29 [info] 2203#2203: *428 client timed out (110: Connection timed out) while waiting for request, client: 89.248.168.171, server: 0.0.0.0:80
+2018/05/24 04:26:28 [info] 2203#2203: *430 client 41.164.21.227 closed keepalive connection
+2018/05/24 04:50:55 [info] 2203#2203: *433 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 70.74.144.89, server: localhost, request: "GET /mot/sockjs/002/w9ns50gr/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/002/w9ns50gr/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 06:46:36 [info] 2203#2203: *435 client 36.67.165.27 closed keepalive connection
+2018/05/24 06:51:41 [info] 2203#2203: *438 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 70.74.144.89, server: localhost, request: "GET /mot/sockjs/614/ly78z8hh/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/614/ly78z8hh/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 07:01:05 [info] 2203#2203: *441 client 23.236.77.30 closed keepalive connection
+2018/05/24 08:52:35 [info] 2203#2203: *445 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 70.74.144.89, server: localhost, request: "GET /mot/sockjs/638/kzhsv6ki/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/638/kzhsv6ki/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 09:22:13 [info] 2203#2203: *449 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 70.74.144.89, server: localhost, request: "GET /mot/sockjs/839/7aj6m3vy/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/839/7aj6m3vy/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 09:27:05 [info] 2203#2203: *451 client 202.162.192.215 closed keepalive connection
+2018/05/24 09:28:06 [info] 2203#2203: *452 client 191.19.4.136 closed keepalive connection
+2018/05/24 11:06:02 [info] 2203#2203: *457 client sent invalid method while reading client request line, client: 71.14.9.18, server: localhost, request: "�   J�]Ï�5��[�Q))<�x���*�u���Bs{���Mî.R0�&���*�J�i��D��r�Cu�'T:g��w5-��"
+2018/05/24 11:25:30 [info] 2203#2203: *467 client 71.14.9.18 closed keepalive connection
+2018/05/24 11:48:14 [info] 2203#2203: *478 client 71.14.9.18 closed keepalive connection
+2018/05/24 12:00:11 [info] 2203#2203: *455 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 70.74.144.89, server: localhost, request: "GET /mot/sockjs/839/vf1ddfqb/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/839/vf1ddfqb/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 12:10:08 [info] 2203#2203: *489 client 71.14.9.18 closed keepalive connection
+2018/05/24 12:30:15 [info] 2203#2203: *499 client 71.14.9.18 closed keepalive connection
+2018/05/24 12:33:12 [info] 2203#2203: *507 client 71.14.9.18 closed keepalive connection
+2018/05/24 12:52:24 [info] 2203#2203: *517 client 71.14.9.18 closed keepalive connection
+2018/05/24 13:00:21 [info] 2203#2203: *504 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 142.244.5.77, server: localhost, request: "GET /mot/sockjs/274/wvtprbn7/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/274/wvtprbn7/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 13:00:38 [info] 2203#2203: *522 client 187.145.50.55 closed keepalive connection
+2018/05/24 13:14:24 [info] 2203#2203: *533 client 71.14.9.18 closed keepalive connection
+2018/05/24 13:18:55 [info] 2203#2203: *536 client closed connection while waiting for request, client: 129.128.184.42, server: 0.0.0.0:80
+2018/05/24 13:29:40 [info] 2203#2203: *542 client 71.14.9.18 closed keepalive connection (104: Connection reset by peer)
+2018/05/24 13:49:27 [info] 2203#2203: *526 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 142.244.5.77, server: localhost, request: "GET /mot/sockjs/771/2ub79c17/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/771/2ub79c17/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 14:08:27 [info] 2203#2203: *545 client closed connection while waiting for request, client: 220.116.181.213, server: 0.0.0.0:80
+2018/05/24 14:08:27 [info] 2203#2203: *546 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 220.116.181.213, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/24 14:19:26 [info] 2203#2203: *549 client closed connection while waiting for request, client: 129.128.184.42, server: 0.0.0.0:80
+2018/05/24 15:19:21 [info] 2203#2203: *552 upstream timed out (110: Connection timed out) while proxying upgraded connection, client: 142.244.5.72, server: localhost, request: "GET /mot/sockjs/629/khig9k7c/websocket HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/sockjs/629/khig9k7c/websocket", host: "notecc.cs.ualberta.ca"
+2018/05/24 16:08:55 [info] 2203#2203: *554 client 186.244.97.40 closed keepalive connection
+2018/05/24 16:21:46 [info] 2203#2203: *555 client 186.1.4.130 closed keepalive connection
+2018/05/24 16:46:32 [info] 2203#2203: *556 client 177.105.64.69 closed keepalive connection
+2018/05/24 16:57:25 [info] 2203#2203: *557 client 127.0.0.1 closed keepalive connection
+2018/05/24 16:57:58 [info] 2203#2203: *558 client 127.0.0.1 closed keepalive connection
+2018/05/24 16:58:41 [info] 2203#2203: *559 client 127.0.0.1 closed keepalive connection
+2018/05/24 17:00:09 [info] 2203#2203: *560 client 127.0.0.1 closed keepalive connection
+2018/05/24 17:27:47 [info] 2203#2203: *561 client 127.0.0.1 closed keepalive connection
+2018/05/24 17:38:03 [info] 2203#2203: *562 client 189.159.59.223 closed keepalive connection
+2018/05/24 18:06:20 [info] 2203#2203: *563 client closed connection while waiting for request, client: 129.128.184.42, server: 0.0.0.0:80
+2018/05/24 19:36:18 [info] 2203#2203: *568 client 87.249.245.200 closed keepalive connection
+2018/05/24 19:59:47 [info] 2203#2203: *569 client 103.9.145.77 closed keepalive connection
+2018/05/24 20:09:23 [info] 2203#2203: *570 client 189.225.153.197 closed keepalive connection
+2018/05/24 20:21:10 [info] 2203#2203: *571 client 189.89.80.238 closed keepalive connection
+2018/05/24 21:12:37 [info] 2203#2203: *572 client 201.92.184.51 closed keepalive connection
+2018/05/24 22:52:33 [info] 2203#2203: *579 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/24 22:52:33 [info] 2203#2203: *577 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/24 22:52:33 [info] 2203#2203: *574 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/24 22:52:33 [info] 2203#2203: *575 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/24 22:52:33 [info] 2203#2203: *578 client closed connection while waiting for request, client: 172.103.136.167, server: 0.0.0.0:80
+2018/05/24 23:28:49 [info] 2203#2203: *580 client 1.36.209.167 closed keepalive connection
+2018/05/24 23:36:21 [info] 2203#2203: *581 client 179.98.27.31 closed keepalive connection
+2018/05/24 23:57:28 [info] 2203#2203: *582 client 71.6.202.198 closed keepalive connection
+2018/05/25 02:47:28 [info] 2203#2203: *583 client 177.102.103.146 closed keepalive connection
+2018/05/25 04:27:49 [info] 2203#2203: *584 client 177.137.62.33 closed keepalive connection
+2018/05/25 04:45:48 [info] 2203#2203: *585 client 107.170.230.198 closed keepalive connection
+2018/05/25 07:15:38 [info] 2203#2203: *586 client 178.47.161.159 closed keepalive connection (104: Connection reset by peer)
+2018/05/25 08:41:35 [info] 2203#2203: *588 client 83.219.147.19 closed keepalive connection
+2018/05/25 10:33:24 [info] 2203#2203: *590 client 180.253.148.191 closed keepalive connection
+2018/05/25 11:01:51 [info] 2203#2203: *591 client 189.163.49.184 closed keepalive connection
+2018/05/25 11:46:02 [info] 2203#2203: *592 client 103.254.59.126 closed keepalive connection
+2018/05/25 17:18:19 [info] 2203#2203: *594 client 78.133.202.227 closed keepalive connection
+2018/05/25 18:36:44 [info] 2203#2203: *596 client 36.255.134.234 closed keepalive connection
+2018/05/25 18:37:12 [info] 2203#2203: *597 client 185.215.233.23 closed keepalive connection
+2018/05/25 18:40:21 [info] 2203#2203: *598 client 78.139.106.96 closed keepalive connection
+2018/05/25 18:43:57 [info] 2203#2203: *599 client 177.86.201.144 closed keepalive connection
+2018/05/25 18:59:35 [info] 2203#2203: *600 client 77.245.162.131 closed keepalive connection
+2018/05/25 19:02:36 [info] 2203#2203: *601 client 177.138.70.68 closed keepalive connection
+2018/05/25 19:48:35 [info] 2203#2203: *602 client 203.189.135.252 closed keepalive connection
+2018/05/25 20:15:54 [info] 2203#2203: *603 client closed connection while waiting for request, client: 142.244.5.44, server: 0.0.0.0:80
+2018/05/25 20:31:20 [info] 2203#2203: *604 client closed connection while waiting for request, client: 142.244.5.87, server: 0.0.0.0:80
+2018/05/25 20:47:16 [info] 2203#2203: *605 client 189.236.23.242 closed keepalive connection
+2018/05/25 23:33:52 [info] 2203#2203: *607 client 113.130.125.53 closed keepalive connection
+2018/05/26 00:45:54 [info] 2203#2203: *608 client 114.141.93.102 closed keepalive connection
+2018/05/26 01:20:44 [info] 2203#2203: *610 client 93.117.18.238 closed keepalive connection
+2018/05/26 01:29:47 [info] 2203#2203: *611 client 177.38.1.237 closed keepalive connection
+2018/05/26 01:48:59 [info] 2203#2203: *612 client 176.65.200.145 closed keepalive connection
+2018/05/26 02:48:44 [info] 2203#2203: *613 client 86.109.43.63 closed keepalive connection
+2018/05/26 03:14:47 [info] 2203#2203: *614 client 185.156.232.171 closed keepalive connection
+2018/05/26 03:44:40 [info] 2203#2203: *615 client 46.143.136.229 closed keepalive connection
+2018/05/26 04:00:40 [info] 2203#2203: *616 client 36.89.16.186 closed keepalive connection
+2018/05/26 04:28:31 [info] 2203#2203: *617 client 41.211.124.143 closed keepalive connection
+2018/05/26 05:09:43 [info] 2203#2203: *621 client timed out (110: Connection timed out) while waiting for request, client: 188.166.72.239, server: 0.0.0.0:80
+2018/05/26 05:09:49 [info] 2203#2203: *622 client timed out (110: Connection timed out) while waiting for request, client: 188.166.72.239, server: 0.0.0.0:80
+2018/05/26 05:09:55 [info] 2203#2203: *623 client timed out (110: Connection timed out) while waiting for request, client: 188.166.72.239, server: 0.0.0.0:80
+2018/05/26 05:41:41 [info] 2203#2203: *624 client 170.150.222.122 closed keepalive connection
+2018/05/26 06:29:31 [info] 2203#2203: *625 client 201.110.91.136 closed keepalive connection
+2018/05/26 06:36:27 [info] 2203#2203: *626 client 143.255.242.113 closed keepalive connection
+2018/05/26 08:06:34 [info] 2203#2203: *628 client 31.185.12.20 closed keepalive connection
+2018/05/26 08:07:45 [info] 2203#2203: *629 client 200.107.15.98 closed keepalive connection
+2018/05/26 09:55:52 [info] 2203#2203: *630 client 191.13.107.144 closed keepalive connection
+2018/05/26 12:07:25 [info] 2203#2203: *631 client closed connection while waiting for request, client: 177.195.35.1, server: 0.0.0.0:80
+2018/05/26 12:07:28 [info] 2203#2203: *632 client 177.195.35.1 closed keepalive connection
+2018/05/26 12:07:31 [info] 2203#2203: *633 client 177.195.35.1 closed keepalive connection
+2018/05/26 12:07:34 [info] 2203#2203: *634 client 177.195.35.1 closed keepalive connection
+2018/05/26 12:07:37 [info] 2203#2203: *635 client 177.195.35.1 closed keepalive connection
+2018/05/26 12:07:46 [info] 2203#2203: *639 client 177.195.35.1 closed keepalive connection
+2018/05/26 12:17:37 [info] 2203#2203: *636 client timed out (110: Connection timed out) while waiting for request, client: 177.195.35.1, server: 0.0.0.0:80
+2018/05/26 12:17:40 [info] 2203#2203: *637 client timed out (110: Connection timed out) while waiting for request, client: 177.195.35.1, server: 0.0.0.0:80
+2018/05/26 12:23:18 [info] 2203#2203: *640 client 186.225.63.82 closed keepalive connection
+2018/05/26 13:44:57 [info] 2203#2203: *642 client 191.205.33.32 closed keepalive connection
+2018/05/26 13:48:56 [info] 2203#2203: *643 client 152.250.176.16 closed keepalive connection
+2018/05/26 14:16:33 [info] 2203#2203: *644 client 201.94.216.51 closed keepalive connection
+2018/05/26 14:20:51 [info] 2203#2203: *645 client 187.214.65.193 closed keepalive connection
+2018/05/26 15:01:05 [info] 2203#2203: *646 client 201.110.224.25 closed keepalive connection
+2018/05/26 15:15:54 [info] 2203#2203: *647 client sent invalid method while reading client request line, client: 134.119.212.87, server: localhost, request: " "
+2018/05/26 15:24:22 [info] 2203#2203: *648 client sent invalid method while reading client request line, client: 134.119.212.87, server: localhost, request: " P�w�' "
+2018/05/26 15:57:50 [info] 2203#2203: *650 client 185.149.17.180 closed keepalive connection
+2018/05/26 15:57:50 [info] 2203#2203: *651 client 185.149.17.180 closed keepalive connection
+2018/05/26 16:08:11 [info] 2203#2203: *652 client timed out (110: Connection timed out) while waiting for request, client: 185.149.17.180, server: 0.0.0.0:80
+2018/05/26 16:36:32 [info] 2203#2203: *653 client closed connection while waiting for request, client: 174.3.250.86, server: 0.0.0.0:80
+2018/05/26 16:39:56 [info] 2203#2203: *654 client closed connection while waiting for request, client: 174.3.250.86, server: 0.0.0.0:80
+2018/05/26 16:41:20 [info] 2203#2203: *655 client closed connection while waiting for request, client: 174.3.250.86, server: 0.0.0.0:80
+2018/05/26 17:00:48 [info] 2203#2203: *656 client 109.121.163.194 closed keepalive connection
+2018/05/26 17:47:57 [info] 2203#2203: *657 client 36.67.115.175 closed keepalive connection
+2018/05/26 20:21:00 [info] 2203#2203: *659 client 164.52.24.163 closed keepalive connection (104: Connection reset by peer)
+2018/05/26 20:24:18 [info] 2203#2203: *660 client 85.90.220.82 closed keepalive connection
+2018/05/26 21:38:26 [info] 2203#2203: *661 client closed connection while waiting for request, client: 174.3.250.86, server: 0.0.0.0:80
+2018/05/26 21:48:34 [info] 2203#2203: *662 client 201.24.119.128 closed keepalive connection
+2018/05/26 21:55:51 [info] 2203#2203: *663 client 138.185.126.124 closed keepalive connection
+2018/05/26 22:22:56 [info] 2203#2203: *664 client 82.48.162.101 closed keepalive connection
+2018/05/26 22:51:27 [info] 2203#2203: *669 client 49.116.222.36 closed keepalive connection (104: Connection reset by peer)
+2018/05/26 23:25:09 [info] 2203#2203: *670 client 189.174.134.131 closed keepalive connection
+2018/05/27 00:53:08 [info] 2203#2203: *671 client closed connection while waiting for request, client: 174.3.250.86, server: 0.0.0.0:80
+2018/05/27 01:38:39 [info] 2203#2203: *672 client closed connection while waiting for request, client: 47.203.88.6, server: 0.0.0.0:80
+2018/05/27 01:38:43 [info] 2203#2203: *673 client 47.203.88.6 closed keepalive connection
+2018/05/27 01:38:43 [info] 2203#2203: *674 client sent invalid method while reading client request line, client: 47.203.88.6, server: localhost, request: " P�c�60 "
+2018/05/27 01:38:43 [info] 2203#2203: *675 client sent invalid method while reading client request line, client: 47.203.88.6, server: localhost, request: " P�c�60 "
+2018/05/27 01:38:43 [info] 2203#2203: *676 client sent invalid method while reading client request line, client: 47.203.88.6, server: localhost, request: " "
+2018/05/27 02:22:08 [info] 2203#2203: *677 client 59.153.80.142 closed keepalive connection
+2018/05/27 02:34:15 [info] 2203#2203: *678 client 80.77.180.134 closed keepalive connection
+2018/05/27 02:41:00 [info] 2203#2203: *679 client 123.200.29.44 closed keepalive connection
+2018/05/27 04:23:00 [info] 2203#2203: *681 client 107.170.224.220 closed keepalive connection
+2018/05/27 04:36:22 [info] 2203#2203: *682 client 27.155.87.88 closed keepalive connection
+2018/05/27 05:24:17 [info] 2203#2203: *683 client sent HTTP/1.1 request without "Host" header while reading client request headers, client: 141.212.122.128, server: localhost, request: "GET /x HTTP/1.1"
+2018/05/27 05:27:20 [info] 2203#2203: *684 client 5.35.103.214 closed keepalive connection
+2018/05/27 06:10:21 [info] 2203#2203: *685 client 181.113.27.18 closed keepalive connection
+2018/05/27 06:44:57 [info] 2203#2203: *686 client 170.254.188.223 closed keepalive connection
+2018/05/27 08:09:54 [info] 2203#2203: *688 client 187.19.30.93 closed keepalive connection
+2018/05/27 10:59:35 [info] 2203#2203: *690 client 186.46.216.182 closed keepalive connection
+2018/05/27 11:46:21 [info] 2203#2203: *692 client 92.112.9.127 closed keepalive connection
+2018/05/27 12:25:28 [info] 2203#2203: *694 client 117.54.13.229 closed keepalive connection
+2018/05/27 14:29:50 [info] 2203#2203: *696 client closed connection while waiting for request, client: 101.200.204.88, server: 0.0.0.0:80
+2018/05/27 14:29:50 [info] 2203#2203: *697 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 101.200.204.88, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/27 14:31:13 [info] 2203#2203: *699 client 101.200.204.88 closed keepalive connection
+2018/05/27 14:49:27 [info] 2203#2203: *700 client 167.60.61.118 closed keepalive connection
+2018/05/27 15:09:15 [info] 2203#2203: *701 client 110.232.86.125 closed keepalive connection
+2018/05/27 15:49:53 [info] 2203#2203: *702 client 38.107.94.140 closed keepalive connection
+2018/05/27 16:36:58 [info] 2203#2203: *703 client 185.206.201.84 closed keepalive connection
+2018/05/27 16:51:02 [info] 2203#2203: *704 client closed connection while waiting for request, client: 211.149.190.87, server: 0.0.0.0:80
+2018/05/27 16:51:02 [info] 2203#2203: *705 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 211.149.190.87, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/27 16:53:22 [info] 2203#2203: *708 client 160.202.9.4 closed keepalive connection
+2018/05/27 22:14:11 [info] 2203#2203: *709 client 91.92.78.149 closed keepalive connection
+2018/05/27 22:41:05 [info] 2203#2203: *710 client 179.192.119.36 closed keepalive connection
+2018/05/27 22:55:14 [info] 2203#2203: *711 client 103.70.146.102 closed keepalive connection
+2018/05/28 00:19:23 [info] 2203#2203: *712 client 189.232.99.16 closed keepalive connection
+2018/05/28 00:24:14 [info] 2203#2203: *713 client 79.16.30.103 closed keepalive connection
+2018/05/28 02:03:06 [info] 2203#2203: *715 client 183.131.83.11 closed keepalive connection
+2018/05/28 02:06:14 [info] 2203#2203: *716 client 114.31.14.234 closed keepalive connection
+2018/05/28 03:05:12 [info] 2203#2203: *717 client 123.200.19.58 closed keepalive connection
+2018/05/28 03:23:43 [info] 2203#2203: *718 client 201.69.9.23 closed keepalive connection
+2018/05/28 03:26:03 [info] 2203#2203: *719 client closed connection while waiting for request, client: 47.203.90.122, server: 0.0.0.0:80
+2018/05/28 03:26:21 [info] 2203#2203: *720 client 47.203.90.122 closed keepalive connection
+2018/05/28 03:26:21 [info] 2203#2203: *721 client sent invalid method while reading client request line, client: 47.203.90.122, server: localhost, request: " P�c�60 "
+2018/05/28 03:26:21 [info] 2203#2203: *722 client sent invalid method while reading client request line, client: 47.203.90.122, server: localhost, request: " P�c�60 "
+2018/05/28 03:26:22 [info] 2203#2203: *723 client sent invalid method while reading client request line, client: 47.203.90.122, server: localhost, request: " "
+2018/05/28 05:41:44 [info] 2203#2203: *724 client 5.190.94.156 closed keepalive connection (104: Connection reset by peer)
+2018/05/28 06:18:21 [info] 2203#2203: *725 client 189.70.73.79 closed keepalive connection
+2018/05/28 06:27:53 [info] 2203#2203: *726 client 138.97.146.223 closed keepalive connection
+2018/05/28 06:54:35 [info] 2203#2203: *727 client 216.115.202.76 closed keepalive connection
+2018/05/28 07:08:51 [info] 2203#2203: *728 client 82.58.36.229 closed keepalive connection
+2018/05/28 07:27:25 [info] 2203#2203: *732 client timed out (110: Connection timed out) while waiting for request, client: 94.102.52.14, server: 0.0.0.0:80
+2018/05/28 07:27:30 [info] 2203#2203: *733 client timed out (110: Connection timed out) while waiting for request, client: 94.102.52.14, server: 0.0.0.0:80
+2018/05/28 07:27:36 [info] 2203#2203: *734 client timed out (110: Connection timed out) while waiting for request, client: 94.102.52.14, server: 0.0.0.0:80
+2018/05/28 08:23:19 [info] 2203#2203: *735 client 189.153.142.82 closed keepalive connection
+2018/05/28 08:47:34 [info] 2203#2203: *737 client 42.115.94.34 closed keepalive connection
+2018/05/28 08:58:09 [info] 2203#2203: *738 client 105.27.142.158 closed keepalive connection
+2018/05/28 08:58:40 [info] 2203#2203: *739 client 103.206.102.222 closed keepalive connection
+2018/05/28 09:46:52 [info] 2203#2203: *740 client 5.202.94.28 closed keepalive connection
+2018/05/28 10:12:37 [info] 2203#2203: *741 client 197.157.16.242 closed keepalive connection
+2018/05/28 11:25:22 [info] 2203#2203: *742 client 64.56.232.215 closed keepalive connection
+2018/05/28 11:54:01 [info] 2203#2203: *743 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/28 12:20:54 [info] 2203#2203: *744 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/28 12:28:39 [info] 2203#2203: *745 client 91.211.189.106 closed keepalive connection
+2018/05/28 12:31:13 [info] 2203#2203: *746 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/28 12:38:49 [info] 2203#2203: *747 client 197.255.41.140 closed keepalive connection
+2018/05/28 13:52:36 [info] 2203#2203: *748 client sent invalid method while reading client request line, client: 65.131.145.240, server: localhost, request: "�   �[���b�N�磝�f^S9�� ��n�����'G>�D\��Ƥ���v������7��!&�������?�������|8�|B���Tŗ6��Al�znǴ����,?W�zXNnqO��I��M�N��C�P�Θ�?�j_�@R�������dҚ;T���N�)*'�ң��a�"
+2018/05/28 13:55:39 [info] 2203#2203: *750 client 65.131.145.240 closed keepalive connection
+2018/05/28 14:15:53 [info] 2203#2203: *761 client 65.131.145.240 closed keepalive connection
+2018/05/28 14:17:39 [info] 2203#2203: *762 client 65.131.145.240 closed keepalive connection
+2018/05/28 14:30:35 [info] 2203#2203: *769 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 127.0.0.1, server: localhost, request: "GET /mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/28 14:30:55 [info] 2203#2203: *782 client 127.0.0.1 closed keepalive connection
+2018/05/28 14:30:55 [info] 2203#2203: *775 client 127.0.0.1 closed keepalive connection
+2018/05/28 14:30:55 [info] 2203#2203: *772 client 127.0.0.1 closed keepalive connection
+2018/05/28 14:30:55 [info] 2203#2203: *779 client 127.0.0.1 closed keepalive connection
+2018/05/28 14:30:56 [info] 2203#2203: *773 client 127.0.0.1 closed keepalive connection
+2018/05/28 14:31:21 [info] 2203#2203: *806 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/28 14:31:44 [info] 2203#2203: *777 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 127.0.0.1, server: localhost, request: "GET /mot/data/experiments/31182d24-78c4-4a60-9cd2-b17e2f7a8735/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/31182d24-78c4-4a60-9cd2-b17e2f7a8735"
+2018/05/28 14:32:22 [info] 2203#2203: *808 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 127.0.0.1, server: localhost, request: "GET /mot/data/experiments/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5"
+2018/05/28 14:32:23 [info] 2203#2203: *807 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 127.0.0.1, server: localhost, request: "GET /mot/data/experiments/9c5022c4-5e8b-4f38-8d1b-cd90ae973f1f/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/9c5022c4-5e8b-4f38-8d1b-cd90ae973f1f"
+2018/05/28 14:32:24 [info] 2203#2203: *809 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 127.0.0.1, server: localhost, request: "GET /mot/data/experiments/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5"
+2018/05/28 14:32:25 [info] 2203#2203: *810 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 127.0.0.1, server: localhost, request: "GET /mot/data/experiments/9c5022c4-5e8b-4f38-8d1b-cd90ae973f1f/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5"
+2018/05/28 14:32:25 [info] 2203#2203: *811 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 127.0.0.1, server: localhost, request: "GET /mot/data/experiments/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5"
+2018/05/28 14:32:40 [info] 2203#2203: *814 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/28 14:32:49 [info] 2203#2203: *813 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 127.0.0.1, server: localhost, request: "GET /mot/data/experiments/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5"
+2018/05/28 14:32:49 [info] 2203#2203: *812 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 127.0.0.1, server: localhost, request: "GET /mot/data/experiments/9c5022c4-5e8b-4f38-8d1b-cd90ae973f1f/tracking.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/e07751e2-d5dd-4e1e-b426-860ff9d7f7b5"
+2018/05/28 14:37:03 [info] 2203#2203: *818 client 47.47.20.166 closed keepalive connection
+2018/05/28 14:37:50 [info] 2203#2203: *817 client 65.131.145.240 closed keepalive connection
+2018/05/28 14:39:44 [info] 2203#2203: *819 client 65.131.145.240 closed keepalive connection
+2018/05/28 14:57:57 [info] 2203#2203: *828 client 65.131.145.240 closed keepalive connection
+2018/05/28 14:59:53 [info] 2203#2203: *829 client 65.131.145.240 closed keepalive connection
+2018/05/28 15:19:58 [info] 2203#2203: *839 client 65.131.145.240 closed keepalive connection
+2018/05/28 15:21:53 [info] 2203#2203: *840 client 65.131.145.240 closed keepalive connection
+2018/05/28 15:36:54 [info] 2203#2203: *849 client 103.253.2.10 closed keepalive connection
+2018/05/28 16:20:45 [info] 2203#2203: *871 client 177.189.114.147 closed keepalive connection
+2018/05/28 16:20:45 [info] 2203#2203: *872 client 177.189.114.147 closed keepalive connection
+2018/05/28 16:20:45 [info] 2203#2203: *873 client 177.189.114.147 closed keepalive connection
+2018/05/28 16:26:04 [info] 2203#2203: *876 client 65.131.145.240 closed keepalive connection
+2018/05/28 16:46:05 [info] 2203#2203: *886 client 65.131.145.240 closed keepalive connection
+2018/05/28 16:48:04 [info] 2203#2203: *887 client 65.131.145.240 closed keepalive connection
+2018/05/28 17:08:10 [info] 2203#2203: *897 client 65.131.145.240 closed keepalive connection
+2018/05/28 17:30:05 [info] 2203#2203: *908 client 65.131.145.240 closed keepalive connection
+2018/05/28 17:32:04 [info] 2203#2203: *909 client 65.131.145.240 closed keepalive connection
+2018/05/28 17:36:01 [info] 2203#2203: *912 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/28 17:36:02 [info] 2203#2203: *913 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 127.0.0.1, server: localhost, request: "GET /mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/upload"
+2018/05/28 17:36:22 [info] 2203#2203: *926 client 127.0.0.1 closed keepalive connection
+2018/05/28 17:36:22 [info] 2203#2203: *922 client 127.0.0.1 closed keepalive connection
+2018/05/28 17:36:23 [info] 2203#2203: *917 client 127.0.0.1 closed keepalive connection
+2018/05/28 17:36:23 [info] 2203#2203: *916 client 127.0.0.1 closed keepalive connection
+2018/05/28 17:36:23 [info] 2203#2203: *919 client 127.0.0.1 closed keepalive connection
+2018/05/28 17:36:24 [info] 2203#2203: *920 client 127.0.0.1 closed keepalive connection
+2018/05/28 17:37:28 [info] 2203#2203: *950 client 31.223.97.31 closed keepalive connection
+2018/05/28 17:37:42 [info] 2203#2203: *951 client 201.103.73.47 closed keepalive connection
+2018/05/28 17:51:30 [info] 2203#2203: *959 client 189.162.243.150 closed keepalive connection
+2018/05/28 17:52:14 [info] 2203#2203: *958 client 65.131.145.240 closed keepalive connection
+2018/05/28 18:14:14 [info] 2203#2203: *970 client 65.131.145.240 closed keepalive connection
+2018/05/28 18:18:05 [info] 2203#2203: *973 client 189.163.155.17 closed keepalive connection
+2018/05/28 18:34:23 [info] 2203#2203: *981 client 65.131.145.240 closed keepalive connection
+2018/05/28 18:48:45 [info] 2203#2203: *989 client closed connection while waiting for request, client: 142.244.5.87, server: 0.0.0.0:80
+2018/05/28 18:56:19 [info] 2203#2203: *993 client 65.131.145.240 closed keepalive connection
+2018/05/28 18:58:14 [info] 2203#2203: *994 client 65.131.145.240 closed keepalive connection
+2018/05/28 19:18:18 [info] 2203#2203: *1004 client 65.131.145.240 closed keepalive connection
+2018/05/28 19:20:14 [info] 2203#2203: *1005 client 65.131.145.240 closed keepalive connection
+2018/05/28 19:45:08 [info] 2203#2203: *1018 client closed connection while waiting for request, client: 118.24.117.110, server: 0.0.0.0:80
+2018/05/28 19:45:09 [info] 2203#2203: *1019 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JBKLIX1yYpYpipS0ayhe01IBc4dKNrlptKoblL2k1BZtBk3BkxzoFWPJNFLqyomaI0FLml0acLLBLlMPgQHOZmIqWWHbZPObr7dKqBjpdK12MlM1Z0bkOPT8Qu5p0tnj9qz0pPRkNhmHRkOhKpKQVsHcmlMyDKnTRkM1Z601ioMaepvLva8OlMzaY7nXYP1eYdkSSMXxMksMKtT5ZBR8Rkr8Ktyq9Cc64KzlpKTK28mLiqJ3rkM42km1hP3Yq4ldO4QK1KPab9qJr1ioIPNxqOaJRkLRxkTFQMS8RNC5qdm0c81gpiPnPisYK6OdphPLbWlfzgKOj5P1IoaG0Wb7R7PVrHLzNvt9FGYoz5zK30okp1WYPQNqBJYs0QOaQZNpb3NpbHaGSYEOevKOwehkpOb9P1Z21BrH9pP2c0BdNrnraBoaNrb0BHxkr5nNmk9oZ53YwVpjJpQKqX3Pp39pIpBiWp0jJdb02JMO1FOxsENfeNavYoweLqYonwB7aGNwqFQXNMkVMHQkiovuauI045kvpKjoe4Rcm0m0ipJKvqiYETkPipKPk84lyoKOIoLoP..." while reading client request headers, client: 118.24.117.110, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/28 21:17:02 [info] 2203#2203: *1026 client 45.229.229.229 closed keepalive connection
+2018/05/28 21:49:52 [info] 2203#2203: *1027 client 176.42.49.106 closed keepalive connection
+2018/05/28 22:05:32 [info] 2203#2203: *1028 client 116.212.154.222 closed keepalive connection
+2018/05/28 22:37:46 [info] 2203#2203: *1029 client 143.255.242.130 closed keepalive connection
+2018/05/29 00:08:02 [info] 2203#2203: *1030 client closed connection while waiting for request, client: 174.3.250.86, server: 0.0.0.0:80
+2018/05/29 00:16:32 [info] 2203#2203: *1031 client 201.103.185.41 closed keepalive connection
+2018/05/29 00:25:17 [info] 2203#2203: *1032 client closed connection while waiting for request, client: 174.3.250.86, server: 0.0.0.0:80
+2018/05/29 00:27:37 [info] 2203#2203: *1033 client 103.65.192.135 closed keepalive connection
+2018/05/29 01:02:04 [info] 2203#2203: *1034 client 36.84.224.158 closed keepalive connection
+2018/05/29 01:47:20 [info] 2203#2203: *1035 client 45.115.172.68 closed keepalive connection
+2018/05/29 02:45:29 [info] 2203#2203: *1036 client 176.67.48.84 closed keepalive connection
+2018/05/29 04:20:16 [info] 2203#2203: *1038 client 188.26.123.118 closed keepalive connection
+2018/05/29 04:46:12 [info] 2203#2203: *1039 client 107.170.229.84 closed keepalive connection
+2018/05/29 06:11:08 [info] 2203#2203: *1040 client 45.123.8.232 closed keepalive connection
+2018/05/29 07:12:34 [info] 2203#2203: *1043 client 181.192.30.226 closed keepalive connection
+2018/05/29 07:25:22 [info] 2203#2203: *1044 client 187.226.18.7 closed keepalive connection
+2018/05/29 07:37:00 [info] 2203#2203: *1045 client 79.118.203.200 closed keepalive connection
+2018/05/29 08:52:20 [info] 2203#2203: *1046 client 170.238.63.49 closed keepalive connection
+2018/05/29 09:00:55 [info] 2203#2203: *1047 client 189.189.160.198 closed keepalive connection
+2018/05/29 09:59:40 [info] 2203#2203: *1059 client 127.0.0.1 closed keepalive connection
+2018/05/29 09:59:40 [info] 2203#2203: *1051 client 127.0.0.1 closed keepalive connection
+2018/05/29 09:59:40 [info] 2203#2203: *1052 client 127.0.0.1 closed keepalive connection
+2018/05/29 09:59:40 [info] 2203#2203: *1048 client 127.0.0.1 closed keepalive connection
+2018/05/29 09:59:41 [info] 2203#2203: *1057 client 127.0.0.1 closed keepalive connection
+2018/05/29 09:59:41 [info] 2203#2203: *1053 client 127.0.0.1 closed keepalive connection
+2018/05/29 11:09:54 [info] 2203#2203: *1084 client 127.0.0.1 closed keepalive connection
+2018/05/29 11:12:22 [info] 2203#2203: *1088 client 127.0.0.1 closed keepalive connection
+2018/05/29 11:48:19 [info] 2203#2203: *1092 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/29 11:52:42 [info] 2203#2203: *1093 client 127.0.0.1 closed keepalive connection
+2018/05/29 12:10:27 [info] 2203#2203: *1094 client 185.151.106.211 closed keepalive connection
+2018/05/29 12:32:40 [info] 2203#2203: *1095 client 127.0.0.1 closed keepalive connection
+2018/05/29 12:37:02 [info] 2203#2203: *1096 client prematurely closed connection (104: Connection reset by peer) while sending response to client, client: 127.0.0.1, server: localhost, request: "GET /mot/data/experiments/ff1ae45d-bc28-4086-855c-d31154850234/extraction.mp4 HTTP/1.1", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/ff1ae45d-bc28-4086-855c-d31154850234"
+2018/05/29 12:37:22 [info] 2203#2203: *1097 client 127.0.0.1 closed keepalive connection
+2018/05/29 12:38:14 [info] 2203#2203: *1098 client 127.0.0.1 closed keepalive connection
+2018/05/29 13:40:28 [info] 2203#2203: *1099 client closed connection while waiting for request, client: 189.101.203.165, server: 0.0.0.0:80
+2018/05/29 13:40:31 [info] 2203#2203: *1100 client 189.101.203.165 closed keepalive connection
+2018/05/29 13:40:34 [info] 2203#2203: *1101 client 189.101.203.165 closed keepalive connection
+2018/05/29 13:40:37 [info] 2203#2203: *1102 client 189.101.203.165 closed keepalive connection
+2018/05/29 13:40:40 [info] 2203#2203: *1103 client 189.101.203.165 closed keepalive connection
+2018/05/29 13:44:15 [info] 2203#2203: *1104 client closed connection while waiting for request, client: 129.128.164.36, server: 0.0.0.0:80
+2018/05/29 14:49:01 [info] 2203#2203: *1108 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/29 14:58:19 [info] 2203#2203: *1109 client 177.68.34.113 closed keepalive connection
+2018/05/29 15:17:13 [info] 2203#2203: *1135 client 127.0.0.1 closed keepalive connection
+2018/05/29 15:17:13 [info] 2203#2203: *1116 client 127.0.0.1 closed keepalive connection
+2018/05/29 15:17:13 [info] 2203#2203: *1114 client 127.0.0.1 closed keepalive connection
+2018/05/29 15:17:13 [info] 2203#2203: *1113 client 127.0.0.1 closed keepalive connection
+2018/05/29 15:17:13 [info] 2203#2203: *1110 client 127.0.0.1 closed keepalive connection
+2018/05/29 15:17:15 [info] 2203#2203: *1118 client 127.0.0.1 closed keepalive connection
+2018/05/29 15:43:23 [info] 2203#2203: *1143 client 158.46.249.2 closed keepalive connection
+2018/05/29 16:17:42 [info] 2207#2207: *1 client 127.0.0.1 closed keepalive connection
+2018/05/29 16:24:58 [info] 2207#2207: *2 client 116.58.236.166 closed keepalive connection
+2018/05/29 16:31:06 [info] 2207#2207: *3 client 34.207.130.196 closed keepalive connection
+2018/05/29 16:40:15 [info] 2207#2207: *5 client closed connection while waiting for request, client: 61.142.209.234, server: 0.0.0.0:80
+2018/05/29 16:40:15 [info] 2207#2207: *6 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 61.142.209.234, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/29 16:41:36 [info] 2207#2207: *8 client 61.142.209.234 closed keepalive connection (104: Connection reset by peer)
+2018/05/29 17:10:39 [info] 2207#2207: *9 client 81.200.243.228 closed keepalive connection
+2018/05/29 18:48:25 [info] 2207#2207: *10 client 190.34.192.31 closed keepalive connection
+2018/05/29 19:14:43 [info] 2207#2207: *12 client 84.210.148.96 closed keepalive connection (104: Connection reset by peer)
+2018/05/29 20:54:42 [info] 2207#2207: *13 client 104.219.28.214 closed keepalive connection
+2018/05/29 21:00:48 [info] 2207#2207: *14 client 178.151.180.251 closed keepalive connection
+2018/05/29 21:13:10 [info] 2207#2207: *15 client 189.163.62.129 closed keepalive connection
+2018/05/29 21:53:01 [info] 2207#2207: *16 client 202.9.123.7 closed keepalive connection
+2018/05/29 22:30:47 [info] 2207#2207: *17 client 197.149.66.166 closed keepalive connection
+2018/05/29 22:35:48 [info] 2207#2207: *18 client 45.65.130.185 closed keepalive connection
+2018/05/29 23:30:57 [info] 2207#2207: *19 client 187.192.247.71 closed keepalive connection
+2018/05/29 23:53:38 [info] 2207#2207: *20 client 187.56.135.101 closed keepalive connection
+2018/05/30 01:06:22 [info] 2207#2207: *22 client 110.77.208.23 closed keepalive connection
+2018/05/30 02:17:13 [info] 2207#2207: *23 client 2.181.27.198 closed keepalive connection
+2018/05/30 02:20:12 [info] 2207#2207: *24 client 163.47.144.146 closed keepalive connection
+2018/05/30 02:45:33 [info] 2207#2207: *25 client 43.252.159.78 closed keepalive connection
+2018/05/30 05:19:33 [info] 2207#2207: *28 client 89.47.38.168 closed keepalive connection
+2018/05/30 06:04:43 [info] 2207#2207: *29 client 137.59.2.17 closed keepalive connection
+2018/05/30 06:29:19 [info] 2207#2207: *30 client sent invalid method while reading client request line, client: 134.119.212.87, server: localhost, request: " "
+2018/05/30 07:07:51 [info] 2207#2207: *32 client 209.126.136.4 closed keepalive connection
+2018/05/30 08:58:45 [info] 2207#2207: *33 client 193.151.129.139 closed keepalive connection
+2018/05/30 09:04:39 [info] 2207#2207: *34 client 46.148.74.215 closed keepalive connection
+2018/05/30 09:10:24 [info] 2207#2207: *35 client sent invalid method while reading client request line, client: 216.52.10.161, server: localhost, request: "�   ujM��0U�F��!Bl�|�g	���{��E���yr]�f��ʈTe$9+�G8��x�؊]��G��/��a�;LϪ*�d��g��"
+2018/05/30 09:34:01 [info] 2207#2207: *36 client 206.63.78.183 closed keepalive connection
+2018/05/30 09:53:35 [info] 2207#2207: *37 client 103.15.83.228 closed keepalive connection
+2018/05/30 10:34:08 [error] 2207#2207: *38 connect() failed (111: Connection refused) while connecting to upstream, client: 127.0.0.1, server: localhost, request: "GET /mot/ HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/", host: "notecc.cs.ualberta.ca"
+2018/05/30 10:34:30 [info] 2207#2207: *38 client 127.0.0.1 closed keepalive connection
+2018/05/30 10:35:24 [error] 2207#2207: *40 connect() failed (111: Connection refused) while connecting to upstream, client: 127.0.0.1, server: localhost, request: "GET /mot/ HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/", host: "notecc.cs.ualberta.ca"
+2018/05/30 10:36:25 [error] 2207#2207: *40 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 127.0.0.1, server: localhost, request: "GET /mot/ HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/", host: "notecc.cs.ualberta.ca"
+2018/05/30 10:36:45 [info] 2207#2207: *40 client 127.0.0.1 closed keepalive connection
+2018/05/30 10:39:58 [info] 2207#2207: *64 client 127.0.0.1 closed keepalive connection
+2018/05/30 10:39:58 [info] 2207#2207: *43 client 127.0.0.1 closed keepalive connection
+2018/05/30 10:39:59 [info] 2207#2207: *48 client 127.0.0.1 closed keepalive connection
+2018/05/30 10:39:59 [info] 2207#2207: *49 client 127.0.0.1 closed keepalive connection
+2018/05/30 10:39:59 [info] 2207#2207: *50 client 127.0.0.1 closed keepalive connection
+2018/05/30 10:40:02 [info] 2207#2207: *51 client 127.0.0.1 closed keepalive connection
+2018/05/30 10:44:42 [info] 2207#2207: *129 client 201.152.96.35 closed keepalive connection
+2018/05/30 10:57:29 [info] 2207#2207: *130 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/30 10:57:41 [info] 2207#2207: *131 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/30 11:09:07 [info] 2207#2207: *132 client 201.236.214.116 closed keepalive connection
+2018/05/30 11:53:56 [info] 2207#2207: *133 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/30 11:54:03 [info] 2207#2207: *134 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/30 11:55:04 [info] 2207#2207: *135 client 180.97.106.39 closed keepalive connection
+2018/05/30 12:12:28 [info] 2207#2207: *136 client 150.242.255.55 closed keepalive connection
+2018/05/30 12:17:47 [info] 2207#2207: *137 client 189.235.156.25 closed keepalive connection
+2018/05/30 13:53:14 [info] 2207#2207: *140 client 188.137.38.228 closed keepalive connection
+2018/05/30 14:21:33 [info] 2207#2207: *141 client 46.246.62.112 closed keepalive connection
+2018/05/30 14:56:08 [info] 2207#2207: *142 client 177.215.83.148 closed keepalive connection
+2018/05/30 15:02:48 [info] 2207#2207: *143 client 141.212.122.112 closed keepalive connection
+2018/05/30 16:22:55 [info] 2207#2207: *144 client 103.233.73.92 closed keepalive connection
+2018/05/30 16:42:26 [info] 2207#2207: *145 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 127.0.0.1, server: localhost, request: "GET /mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/30 16:42:47 [info] 2207#2207: *162 client 127.0.0.1 closed keepalive connection
+2018/05/30 16:42:47 [info] 2207#2207: *150 client 127.0.0.1 closed keepalive connection
+2018/05/30 16:42:47 [info] 2207#2207: *148 client 127.0.0.1 closed keepalive connection
+2018/05/30 16:42:47 [info] 2207#2207: *156 client 127.0.0.1 closed keepalive connection
+2018/05/30 16:42:49 [info] 2207#2207: *152 client 127.0.0.1 closed keepalive connection
+2018/05/30 16:42:49 [info] 2207#2207: *154 client 127.0.0.1 closed keepalive connection
+2018/05/30 16:57:59 [info] 2207#2207: *181 client 113.128.105.211 closed keepalive connection
+2018/05/30 17:02:04 [info] 2207#2207: *182 client 127.0.0.1 closed keepalive connection
+2018/05/30 17:12:33 [info] 2207#2207: *183 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/30 17:25:17 [info] 2207#2207: *184 client sent invalid method while reading client request line, client: 24.243.175.83, server: localhost, request: "�   G�W���`�=o�Tx��u;4��n��8PB�Ep��(!N���	&��Ϸ�)� �M����V[�/[\��xiu:}0���r��jK]�,ƃ}w2"
+2018/05/30 17:34:45 [info] 2207#2207: *185 client sent invalid method while reading client request line, client: 180.97.106.164, server: localhost, request: " P��qR "
+2018/05/30 17:37:05 [info] 2207#2207: *186 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/30 17:38:03 [info] 2207#2207: *187 client 127.0.0.1 closed keepalive connection
+2018/05/30 18:20:08 [info] 2207#2207: *188 client 200.24.69.174 closed keepalive connection
+2018/05/30 18:28:49 [info] 2207#2207: *196 client 127.0.0.1 closed keepalive connection
+2018/05/30 18:28:49 [info] 2207#2207: *192 client 127.0.0.1 closed keepalive connection
+2018/05/30 18:28:49 [info] 2207#2207: *193 client 127.0.0.1 closed keepalive connection
+2018/05/30 18:28:49 [info] 2207#2207: *194 client 127.0.0.1 closed keepalive connection
+2018/05/30 18:28:49 [info] 2207#2207: *195 client 127.0.0.1 closed keepalive connection
+2018/05/30 18:28:49 [info] 2207#2207: *189 client 127.0.0.1 closed keepalive connection

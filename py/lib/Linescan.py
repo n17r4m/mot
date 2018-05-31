@@ -32,7 +32,7 @@ class LoadLinescanSegment(F):
         print("Linescan loader running on GPU", os.environ["CUDA_VISIBLE_DEVICES"])
         tf_config = tf.ConfigProto()
         tf_config.gpu_options.allow_growth = True
-        tf.enable_eager_execution()
+        tf.enable_eager_execution(config=tf_config)
         
 
 
@@ -164,7 +164,7 @@ class Linescan2:
         for segment in EZ(Iter(paired), Seq(
                 (
                     LoadLinescanSegment(self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}),
-                    LoadLinescanSegment(self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}),
+                    #LoadLinescanSegment(self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}),
                     LoadLinescanSegment(self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}),
                     LoadLinescanSegment(self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"})
                 ),

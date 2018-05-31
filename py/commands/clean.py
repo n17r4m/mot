@@ -11,30 +11,36 @@ import sys
 
 async def main(args):
     print(await clean_experiments_dir(*args))
-    
 
 
 async def clean_experiments_dir():
-    
-    
-    exp_dirs = set([f for f in os.listdir(config.experiment_dir) if os.path.isdir(os.path.join(config.experiment_dir, f))])
+
+    exp_dirs = set(
+        [
+            f
+            for f in os.listdir(config.experiment_dir)
+            if os.path.isdir(os.path.join(config.experiment_dir, f))
+        ]
+    )
     print("Found", len(exp_dirs), "experiment directories")
-    
+
     exp_db = set()
     async for exp in Database().query("SELECT * FROM experiment ORDER BY experiment"):
         exp_db.add(str(exp["experiment"]))
-    
+
     print("Found", len(exp_db), "experiment database entries")
-    
-    
+
     removed = 0
-    for to_remove in (exp_dirs - exp_db):
-        print("Removing", to_remove)
+    for to_remove in exp_dirs - exp_db:
+
         path = os.path.join(config.experiment_dir, to_remove)
-        shutil.rmtree(path)
+        try:
+            shutil.rmtree(path)
+            print("Removed ", to_remove)
+        except Exception as e:
+            print("Failed to remove ", to_remove)
+            print(e)
+
         removed += 1
-        
+
     return "Removed {} invalid directories".format(removed)
-    
-    
-    

@@ -15,5 +15,7 @@ ffmpeg -y -i MSBOT-010140000037.avi -c:v h264_nvenc -gpu 2 -preset slow -b:v 100
                                 # or nvenc_hevc / hevc_nvenc   for h265
   
 
+Force mplayer to play raw vbideo data
 
+mplayer -demuxer rawvideo -rawvideo w=2336:h=1729:y8 test.avi
 

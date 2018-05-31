@@ -290,6 +290,18 @@ async def detect_linescan(path, dump_path=None, *args):
     plt.savefig(dump_path / "summary.png", bbox_inches='tight', dpi=300)
     
     # todo: figure with random examples collaged. (maybe show outliers too?)
+    def shifted_into_shape(ls, props, crops):
+        shape = np.array("need to pass in sy, ey, sx, ex", "those hooligans!")
+        adjusted = np.zeros(shape.shape)
+        #todo: adjust each crop back onto background.
+        #todo: that is, "simulate" 
+        #
+        # for the given snapshot, render the surface where 
+        # simulated circularity is assumed!
+        global sy, ey, sx, ex
+        pass
+    
+    
     
     print("Plots generated")
     
