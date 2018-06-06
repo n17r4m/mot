@@ -99,11 +99,20 @@ class SegmentEmitter(F):
 
 class Tracker(F):
 
-    def setup(self, tx):
+    def setup(self, tx, new_experiment_uuid, frame_uuid_map, track_uuid_map):
         self.tx = tx
+        self.new_experiment_uuid = new_experiment_uuid
+        self.frame_uuid_map = frame_uuid_map
+        self.track_uuid_map = track_uuid_map
+        self.verbose  = True
 
     async def getEdges(self, segment):
         db = Database()
+        
+        Ci = -100
+        Cen = 150
+        Cex = 150
+        
         q = """
             SELECT f1.frame as fr1, f2.frame as fr2,
                    t1.location as location1, t2.location as location2,
@@ -302,10 +311,6 @@ class Tracker(F):
         self.mcf_graph = MCF_GRAPH_HELPER()
         self.mcf_graph.add_node("START")
         self.mcf_graph.add_node("END")
-
-        Ci = -100
-        Cen = 150
-        Cex = 150
 
         self.edge_data = dict()
         self.costs = []
