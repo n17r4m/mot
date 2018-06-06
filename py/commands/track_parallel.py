@@ -80,11 +80,12 @@ async def main(args):
 
 class SegmentEmitter(F):
 
-    def setup(self, experiment):
-        self.async(query(experiment))
+    def setup(self, experiment_uuid):
+        self.async(self.query(experiment_uuid))
 
-    async def query(self, experiment):
-        async for segment in tx.cursor(
+    async def query(self, experiment_uuid):
+        db = Database()
+        async for segment in db.query(
             """
                                 SELECT segment, number
                                 FROM segment
@@ -93,14 +94,356 @@ class SegmentEmitter(F):
                                 """,
             experiment_uuid,
         ):
-            self.put(segment)
+            self.put(segment["segment"])
+
+
+class Tracker(F):
+
+    def setup(self, tx):
+        self.tx = tx
+
+    async def getEdges(self, segment):
+        q = """
+            SELECT f1.frame as fr1, f2.frame as fr2,
+                   t1.location as location1, t2.location as location2,
+                   t1.bbox as bbox1, t2.bbox as bbox2,
+                   t1.latent as latent1, t2.latent as latent2,
+                   p1.area as area1, p2.area as area2,
+                   p1.intensity as intensity1, p2.intensity as intensity2,
+                   p1.radius as radius1, p2.radius as radius2,
+                   p1.category as category1, p2.category as category2,
+                   p1.perimeter as perimeter1, p2.perimeter as perimeter2,
+                   tr1, tr2,
+                   cost1,
+                   cost2,
+                   cost3
+            FROM frame f1, frame f2,track t1, track t2, particle p1, particle p2
+            JOIN LATERAL (
+                SELECT t3.track AS tr1, tr2, cost1, cost2, cost3     
+                FROM track t3
+                JOIN LATERAL (
+                    SELECT t4.track AS tr2,
+                           ((1 + (t3.latent <-> t4.latent))
+                           *(1 + (t3.location <-> t4.location))) AS cost1,
+                           (1 + (t3.location <-> t4.location)) AS cost2,
+                           (1 + (t3.latent <-> t4.latent)) AS cost3
+                    FROM track t4
+                    WHERE t4.frame = f2.frame
+                    ORDER BY cost1 ASC
+                    LIMIT 5
+                ) C ON TRUE
+                WHERE t3.frame = f1.frame
+            ) E on true
+            WHERE f1.number = f2.number-1
+            AND t1.track = tr1 AND t2.track = tr2
+            AND t1.particle = p1.particle AND t2.particle = p2.particle
+            AND f1.segment = '{segment}'
+            AND f2.segment = '{segment}'
+            ORDER BY f1.number ASC;
+            """
+        # The following uses no deep learning
+        ## Developed on the Syncrude bead 200-300 um megaspeed camera video
+        q = """
+            SELECT f1.frame as fr1, f2.frame as fr2,
+                   t1.location as location1, t2.location as location2,
+                   t1.bbox as bbox1, t2.bbox as bbox2,
+                   t1.latent as latent1, t2.latent as latent2,
+                   p1.area as area1, p2.area as area2,
+                   p1.intensity as intensity1, p2.intensity as intensity2,
+                   p1.radius as radius1, p2.radius as radius2,
+                   p1.category as category1, p2.category as category2,
+                   p1.perimeter as perimeter1, p2.perimeter as perimeter2,
+                   p1.major as major1, p2.major as major2,
+                   p1.minor as minor1, p2.minor as minor2,
+                   p1.eccentricity as eccentricity1, p2.eccentricity as eccentricity2,
+                   p1.orientation as orientation1, p2.orientation as orientation2,
+                   p1.solidity as solidity1, p2.solidity as solidity2,
+                   tr1, tr2,
+                   cost1,
+                   cost2,
+                   cost3
+            FROM frame f1, frame f2,track t1, track t2, particle p1, particle p2
+            JOIN LATERAL (
+                SELECT t3.track AS tr1, tr2, cost1, cost2, cost3     
+                FROM track t3
+                JOIN LATERAL (
+                    SELECT t4.track AS tr2,
+                           ((1 + (t3.latent <-> t4.latent))
+                           *(1 + (t3.location <-> t4.location))) AS cost1,
+                           (1 + (t3.location <-> t4.location)) AS cost2,
+                           (1 + (t3.latent <-> t4.latent)) AS cost3
+                    FROM track t4
+                    WHERE t4.frame = f2.frame
+                    ORDER BY cost2 ASC
+                    LIMIT 5
+                ) C ON TRUE
+                WHERE t3.frame = f1.frame
+            ) E on true
+            WHERE f1.number = f2.number-1
+            AND t1.track = tr1 AND t2.track = tr2
+            AND t1.particle = p1.particle AND t2.particle = p2.particle
+            AND f1.segment = '{segment}'
+            AND f2.segment = '{segment}'
+            ORDER BY f1.number ASC;
+            """
+        s = q.format(segment=segment)
+        async for edges in tx.execute(s):
+            if edges["tr1"] not in edge_data:
+                self.edge_data[edges["tr1"]] = {
+                    "track": edges["tr1"],
+                    "frame": edges["fr1"],
+                    "location": edges["location1"],
+                    "bbox": edges["bbox1"],
+                    "latent": edges["latent1"],
+                    "area": edges["area1"],
+                    "intensity": edges["intensity1"],
+                    "radius": edges["radius1"],
+                    "perimeter": edges["perimeter1"],
+                    "major": edges["major1"],
+                    "minor": edges["minor1"],
+                    "orientation": edges["orientation1"],
+                    "solidity": edges["solidity1"],
+                    "eccentricity": edges["eccentricity1"],
+                    "category": edges["category1"],
+                }
+            self.edge_data[edges["tr2"]] = {
+                "track": edges["tr2"],
+                "frame": edges["fr2"],
+                "location": edges["location2"],
+                "bbox": edges["bbox2"],
+                "latent": edges["latent2"],
+                "area": edges["area2"],
+                "intensity": edges["intensity2"],
+                "radius": edges["radius2"],
+                "perimeter": edges["perimeter2"],
+                "major": edges["major2"],
+                "minor": edges["minor2"],
+                "orientation": edges["orientation2"],
+                "solidity": edges["solidity2"],
+                "eccentricity": edges["eccentricity2"],
+                "category": edges["category2"],
+            }
+
+            u1, v1 = "u_" + str(edges["tr1"]), "v_" + str(edges["tr1"])
+            u2, v2 = "u_" + str(edges["tr2"]), "v_" + str(edges["tr2"])
+
+            # create ui, create vi, create edge (ui, vi), cost CI(ui,vi), cap = 1
+            if self.mcf_graph.add_node(u1):
+                self.mcf_graph.add_node(v1)
+
+                # Heuristic reward for larger, darker; penalize undefined
+                larger = 500
+                darker = 0
+                area = self.edge_data[edges["tr1"]]["area"]
+                intensity = self.edge_data[edges["tr1"]]["intensity"]
+                nodeCi = Ci * (1 + (area / larger) * ((255 - intensity) / 255))
+                # if not edge_data[edges["tr1"]]["category"]:
+                # nodeCi = 10
+                # End heuristic reward
+
+                self.mcf_graph.add_edge(u1, v1, capacity=1, weight=int(nodeCi))
+                self.mcf_graph.add_edge("START", u1, capacity=1, weight=Cen)
+                self.mcf_graph.add_edge(v1, "END", capacity=1, weight=Cex)
+
+            if self.mcf_graph.add_node(u2):
+                self.mcf_graph.add_node(v2)
+
+                # Heuristic reward for larger, darker; penalize undefined
+                larger = 500
+                darker = 0
+                area = self.edge_data[edges["tr2"]]["area"]
+                intensity = self.edge_data[edges["tr2"]]["intensity"]
+                nodeCi = Ci * (1 + (area / larger) * ((255 - intensity) / 255))
+                # if not edge_data[edges["tr1"]]["category"]:
+                # nodeCi = 10
+                # End heuristic reward
+
+                self.mcf_graph.add_edge(u2, v2, capacity=1, weight=int(nodeCi))
+                self.mcf_graph.add_edge("START", u2, capacity=1, weight=Cen)
+                self.mcf_graph.add_edge(v2, "END", capacity=1, weight=Cex)
+
+            # Cij = -Log(Plink(xi|xj)), Plink = Psize*Pposiiton*Pappearance*Ptime
+            Cij = int(2 * edges["cost2"])
+            self.costs.append(Cij)
+
+            self.mcf_graph.add_edge(v1, u2, weight=Cij, capacity=1)
+
+    async def inserts(self):
+        await self.tx.executemany(
+            """
+            INSERT INTO Particle (particle, 
+                                  experiment, 
+                                  area, 
+                                  intensity, 
+                                  perimeter, 
+                                  major,
+                                  minor,
+                                  orientation,
+                                  solidity,
+                                  eccentricity,
+                                  category)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+        """,
+            self.particle_inserts,
+        )
+
+        await self.tx.executemany(
+            """
+            INSERT INTO Track (track, frame, particle, location, bbox, latent)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        """,
+            self.track_inserts,
+        )
+
+    def do(self, segment):
+        print(segment)
+
+        self.mcf_graph = MCF_GRAPH_HELPER()
+        self.mcf_graph.add_node("START")
+        self.mcf_graph.add_node("END")
+
+        Ci = -100
+        Cen = 150
+        Cex = 150
+
+        self.edge_data = dict()
+        self.costs = []
+
+        self.async(self.getEdges(segment))
+
+        if self.mcf_graph.n_nodes == 2:  # only START and END nodes present (empty)
+            if verbose:
+                print("Nothing in segment")
+            return
+
+        if verbose:
+            print("cost", np.min(self.costs), np.mean(self.costs), np.max(self.costs))
+
+        if verbose:
+            print("Solving min-cost-flow for segment")
+
+        demand = goldenSectionSearch(
+            self.mcf_graph.solve,
+            0,
+            self.mcf_graph.n_nodes // 4,
+            self.mcf_graph.n_nodes // 2,
+            10,
+            memo=None,
+        )
+
+        if verbose:
+            print("Optimal number of tracks", demand)
+        min_cost = self.mcf_graph.solve(demand)
+        if verbose:
+            print("Min cost", min_cost)
+
+        mcf_flow_dict = self.mcf_graph.flowdict()
+        self.mcf_graph = None
+
+        tracks = dict()
+        for dest in mcf_flow_dict["START"]:
+            new_particle_uuid = uuid4()
+            track = []
+            curr = dest
+            while curr != "END":
+                if curr[0] == "u":
+                    old_particle_uuid = UUID(curr.split("_")[-1])
+                    track.append(old_particle_uuid)
+                curr = mcf_flow_dict[curr][0]
+
+            tracks[new_particle_uuid] = track
+
+        if verbose:
+            print("Tracks reconstructed", len(tracks))
+
+        """
+        Headers for Syncrude 2018
+        
+        Frame ID, 
+        Particle ID, 
+        Particle Area, 
+        Particle Velocity, 
+        Particle Intensity, 
+        Particle Perimeter, 
+        X Position, 
+        Y Position, 
+        Major Axis Length, 
+        Minor Axis Length, 
+        Orientation, 
+        Solidity, 
+        Eccentricity.
+        """
+
+        start = time.time()
+        self.particle_inserts = []
+        self.track_inserts = []
+        for new_particle_uuid, track in tracks.items():
+            mean_area = 0.0
+            mean_intensity = 0.0
+            mean_perimeter = 0.0
+            # mean_radius = 0.0
+            mean_major = 0.0
+            mean_minor = 0.0
+            mean_orientation = 0.0
+            mean_solidity = 0.0
+            mean_eccentricity = 0.0
+            category = []
+
+            for data in [self.edge_data[i] for i in track]:
+                mean_area += data["area"] / len(track)
+                mean_intensity += data["intensity"] / len(track)
+                mean_perimeter += data["perimeter"] / len(track)
+                # mean_radius += data["radius"] / len(track)
+                mean_major += data["major"] / len(track)
+                mean_minor += data["minor"] / len(track)
+                mean_orientation += data["orientation"] / len(track)
+                mean_solidity += data["solidity"] / len(track)
+                mean_eccentricity += data["eccentricity"] / len(track)
+                category.append(data["category"])
+
+                new_frame_uuid = frame_uuid_map[data["frame"]]
+                new_track_uuid = track_uuid_map[data["track"]]
+
+                self.track_inserts.append(
+                    (
+                        new_track_uuid,
+                        new_frame_uuid,
+                        new_particle_uuid,
+                        data["location"],
+                        data["bbox"],
+                        data["latent"],
+                    )
+                )
+
+            category = np.argmax(np.bincount(category))
+
+            self.particle_inserts.append(
+                (
+                    new_particle_uuid,
+                    new_experiment_uuid,
+                    mean_area,
+                    mean_intensity,
+                    mean_perimeter,
+                    mean_major,
+                    mean_minor,
+                    mean_orientation,
+                    mean_solidity,
+                    mean_eccentricity,
+                    category,
+                )
+            )
+
+        self.async(self.inserts())
+
+        if verbose:
+            print("Tracks inserted", time.time() - start, "s")
 
 
 async def track_experiment(experiment_uuid, method="Tracking", model=None):
     """
     
     """
-    verbose = False
+    verbose = True
     cpus = multiprocessing.cpu_count()
     loop = asyncio.get_event_loop()
     db = Database()
@@ -122,396 +465,7 @@ async def track_experiment(experiment_uuid, method="Tracking", model=None):
 
         # 2) Perform tracking analysis
 
-        segments = EZ(SegmentEmitter(experiment_uuid)).items()
-        for segment in segments:
-            if verbose:
-                print("tracking segment", segment["number"])
-            mcf_graph = MCF_GRAPH_HELPER()
-            mcf_graph.add_node("START")
-            mcf_graph.add_node("END")
-
-            Ci = -100
-            Cen = 150
-            Cex = 150
-
-            edge_data = dict()
-            dvEdges = []
-            costs = []
-            dvCosts = []
-
-            q = """
-                SELECT f1.frame as fr1, f2.frame as fr2,
-                       t1.location as location1, t2.location as location2,
-                       t1.bbox as bbox1, t2.bbox as bbox2,
-                       t1.latent as latent1, t2.latent as latent2,
-                       p1.area as area1, p2.area as area2,
-                       p1.intensity as intensity1, p2.intensity as intensity2,
-                       p1.radius as radius1, p2.radius as radius2,
-                       p1.category as category1, p2.category as category2,
-                       p1.perimeter as perimeter1, p2.perimeter as perimeter2,
-                       tr1, tr2,
-                       cost1,
-                       cost2,
-                       cost3
-                FROM frame f1, frame f2,track t1, track t2, particle p1, particle p2
-                JOIN LATERAL (
-                    SELECT t3.track AS tr1, tr2, cost1, cost2, cost3     
-                    FROM track t3
-                    JOIN LATERAL (
-                        SELECT t4.track AS tr2,
-                               ((1 + (t3.latent <-> t4.latent))
-                               *(1 + (t3.location <-> t4.location))) AS cost1,
-                               (1 + (t3.location <-> t4.location)) AS cost2,
-                               (1 + (t3.latent <-> t4.latent)) AS cost3
-                        FROM track t4
-                        WHERE t4.frame = f2.frame
-                        ORDER BY cost1 ASC
-                        LIMIT 5
-                    ) C ON TRUE
-                    WHERE t3.frame = f1.frame
-                ) E on true
-                WHERE f1.number = f2.number-1
-                AND t1.track = tr1 AND t2.track = tr2
-                AND t1.particle = p1.particle AND t2.particle = p2.particle
-                AND f1.segment = '{segment}'
-                AND f2.segment = '{segment}'
-                ORDER BY f1.number ASC;
-                """
-            # The following uses no deep learning
-            ## Developed on the Syncrude bead 200-300 um megaspeed camera video
-            q = """
-                SELECT f1.frame as fr1, f2.frame as fr2,
-                       t1.location as location1, t2.location as location2,
-                       t1.bbox as bbox1, t2.bbox as bbox2,
-                       t1.latent as latent1, t2.latent as latent2,
-                       p1.area as area1, p2.area as area2,
-                       p1.intensity as intensity1, p2.intensity as intensity2,
-                       p1.radius as radius1, p2.radius as radius2,
-                       p1.category as category1, p2.category as category2,
-                       p1.perimeter as perimeter1, p2.perimeter as perimeter2,
-                       p1.major as major1, p2.major as major2,
-                       p1.minor as minor1, p2.minor as minor2,
-                       p1.eccentricity as eccentricity1, p2.eccentricity as eccentricity2,
-                       p1.orientation as orientation1, p2.orientation as orientation2,
-                       p1.solidity as solidity1, p2.solidity as solidity2,
-                       tr1, tr2,
-                       cost1,
-                       cost2,
-                       cost3
-                FROM frame f1, frame f2,track t1, track t2, particle p1, particle p2
-                JOIN LATERAL (
-                    SELECT t3.track AS tr1, tr2, cost1, cost2, cost3     
-                    FROM track t3
-                    JOIN LATERAL (
-                        SELECT t4.track AS tr2,
-                               ((1 + (t3.latent <-> t4.latent))
-                               *(1 + (t3.location <-> t4.location))) AS cost1,
-                               (1 + (t3.location <-> t4.location)) AS cost2,
-                               (1 + (t3.latent <-> t4.latent)) AS cost3
-                        FROM track t4
-                        WHERE t4.frame = f2.frame
-                        ORDER BY cost2 ASC
-                        LIMIT 5
-                    ) C ON TRUE
-                    WHERE t3.frame = f1.frame
-                ) E on true
-                WHERE f1.number = f2.number-1
-                AND t1.track = tr1 AND t2.track = tr2
-                AND t1.particle = p1.particle AND t2.particle = p2.particle
-                AND f1.segment = '{segment}'
-                AND f2.segment = '{segment}'
-                ORDER BY f1.number ASC;
-                """
-            s = q.format(segment=segment["segment"])
-            async for edges in db.query(s):
-                if edges["tr1"] not in edge_data:
-                    edge_data[edges["tr1"]] = {
-                        "track": edges["tr1"],
-                        "frame": edges["fr1"],
-                        "location": edges["location1"],
-                        "bbox": edges["bbox1"],
-                        "latent": edges["latent1"],
-                        "area": edges["area1"],
-                        "intensity": edges["intensity1"],
-                        "radius": edges["radius1"],
-                        "perimeter": edges["perimeter1"],
-                        "major": edges["major1"],
-                        "minor": edges["minor1"],
-                        "orientation": edges["orientation1"],
-                        "solidity": edges["solidity1"],
-                        "eccentricity": edges["eccentricity1"],
-                        "category": edges["category1"],
-                    }
-                edge_data[edges["tr2"]] = {
-                    "track": edges["tr2"],
-                    "frame": edges["fr2"],
-                    "location": edges["location2"],
-                    "bbox": edges["bbox2"],
-                    "latent": edges["latent2"],
-                    "area": edges["area2"],
-                    "intensity": edges["intensity2"],
-                    "radius": edges["radius2"],
-                    "perimeter": edges["perimeter2"],
-                    "major": edges["major2"],
-                    "minor": edges["minor2"],
-                    "orientation": edges["orientation2"],
-                    "solidity": edges["solidity2"],
-                    "eccentricity": edges["eccentricity2"],
-                    "category": edges["category2"],
-                }
-
-                u1, v1 = "u_" + str(edges["tr1"]), "v_" + str(edges["tr1"])
-                u2, v2 = "u_" + str(edges["tr2"]), "v_" + str(edges["tr2"])
-
-                # create ui, create vi, create edge (ui, vi), cost CI(ui,vi), cap = 1
-                if mcf_graph.add_node(u1):
-                    mcf_graph.add_node(v1)
-
-                    # Heuristic reward for larger, darker; penalize undefined
-                    larger = 500
-                    darker = 0
-                    area = edge_data[edges["tr1"]]["area"]
-                    intensity = edge_data[edges["tr1"]]["intensity"]
-                    nodeCi = Ci * (1 + (area / larger) * ((255 - intensity) / 255))
-                    # if not edge_data[edges["tr1"]]["category"]:
-                    # nodeCi = 10
-                    # End heuristic reward
-
-                    mcf_graph.add_edge(u1, v1, capacity=1, weight=int(nodeCi))
-                    mcf_graph.add_edge("START", u1, capacity=1, weight=Cen)
-                    mcf_graph.add_edge(v1, "END", capacity=1, weight=Cex)
-
-                if mcf_graph.add_node(u2):
-                    mcf_graph.add_node(v2)
-
-                    # Heuristic reward for larger, darker; penalize undefined
-                    larger = 500
-                    darker = 0
-                    area = edge_data[edges["tr2"]]["area"]
-                    intensity = edge_data[edges["tr2"]]["intensity"]
-                    nodeCi = Ci * (1 + (area / larger) * ((255 - intensity) / 255))
-                    # if not edge_data[edges["tr1"]]["category"]:
-                    # nodeCi = 10
-                    # End heuristic reward
-
-                    mcf_graph.add_edge(u2, v2, capacity=1, weight=int(nodeCi))
-                    mcf_graph.add_edge("START", u2, capacity=1, weight=Cen)
-                    mcf_graph.add_edge(v2, "END", capacity=1, weight=Cex)
-
-                # Cij = -Log(Plink(xi|xj)), Plink = Psize*Pposiiton*Pappearance*Ptime
-                Cij = int(2 * edges["cost2"])
-                costs.append(Cij)
-
-                if not model:
-                    mcf_graph.add_edge(v1, u2, weight=Cij, capacity=1)
-                else:
-                    dvEdges.append((v1, u2))
-
-            if mcf_graph.n_nodes == 2:  # only START and END nodes present (empty)
-                if verbose:
-                    print("Nothing in segment")
-                continue
-
-            if model:
-                batch = DataBatch()
-                for v1, u2 in dvEdges:
-                    v1Data = edge_data[UUID(v1[2:])]
-                    u2Data = edge_data[UUID(u2[2:])]
-
-                    loc1 = (v1Data["location"][0], v1Data["location"][1])
-                    loc2 = (u2Data["location"][0], u2Data["location"][1])
-                    frameFile1 = os.path.join(
-                        config.experiment_dir,
-                        experiment_uuid,
-                        str(v1Data["frame"]),
-                        "64x64.png",
-                    )
-                    frame1 = io.imread(frameFile1, as_grey=True)
-
-                    frameFile2 = os.path.join(
-                        config.experiment_dir,
-                        experiment_uuid,
-                        str(u2Data["frame"]),
-                        "64x64.png",
-                    )
-                    frame2 = io.imread(frameFile2, as_grey=True)
-
-                    latent1_string = v1Data["latent"][1:-1].split(",")
-                    latent1 = [float(i) for i in latent1_string]
-
-                    latent2_string = u2Data["latent"][1:-1].split(",")
-                    latent2 = [float(i) for i in latent2_string]
-
-                    batch.addLocation(loc1, loc2)
-                    batch.addFrame(frame1, frame2)
-                    batch.addLatent(latent1, latent2)
-                    batch.addOutput([0.0, 0.0])
-                # make the batch divisible by # gpus
-
-                while len(batch) % 4:
-                    # print(len(batch))
-                    batch.addLocation(loc1, loc2)
-                    batch.addFrame(frame1, frame2)
-                    batch.addLatent(latent1, latent2)
-                    batch.addOutput([0.0, 0.0])
-
-                batch.normParams()
-                batch.toNumpy()
-                batch.normalize(batch.normalizeParams)
-                probs = model.predict(batch.getInput())
-
-                for i, (v1, u2) in enumerate(dvEdges):
-                    Cij = np.int32(min(-100 * np.log(probs[i][0]), 2147483647))
-                    dvCosts.append(Cij)
-                    mcf_graph.add_edge(v1, u2, weight=Cij, capacity=1)
-
-                if verbose:
-                    print("dvCt", np.min(dvCosts), np.mean(dvCosts), np.max(dvCosts))
-            if verbose:
-                print("cost", np.min(costs), np.mean(costs), np.max(costs))
-
-            if verbose:
-                print("Solving min-cost-flow for segment")
-
-            demand = goldenSectionSearch(
-                mcf_graph.solve,
-                0,
-                mcf_graph.n_nodes // 4,
-                mcf_graph.n_nodes // 2,
-                10,
-                memo=None,
-            )
-
-            if verbose:
-                print("Optimal number of tracks", demand)
-            min_cost = mcf_graph.solve(demand)
-            if verbose:
-                print("Min cost", min_cost)
-
-            mcf_flow_dict = mcf_graph.flowdict()
-            mcf_graph = None
-
-            tracks = dict()
-            for dest in mcf_flow_dict["START"]:
-                new_particle_uuid = uuid4()
-                track = []
-                curr = dest
-                while curr != "END":
-                    if curr[0] == "u":
-                        old_particle_uuid = UUID(curr.split("_")[-1])
-                        track.append(old_particle_uuid)
-                    curr = mcf_flow_dict[curr][0]
-
-                tracks[new_particle_uuid] = track
-
-            if verbose:
-                print("Tracks reconstructed", len(tracks))
-
-            """
-            Headers for Syncrude 2018
-            
-            Frame ID, 
-            Particle ID, 
-            Particle Area, 
-            Particle Velocity, 
-            Particle Intensity, 
-            Particle Perimeter, 
-            X Position, 
-            Y Position, 
-            Major Axis Length, 
-            Minor Axis Length, 
-            Orientation, 
-            Solidity, 
-            Eccentricity.
-            """
-
-            start = time.time()
-            particle_inserts = []
-            track_inserts = []
-            for new_particle_uuid, track in tracks.items():
-                mean_area = 0.0
-                mean_intensity = 0.0
-                mean_perimeter = 0.0
-                # mean_radius = 0.0
-                mean_major = 0.0
-                mean_minor = 0.0
-                mean_orientation = 0.0
-                mean_solidity = 0.0
-                mean_eccentricity = 0.0
-                category = []
-
-                for data in [edge_data[i] for i in track]:
-                    mean_area += data["area"] / len(track)
-                    mean_intensity += data["intensity"] / len(track)
-                    mean_perimeter += data["perimeter"] / len(track)
-                    # mean_radius += data["radius"] / len(track)
-                    mean_major += data["major"] / len(track)
-                    mean_minor += data["minor"] / len(track)
-                    mean_orientation += data["orientation"] / len(track)
-                    mean_solidity += data["solidity"] / len(track)
-                    mean_eccentricity += data["eccentricity"] / len(track)
-                    category.append(data["category"])
-
-                    new_frame_uuid = frame_uuid_map[data["frame"]]
-                    new_track_uuid = track_uuid_map[data["track"]]
-
-                    track_inserts.append(
-                        (
-                            new_track_uuid,
-                            new_frame_uuid,
-                            new_particle_uuid,
-                            data["location"],
-                            data["bbox"],
-                            data["latent"],
-                        )
-                    )
-
-                category = np.argmax(np.bincount(category))
-
-                particle_inserts.append(
-                    (
-                        new_particle_uuid,
-                        new_experiment_uuid,
-                        mean_area,
-                        mean_intensity,
-                        mean_perimeter,
-                        mean_major,
-                        mean_minor,
-                        mean_orientation,
-                        mean_solidity,
-                        mean_eccentricity,
-                        category,
-                    )
-                )
-
-            await tx.executemany(
-                """
-                INSERT INTO Particle (particle, 
-                                      experiment, 
-                                      area, 
-                                      intensity, 
-                                      perimeter, 
-                                      major,
-                                      minor,
-                                      orientation,
-                                      solidity,
-                                      eccentricity,
-                                      category)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-            """,
-                particle_inserts,
-            )
-
-            await tx.executemany(
-                """
-                INSERT INTO Track (track, frame, particle, location, bbox, latent)
-                VALUES ($1, $2, $3, $4, $5, $6)
-            """,
-                track_inserts,
-            )
-
-            if verbose:
-                print("Tracks inserted", time.time() - start, "s")
+        segments = EZ(SegmentEmitter(experiment_uuid), Tracker(tx)).start().join()
 
     except Exception as e:  ### ERROR: UNDO EVERYTHING !    #################
         print("Uh oh. Something went wrong")

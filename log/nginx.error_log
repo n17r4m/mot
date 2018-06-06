@@ -10289,3 +10289,11 @@
 2018/06/06 15:00:49 [info] 2207#2207: *1744 client 127.0.0.1 closed keepalive connection
 2018/06/06 15:00:49 [info] 2207#2207: *1743 client 127.0.0.1 closed keepalive connection
 2018/06/06 15:00:52 [info] 2207#2207: *1746 client 127.0.0.1 closed keepalive connection
+2018/06/06 16:34:36 [info] 2207#2207: *1760 client 127.0.0.1 closed keepalive connection
+2018/06/06 16:34:36 [info] 2207#2207: *1758 client 127.0.0.1 closed keepalive connection
+2018/06/06 16:34:36 [info] 2207#2207: *1756 client 127.0.0.1 closed keepalive connection
+2018/06/06 16:34:36 [info] 2207#2207: *1752 client 127.0.0.1 closed keepalive connection
+2018/06/06 16:34:36 [info] 2207#2207: *1749 client 127.0.0.1 closed keepalive connection
+2018/06/06 16:34:48 [info] 2207#2207: *1787 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/06 16:35:05 [info] 2207#2207: *1786 client 127.0.0.1 closed keepalive connection
+2018/06/06 16:36:48 [info] 2207#2207: *1788 client 191.241.51.63 closed keepalive connection
