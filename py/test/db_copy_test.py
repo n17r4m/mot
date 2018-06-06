@@ -31,42 +31,68 @@ async def test(N):
 
     inserts = np.random.randint(0, 30000, (N, 5))
 
-    # await db.vacuum()
-    # try:
-    #     print("Method 1: vanilla inserts")
-    #     start = time()
+    await db.execute(
+        """
+            DELETE FROM io_test
+            """
+    )
+    await db.vacuum("io_test")
+    try:
+        print("Method 1: vanilla inserts")
+        start = time()
 
-    #     await db.executemany("""
-    #             INSERT INTO io_test (col1, col2, col3, col4, col5)
-    #             VALUES ($1, $2, $3, $4, $5)
-    #             """, list(inserts))
+        await db.executemany(
+            """
+                INSERT INTO io_test (col1, col2, col3, col4, col5)
+                VALUES ($1, $2, $3, $4, $5)
+                """,
+            list(inserts),
+        )
 
-    #     print("Inserting "+str(N)+" records took "+str(time()-start))
+        print("Inserting " + str(N) + " records took " + str(time() - start))
 
-    # except Exception as e:
-    #     print(e)
-    #     traceback.print_exc()
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
 
-    # # await db.vacuum()
-    # try:
-    #     print("Method 2: vanilla transaction inserts")
-    #     start = time()
-    #     tx, transaction = await db.transaction()
+    #  -------------------------------------------------------------------------
 
-    #     await tx.executemany("""
-    #             INSERT INTO io_test (col1, col2, col3, col4, col5)
-    #             VALUES ($1, $2, $3, $4, $5)
-    #             """, list(inserts))
+    await db.execute(
+        """
+            DELETE FROM io_test
+            """
+    )
+    await db.vacuum("io_test")
+    try:
+        print("Method 2: vanilla transaction inserts")
+        start = time()
+        tx, transaction = await db.transaction()
 
-    #     await transaction.commit()
-    #     print("Inserting "+str(N)+" records took "+str(time()-start))
+        await tx.executemany(
+            """
+                INSERT INTO io_test (col1, col2, col3, col4, col5)
+                VALUES ($1, $2, $3, $4, $5)
+                """,
+            list(inserts),
+        )
 
-    # except Exception as e:
-    #     print(e)
-    #     traceback.print_exc()
-    #     await transaction.rollback()
+        await transaction.commit()
+        print("Inserting " + str(N) + " records took " + str(time() - start))
 
-    # await db.vacuum()
+    except Exception as e:
+        print(e)
+        traceback.print_exc()
+        await transaction.rollback()
+
+    #  -------------------------------------------------------------------------
+    await db.execute(
+        """
+            DELETE FROM io_test
+            """
+    )
+
+    await db.vacuum("io_test")
+
     try:
         print("Method 3: copy-to")
         start = time()

@@ -184,9 +184,12 @@ class Database(object):
             END $$; """
         )
 
-    async def vacuum(self):
+    async def vacuum(self, table=None):
         async with (await self.pool()).acquire() as connection:
-            await connection.execute("VACUUM FULL;")
+            if table is not None:
+                await connection.execute("VACUUM {};".format(table))
+            else:
+                await connection.execute("VACUUM FULL;")
 
     async def reset(self):
         print("Database reset commencing in 5 seconds...")

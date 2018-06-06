@@ -9614,3 +9614,678 @@
 2018/05/30 18:28:49 [info] 2207#2207: *194 client 127.0.0.1 closed keepalive connection
 2018/05/30 18:28:49 [info] 2207#2207: *195 client 127.0.0.1 closed keepalive connection
 2018/05/30 18:28:49 [info] 2207#2207: *189 client 127.0.0.1 closed keepalive connection
+2018/05/30 18:40:39 [info] 2207#2207: *275 client 179.127.119.250 closed keepalive connection
+2018/05/30 20:00:57 [info] 2207#2207: *276 client 116.254.100.101 closed keepalive connection
+2018/05/30 20:17:54 [info] 2207#2207: *277 client 41.211.120.11 closed keepalive connection
+2018/05/30 20:19:28 [info] 2207#2207: *278 client 187.144.88.107 closed keepalive connection
+2018/05/30 20:49:05 [info] 2207#2207: *279 client 189.110.232.123 closed keepalive connection
+2018/05/30 21:34:47 [info] 2207#2207: *280 client 189.47.69.75 closed keepalive connection
+2018/05/30 22:42:58 [info] 2207#2207: *281 client 213.195.222.3 closed keepalive connection
+2018/05/30 23:50:59 [info] 2207#2207: *282 client 177.84.41.140 closed keepalive connection
+2018/05/30 23:59:43 [info] 2207#2207: *283 client 218.211.168.176 closed keepalive connection
+2018/05/31 00:27:33 [info] 2207#2207: *286 client 187.10.249.125 closed keepalive connection
+2018/05/31 00:27:33 [info] 2207#2207: *285 client 187.10.249.125 closed keepalive connection
+2018/05/31 00:27:33 [info] 2207#2207: *284 client 187.10.249.125 closed keepalive connection
+2018/05/31 01:21:28 [info] 2207#2207: *288 client closed connection while waiting for request, client: 188.243.52.4, server: 0.0.0.0:80
+2018/05/31 01:21:29 [info] 2207#2207: *289 client 188.243.52.4 closed keepalive connection
+2018/05/31 01:21:31 [info] 2207#2207: *290 client 188.243.52.4 closed keepalive connection
+2018/05/31 01:42:07 [info] 2207#2207: *291 client 185.64.51.218 closed keepalive connection
+2018/05/31 02:54:08 [info] 2207#2207: *293 client 167.249.150.12 closed keepalive connection
+2018/05/31 03:11:44 [info] 2207#2207: *294 client 192.241.233.61 closed keepalive connection
+2018/05/31 03:30:20 [info] 2207#2207: *295 client 189.162.243.225 closed keepalive connection
+2018/05/31 03:41:28 [info] 2207#2207: *296 client 117.212.88.123 closed keepalive connection
+2018/05/31 03:55:36 [info] 2207#2207: *297 client 123.189.31.250 closed keepalive connection
+2018/05/31 05:24:55 [info] 2207#2207: *298 client 189.152.71.132 closed keepalive connection
+2018/05/31 05:24:55 [info] 2207#2207: *299 client 189.152.71.132 closed keepalive connection
+2018/05/31 06:07:47 [info] 2207#2207: *300 client 201.222.26.214 closed keepalive connection
+2018/05/31 07:24:19 [info] 2207#2207: *301 client 36.37.244.19 closed keepalive connection
+2018/05/31 07:57:49 [info] 2207#2207: *302 client 165.16.37.184 closed keepalive connection
+2018/05/31 09:11:48 [info] 2207#2207: *303 client 195.128.222.113 closed keepalive connection
+2018/05/31 09:35:38 [info] 2207#2207: *304 client 176.12.121.2 closed keepalive connection
+2018/05/31 10:01:49 [info] 2207#2207: *305 client 190.186.46.148 closed keepalive connection
+2018/05/31 10:27:35 [info] 2207#2207: *315 client 127.0.0.1 closed keepalive connection
+2018/05/31 10:27:35 [info] 2207#2207: *313 client 127.0.0.1 closed keepalive connection
+2018/05/31 10:27:35 [info] 2207#2207: *311 client 127.0.0.1 closed keepalive connection
+2018/05/31 10:27:35 [info] 2207#2207: *306 client 127.0.0.1 closed keepalive connection
+2018/05/31 10:27:38 [info] 2207#2207: *317 client 127.0.0.1 closed keepalive connection
+2018/05/31 10:27:38 [info] 2207#2207: *309 client 127.0.0.1 closed keepalive connection
+2018/05/31 10:28:10 [info] 2207#2207: *341 client 127.0.0.1 closed keepalive connection
+2018/05/31 11:51:14 [info] 2207#2207: *342 client 45.115.172.134 closed keepalive connection
+2018/05/31 12:17:12 [info] 2207#2207: *343 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/31 12:37:58 [info] 2207#2207: *344 client 45.115.172.81 closed keepalive connection
+2018/05/31 12:41:20 [info] 2207#2207: *345 client 191.19.44.50 closed keepalive connection
+2018/05/31 12:58:45 [info] 2207#2207: *347 client closed connection while waiting for request, client: 139.199.83.218, server: 0.0.0.0:80
+2018/05/31 12:58:45 [info] 2207#2207: *348 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 139.199.83.218, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/05/31 13:08:19 [info] 2207#2207: *351 client 194.50.254.171 closed keepalive connection
+2018/05/31 13:26:45 [info] 2207#2207: *352 client 189.127.236.172 closed keepalive connection
+2018/05/31 13:44:05 [info] 2207#2207: *353 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/31 13:44:08 [info] 2207#2207: *354 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 127.0.0.1, server: localhost, request: "GET /mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/app/experiment/68515e15-2c49-4a24-8d7b-559e6c511ce1"
+2018/05/31 13:44:28 [info] 2207#2207: *363 client 127.0.0.1 closed keepalive connection
+2018/05/31 13:44:28 [info] 2207#2207: *359 client 127.0.0.1 closed keepalive connection
+2018/05/31 13:44:28 [info] 2207#2207: *357 client 127.0.0.1 closed keepalive connection
+2018/05/31 13:44:28 [info] 2207#2207: *365 client 127.0.0.1 closed keepalive connection
+2018/05/31 13:44:28 [info] 2207#2207: *368 client 127.0.0.1 closed keepalive connection
+2018/05/31 13:44:32 [info] 2207#2207: *361 client 127.0.0.1 closed keepalive connection
+2018/05/31 14:08:48 [info] 2207#2207: *390 client 177.138.154.235 closed keepalive connection
+2018/05/31 14:25:23 [info] 2207#2207: *391 client 131.108.53.58 closed keepalive connection
+2018/05/31 14:30:39 [info] 2207#2207: *392 client sent invalid method while reading client request line, client: 155.94.222.12, server: localhost, request: ", (܃�.�5�����*f��bkX��K�Ls�T�^  ��0�,�(�$��"
+2018/05/31 14:30:39 [info] 2207#2207: *392 recv() failed (104: Connection reset by peer) while reading client request line, client: 155.94.222.12, server: localhost, request: ", (܃�.�5�����*f��bkX��K�Ls�T�^  ��0�,�(�$��"
+2018/05/31 15:11:08 [info] 2207#2207: *393 epoll_wait() reported that client prematurely closed connection, so upstream connection is closed too while sending request to upstream, client: 127.0.0.1, server: localhost, request: "GET /mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61 HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/merged-stylesheets.css?hash=25034fa0395403ffa17923dbb2c2e90d1e678b61", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/05/31 15:11:29 [info] 2207#2207: *406 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:29 [info] 2207#2207: *402 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:29 [info] 2207#2207: *397 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:29 [info] 2207#2207: *396 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:29 [info] 2207#2207: *401 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:58 [info] 2207#2207: *490 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:58 [info] 2207#2207: *489 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:58 [info] 2207#2207: *488 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:58 [info] 2207#2207: *487 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:58 [info] 2207#2207: *485 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:11:58 [info] 2207#2207: *486 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:12:28 [info] 2207#2207: *491 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:12:51 [info] 2207#2207: *492 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:12:57 [info] 2207#2207: *493 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/31 15:13:38 [info] 2207#2207: *494 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:14:03 [info] 2207#2207: *498 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:14:03 [info] 2207#2207: *497 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:14:03 [info] 2207#2207: *496 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:14:03 [info] 2207#2207: *495 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:14:03 [info] 2207#2207: *500 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:14:03 [info] 2207#2207: *499 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:15:01 [info] 2207#2207: *501 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/31 15:16:35 [info] 2207#2207: *503 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:16:35 [info] 2207#2207: *502 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:16:35 [info] 2207#2207: *506 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:16:35 [info] 2207#2207: *504 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:16:35 [info] 2207#2207: *505 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:16:35 [info] 2207#2207: *507 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:18:09 [info] 2207#2207: *508 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/31 15:19:52 [info] 2207#2207: *514 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:19:52 [info] 2207#2207: *513 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:19:52 [info] 2207#2207: *512 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:19:52 [info] 2207#2207: *511 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:19:52 [info] 2207#2207: *510 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:19:52 [info] 2207#2207: *509 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:20:24 [info] 2207#2207: *515 client 189.243.196.217 closed keepalive connection
+2018/05/31 15:21:12 [info] 2207#2207: *516 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/05/31 15:33:07 [info] 2207#2207: *517 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:33:35 [info] 2207#2207: *518 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:34:10 [info] 2207#2207: *524 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:34:10 [info] 2207#2207: *523 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:34:10 [info] 2207#2207: *522 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:34:10 [info] 2207#2207: *521 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:34:10 [info] 2207#2207: *520 client 127.0.0.1 closed keepalive connection
+2018/05/31 15:34:10 [info] 2207#2207: *519 client 127.0.0.1 closed keepalive connection
+2018/05/31 16:28:59 [info] 2207#2207: *525 client 95.15.110.64 closed keepalive connection
+2018/05/31 16:29:33 [info] 2207#2207: *526 client 190.57.161.194 closed keepalive connection
+2018/05/31 16:39:07 [info] 2207#2207: *527 client 103.215.200.1 closed keepalive connection
+2018/05/31 17:07:34 [info] 2207#2207: *528 client 177.9.119.137 closed keepalive connection
+2018/05/31 18:15:13 [info] 2207#2207: *529 client 102.177.0.198 closed keepalive connection
+2018/05/31 18:34:05 [info] 2207#2207: *530 client 2.187.220.125 closed keepalive connection
+2018/05/31 19:21:06 [info] 2207#2207: *531 client 124.90.176.76 closed keepalive connection
+2018/05/31 20:06:17 [info] 2207#2207: *532 client 77.235.8.86 closed keepalive connection
+2018/05/31 20:27:57 [info] 2207#2207: *533 client 189.189.28.57 closed keepalive connection
+2018/05/31 21:48:30 [info] 2207#2207: *536 client 62.105.139.214 closed keepalive connection
+2018/05/31 21:51:39 [info] 2207#2207: *537 client 92.53.62.170 closed keepalive connection
+2018/05/31 21:54:08 [info] 2207#2207: *538 client sent invalid method while reading client request line, client: 46.29.161.74, server: localhost, request: "  ��*�fNr��ڮ U��l����b>w���;l  ��0�,�(�$��"
+2018/05/31 21:54:08 [info] 2207#2207: *538 recv() failed (104: Connection reset by peer) while reading client request line, client: 46.29.161.74, server: localhost, request: "  ��*�fNr��ڮ U��l����b>w���;l  ��0�,�(�$��"
+2018/05/31 22:07:56 [info] 2207#2207: *540 client 189.249.153.209 closed keepalive connection
+2018/05/31 22:11:24 [info] 2207#2207: *541 client 201.69.39.72 closed keepalive connection
+2018/05/31 22:26:21 [info] 2207#2207: *542 client 36.66.234.251 closed keepalive connection
+2018/05/31 23:33:27 [info] 2207#2207: *543 client 180.183.58.184 closed keepalive connection
+2018/05/31 23:46:45 [info] 2207#2207: *544 client 36.79.209.141 closed keepalive connection (104: Connection reset by peer)
+2018/05/31 23:55:04 [info] 2207#2207: *545 client 191.205.180.42 closed keepalive connection
+2018/05/31 23:57:25 [info] 2207#2207: *546 client 194.28.169.230 closed keepalive connection
+2018/06/01 00:40:34 [info] 2207#2207: *548 client 201.220.146.230 closed keepalive connection
+2018/06/01 01:27:17 [info] 2207#2207: *549 client 85.255.165.144 closed keepalive connection
+2018/06/01 01:55:44 [info] 2207#2207: *550 client 150.242.255.210 closed keepalive connection
+2018/06/01 04:10:49 [info] 2207#2207: *552 client 95.70.255.106 closed keepalive connection
+2018/06/01 04:17:06 [info] 2207#2207: *553 client 213.207.245.46 closed keepalive connection
+2018/06/01 04:31:27 [info] 2207#2207: *554 client 178.234.10.179 closed keepalive connection
+2018/06/01 04:37:36 [info] 2207#2207: *555 client 177.11.117.107 closed keepalive connection
+2018/06/01 04:46:03 [info] 2207#2207: *556 client 107.170.226.138 closed keepalive connection
+2018/06/01 05:46:00 [info] 2207#2207: *558 client 131.196.56.1 closed keepalive connection
+2018/06/01 07:15:25 [info] 2207#2207: *560 client 164.52.24.163 closed keepalive connection (104: Connection reset by peer)
+2018/06/01 07:23:27 [info] 2207#2207: *561 client 109.195.129.69 closed keepalive connection
+2018/06/01 08:08:16 [info] 2207#2207: *562 client 5.160.148.115 closed keepalive connection
+2018/06/01 08:25:10 [info] 2207#2207: *563 client 179.127.166.40 closed keepalive connection
+2018/06/01 09:05:14 [info] 2207#2207: *576 client 127.0.0.1 closed keepalive connection
+2018/06/01 09:05:14 [info] 2207#2207: *574 client 127.0.0.1 closed keepalive connection
+2018/06/01 09:05:14 [info] 2207#2207: *569 client 127.0.0.1 closed keepalive connection
+2018/06/01 09:05:14 [info] 2207#2207: *568 client 127.0.0.1 closed keepalive connection
+2018/06/01 09:05:14 [info] 2207#2207: *564 client 127.0.0.1 closed keepalive connection
+2018/06/01 09:05:17 [info] 2207#2207: *572 client 127.0.0.1 closed keepalive connection
+2018/06/01 09:05:39 [info] 2207#2207: *598 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/01 09:05:48 [info] 2207#2207: *599 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/01 09:15:49 [info] 2207#2207: *600 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/01 09:42:47 [info] 2207#2207: *601 client 177.21.104.12 closed keepalive connection
+2018/06/01 09:48:36 [info] 2207#2207: *602 client 71.6.202.198 closed keepalive connection
+2018/06/01 09:52:31 [info] 2207#2207: *603 client 127.0.0.1 closed keepalive connection
+2018/06/01 10:06:20 [info] 2207#2207: *607 client 127.0.0.1 closed keepalive connection
+2018/06/01 10:28:08 [info] 2207#2207: *611 client closed connection while waiting for request, client: 139.199.179.20, server: 0.0.0.0:80
+2018/06/01 10:28:08 [info] 2207#2207: *612 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 139.199.179.20, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/06/01 13:37:08 [info] 2207#2207: *615 client 37.79.101.150 closed keepalive connection
+2018/06/01 13:42:41 [info] 2207#2207: *616 client 187.139.6.248 closed keepalive connection
+2018/06/01 14:29:29 [info] 2207#2207: *617 client 187.155.93.184 closed keepalive connection
+2018/06/01 14:38:38 [info] 2207#2207: *618 client 201.110.126.10 closed keepalive connection
+2018/06/01 14:58:16 [info] 2207#2207: *619 client 41.50.83.85 closed keepalive connection
+2018/06/01 15:25:22 [info] 2207#2207: *620 client 213.100.163.159 closed keepalive connection
+2018/06/01 15:25:22 [info] 2207#2207: *621 client 213.100.163.159 closed keepalive connection
+2018/06/01 15:41:00 [info] 2207#2207: *622 client 217.233.165.133 closed keepalive connection
+2018/06/01 15:41:05 [info] 2207#2207: *623 client 217.233.165.133 closed keepalive connection
+2018/06/01 16:00:56 [info] 2207#2207: *624 client 103.31.44.149 closed keepalive connection
+2018/06/01 16:28:43 [info] 2207#2207: *625 client 187.75.191.143 closed keepalive connection
+2018/06/01 16:34:58 [info] 2207#2207: *626 client 178.164.165.29 closed keepalive connection
+2018/06/01 17:21:28 [info] 2207#2207: *627 client 187.151.255.206 closed keepalive connection
+2018/06/01 17:29:18 [info] 2207#2207: *628 client 201.69.118.168 closed keepalive connection
+2018/06/01 18:03:58 [info] 2207#2207: *629 client 128.140.71.76 closed keepalive connection
+2018/06/01 21:11:19 [info] 2207#2207: *631 client 187.147.134.110 closed keepalive connection
+2018/06/01 21:33:36 [info] 2207#2207: *632 client 82.208.137.141 closed keepalive connection
+2018/06/01 22:31:21 [info] 2207#2207: *633 client 202.131.234.26 closed keepalive connection
+2018/06/02 00:13:19 [info] 2207#2207: *634 client sent invalid method while reading client request line, client: 185.143.223.191, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/02 00:13:19 [info] 2207#2207: *634 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.143.223.191, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/02 00:36:44 [info] 2207#2207: *635 client 188.93.244.46 closed keepalive connection
+2018/06/02 01:38:37 [info] 2207#2207: *636 client 103.91.72.59 closed keepalive connection
+2018/06/02 02:17:00 [info] 2207#2207: *637 client 122.52.136.226 closed keepalive connection
+2018/06/02 03:29:19 [info] 2207#2207: *639 client 217.29.212.31 closed keepalive connection
+2018/06/02 03:57:47 [info] 2207#2207: *641 client 109.73.185.135 closed keepalive connection
+2018/06/02 04:26:39 [info] 2207#2207: *642 client 187.151.216.235 closed keepalive connection
+2018/06/02 04:52:34 [info] 2207#2207: *643 client closed connection while waiting for request, client: 191.178.186.243, server: 0.0.0.0:80
+2018/06/02 04:52:37 [info] 2207#2207: *644 client 191.178.186.243 closed keepalive connection
+2018/06/02 04:52:40 [info] 2207#2207: *645 client 191.178.186.243 closed keepalive connection
+2018/06/02 04:52:43 [info] 2207#2207: *646 client 191.178.186.243 closed keepalive connection
+2018/06/02 04:52:46 [info] 2207#2207: *647 client 191.178.186.243 closed keepalive connection
+2018/06/02 04:52:56 [info] 2207#2207: *651 client 191.178.186.243 closed keepalive connection
+2018/06/02 05:02:46 [info] 2207#2207: *648 client timed out (110: Connection timed out) while waiting for request, client: 191.178.186.243, server: 0.0.0.0:80
+2018/06/02 05:02:49 [info] 2207#2207: *649 client timed out (110: Connection timed out) while waiting for request, client: 191.178.186.243, server: 0.0.0.0:80
+2018/06/02 06:12:44 [info] 2207#2207: *653 client 103.212.91.73 closed keepalive connection
+2018/06/02 06:23:51 [info] 2207#2207: *654 client 86.126.85.237 closed keepalive connection
+2018/06/02 06:30:43 [info] 2207#2207: *655 client 5.226.50.61 closed keepalive connection
+2018/06/02 06:30:43 [info] 2207#2207: *656 client 5.226.50.61 closed keepalive connection
+2018/06/02 07:31:37 [info] 2207#2207: *657 client 187.94.114.166 closed keepalive connection
+2018/06/02 08:07:25 [info] 2207#2207: *659 client 182.88.232.17 closed keepalive connection
+2018/06/02 09:00:27 [info] 2207#2207: *660 client 187.120.128.188 closed keepalive connection
+2018/06/02 09:04:07 [info] 2207#2207: *662 client 177.38.3.136 closed keepalive connection
+2018/06/02 09:29:30 [info] 2207#2207: *664 client 93.152.165.125 closed keepalive connection
+2018/06/02 09:30:21 [info] 2207#2207: *665 client 103.101.56.18 closed keepalive connection
+2018/06/02 10:31:50 [info] 2207#2207: *666 client closed connection while waiting for request, client: 115.126.25.55, server: 0.0.0.0:80
+2018/06/02 10:31:50 [info] 2207#2207: *667 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 115.126.25.55, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/06/02 10:33:23 [info] 2207#2207: *669 client 115.126.25.55 closed keepalive connection
+2018/06/02 11:04:50 [info] 2207#2207: *670 client 178.47.126.25 closed keepalive connection
+2018/06/02 11:23:01 [info] 2207#2207: *671 client 201.103.186.158 closed keepalive connection
+2018/06/02 14:22:36 [info] 2207#2207: *674 client 79.17.104.9 closed keepalive connection
+2018/06/02 15:17:53 [info] 2207#2207: *675 client 178.47.124.87 closed keepalive connection
+2018/06/02 15:35:33 [info] 2207#2207: *676 client 202.43.154.162 closed keepalive connection (104: Connection reset by peer)
+2018/06/02 15:55:29 [info] 2207#2207: *677 client sent invalid method while reading client request line, client: 185.143.223.191, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/02 15:55:30 [info] 2207#2207: *677 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.143.223.191, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/02 16:51:27 [info] 2207#2207: *678 client closed connection while waiting for request, client: 118.24.117.110, server: 0.0.0.0:80
+2018/06/02 16:51:28 [info] 2207#2207: *679 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JBKLIX1yYpYpipS0ayhe01IBc4dKNrlptKoblL2k1BZtBk3BkxzoFWPJNFLqyomaI0FLml0acLLBLlMPgQHOZmIqWWHbZPObr7dKqBjpdK12MlM1Z0bkOPT8Qu5p0tnj9qz0pPRkNhmHRkOhKpKQVsHcmlMyDKnTRkM1Z601ioMaepvLva8OlMzaY7nXYP1eYdkSSMXxMksMKtT5ZBR8Rkr8Ktyq9Cc64KzlpKTK28mLiqJ3rkM42km1hP3Yq4ldO4QK1KPab9qJr1ioIPNxqOaJRkLRxkTFQMS8RNC5qdm0c81gpiPnPisYK6OdphPLbWlfzgKOj5P1IoaG0Wb7R7PVrHLzNvt9FGYoz5zK30okp1WYPQNqBJYs0QOaQZNpb3NpbHaGSYEOevKOwehkpOb9P1Z21BrH9pP2c0BdNrnraBoaNrb0BHxkr5nNmk9oZ53YwVpjJpQKqX3Pp39pIpBiWp0jJdb02JMO1FOxsENfeNavYoweLqYonwB7aGNwqFQXNMkVMHQkiovuauI045kvpKjoe4Rcm0m0ipJKvqiYETkPipKPk84lyoKOIoLoP..." while reading client request headers, client: 118.24.117.110, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/06/02 17:24:06 [info] 2207#2207: *682 client 125.167.196.61 closed keepalive connection
+2018/06/02 19:15:09 [info] 2207#2207: *683 client 36.89.82.170 closed keepalive connection
+2018/06/02 19:30:59 [info] 2207#2207: *684 client 201.105.135.104 closed keepalive connection
+2018/06/02 19:31:40 [info] 2207#2207: *685 client 88.250.37.137 closed keepalive connection
+2018/06/02 21:10:43 [info] 2207#2207: *686 client closed connection while waiting for request, client: 114.255.113.150, server: 0.0.0.0:80
+2018/06/02 21:10:44 [info] 2207#2207: *687 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JBKLIX1yYpYpipS0ayhe01IBc4dKNrlptKoblL2k1BZtBk3BkxzoFWPJNFLqyomaI0FLml0acLLBLlMPgQHOZmIqWWHbZPObr7dKqBjpdK12MlM1Z0bkOPT8Qu5p0tnj9qz0pPRkNhmHRkOhKpKQVsHcmlMyDKnTRkM1Z601ioMaepvLva8OlMzaY7nXYP1eYdkSSMXxMksMKtT5ZBR8Rkr8Ktyq9Cc64KzlpKTK28mLiqJ3rkM42km1hP3Yq4ldO4QK1KPab9qJr1ioIPNxqOaJRkLRxkTFQMS8RNC5qdm0c81gpiPnPisYK6OdphPLbWlfzgKOj5P1IoaG0Wb7R7PVrHLzNvt9FGYoz5zK30okp1WYPQNqBJYs0QOaQZNpb3NpbHaGSYEOevKOwehkpOb9P1Z21BrH9pP2c0BdNrnraBoaNrb0BHxkr5nNmk9oZ53YwVpjJpQKqX3Pp39pIpBiWp0jJdb02JMO1FOxsENfeNavYoweLqYonwB7aGNwqFQXNMkVMHQkiovuauI045kvpKjoe4Rcm0m0ipJKvqiYETkPipKPk84lyoKOIoLoP..." while reading client request headers, client: 114.255.113.150, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/06/02 21:12:01 [info] 2207#2207: *688 client 114.255.113.150 closed keepalive connection (104: Connection reset by peer)
+2018/06/02 21:39:25 [info] 2207#2207: *689 client 5.234.169.141 closed keepalive connection
+2018/06/02 21:51:14 [info] 2207#2207: *690 client 176.109.35.60 closed keepalive connection
+2018/06/02 23:49:49 [info] 2207#2207: *693 client 103.46.239.82 closed keepalive connection
+2018/06/03 00:04:23 [info] 2207#2207: *694 client 103.91.93.42 closed keepalive connection
+2018/06/03 00:14:28 [info] 2207#2207: *695 client 189.152.224.81 closed keepalive connection
+2018/06/03 01:41:06 [info] 2207#2207: *696 client 190.94.144.246 closed keepalive connection
+2018/06/03 01:41:12 [info] 2207#2207: *697 client 190.94.144.246 closed keepalive connection
+2018/06/03 02:55:33 [info] 2207#2207: *699 client 89.19.115.38 closed keepalive connection
+2018/06/03 03:20:32 [info] 2207#2207: *700 client 203.77.215.14 closed keepalive connection
+2018/06/03 08:33:18 [info] 2207#2207: *704 client 125.162.78.20 closed keepalive connection
+2018/06/03 10:38:00 [info] 2207#2207: *705 client 79.7.58.90 closed keepalive connection
+2018/06/03 10:58:45 [info] 2207#2207: *706 client sent HTTP/1.1 request without "Host" header while reading client request headers, client: 141.212.122.128, server: localhost, request: "GET /x HTTP/1.1"
+2018/06/03 11:11:15 [info] 2207#2207: *707 client 187.207.66.33 closed keepalive connection
+2018/06/03 11:19:37 [info] 2207#2207: *708 client 77.45.7.50 closed keepalive connection
+2018/06/03 11:35:43 [info] 2207#2207: *710 client sent invalid method while reading client request line, client: 104.179.82.88, server: localhost, request: "�   G�W���`�=o�Tx��u;4��n��8PB�Ep��(!N���	&��Ϸ�)� �M����V[�/[\��xiu:}0���r��jK]�,ƃ}w2"
+2018/06/03 11:35:46 [info] 2207#2207: *711 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:37:47 [info] 2207#2207: *712 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:39:47 [info] 2207#2207: *714 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:41:47 [info] 2207#2207: *715 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:43:47 [info] 2207#2207: *716 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:45:47 [info] 2207#2207: *717 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:47:48 [info] 2207#2207: *718 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:49:48 [info] 2207#2207: *719 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:51:48 [info] 2207#2207: *720 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:53:48 [info] 2207#2207: *721 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:55:48 [info] 2207#2207: *722 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:57:48 [info] 2207#2207: *723 client 104.179.82.88 closed keepalive connection
+2018/06/03 11:59:49 [info] 2207#2207: *724 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:01:49 [info] 2207#2207: *725 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:03:50 [info] 2207#2207: *726 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:05:50 [info] 2207#2207: *727 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:07:51 [info] 2207#2207: *728 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:09:51 [info] 2207#2207: *729 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:11:51 [info] 2207#2207: *730 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:13:52 [info] 2207#2207: *731 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:15:52 [info] 2207#2207: *732 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:17:52 [info] 2207#2207: *733 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:19:53 [info] 2207#2207: *734 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:21:53 [info] 2207#2207: *735 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:23:53 [info] 2207#2207: *736 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:25:54 [info] 2207#2207: *737 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:27:51 [info] 2207#2207: *738 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:29:51 [info] 2207#2207: *739 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:31:52 [info] 2207#2207: *740 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:33:52 [info] 2207#2207: *741 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:35:52 [info] 2207#2207: *742 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:37:52 [info] 2207#2207: *743 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:39:52 [info] 2207#2207: *744 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:41:52 [info] 2207#2207: *745 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:43:53 [info] 2207#2207: *746 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:45:53 [info] 2207#2207: *747 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:47:53 [info] 2207#2207: *748 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:49:54 [info] 2207#2207: *749 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:51:54 [info] 2207#2207: *750 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:53:43 [info] 2207#2207: *751 client 103.19.255.130 closed keepalive connection
+2018/06/03 12:53:54 [info] 2207#2207: *752 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:55:55 [info] 2207#2207: *753 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:57:58 [info] 2207#2207: *754 client 104.179.82.88 closed keepalive connection
+2018/06/03 12:59:55 [info] 2207#2207: *755 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:01:55 [info] 2207#2207: *756 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:03:56 [info] 2207#2207: *757 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:05:56 [info] 2207#2207: *758 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:07:56 [info] 2207#2207: *759 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:09:56 [info] 2207#2207: *760 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:11:56 [info] 2207#2207: *761 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:13:56 [info] 2207#2207: *762 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:15:57 [info] 2207#2207: *763 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:17:57 [info] 2207#2207: *764 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:19:57 [info] 2207#2207: *765 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:21:57 [info] 2207#2207: *766 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:23:57 [info] 2207#2207: *767 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:25:57 [info] 2207#2207: *768 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:27:58 [info] 2207#2207: *769 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:29:58 [info] 2207#2207: *770 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:31:58 [info] 2207#2207: *771 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:33:58 [info] 2207#2207: *773 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:36:03 [info] 2207#2207: *774 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:37:58 [info] 2207#2207: *775 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:39:59 [info] 2207#2207: *776 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:41:59 [info] 2207#2207: *777 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:43:59 [info] 2207#2207: *778 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:45:59 [info] 2207#2207: *779 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:48:00 [info] 2207#2207: *780 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:49:59 [info] 2207#2207: *781 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:52:00 [info] 2207#2207: *782 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:54:00 [info] 2207#2207: *783 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:56:00 [info] 2207#2207: *784 client 104.179.82.88 closed keepalive connection
+2018/06/03 13:58:00 [info] 2207#2207: *785 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:00:00 [info] 2207#2207: *786 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:02:00 [info] 2207#2207: *787 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:04:02 [info] 2207#2207: *788 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:06:02 [info] 2207#2207: *789 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:08:02 [info] 2207#2207: *790 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:10:02 [info] 2207#2207: *791 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:12:02 [info] 2207#2207: *792 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:14:03 [info] 2207#2207: *793 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:16:03 [info] 2207#2207: *794 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:18:03 [info] 2207#2207: *795 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:20:04 [info] 2207#2207: *796 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:22:04 [info] 2207#2207: *797 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:24:10 [info] 2207#2207: *798 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:26:09 [info] 2207#2207: *799 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:28:10 [info] 2207#2207: *800 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:28:30 [info] 2207#2207: *801 client 189.18.118.248 closed keepalive connection
+2018/06/03 14:30:11 [info] 2207#2207: *802 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:32:11 [info] 2207#2207: *803 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:34:11 [info] 2207#2207: *804 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:36:11 [info] 2207#2207: *805 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:38:11 [info] 2207#2207: *806 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:40:12 [info] 2207#2207: *807 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:42:12 [info] 2207#2207: *808 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:44:12 [info] 2207#2207: *809 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:46:12 [info] 2207#2207: *810 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:48:12 [info] 2207#2207: *811 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:50:12 [info] 2207#2207: *812 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:52:13 [info] 2207#2207: *813 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:54:13 [info] 2207#2207: *814 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:56:13 [info] 2207#2207: *815 client 104.179.82.88 closed keepalive connection
+2018/06/03 14:58:13 [info] 2207#2207: *816 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:00:13 [info] 2207#2207: *817 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:02:14 [info] 2207#2207: *818 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:04:14 [info] 2207#2207: *819 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:06:14 [info] 2207#2207: *820 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:08:14 [info] 2207#2207: *821 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:10:14 [info] 2207#2207: *822 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:12:14 [info] 2207#2207: *823 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:14:15 [info] 2207#2207: *824 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:16:15 [info] 2207#2207: *825 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:17:27 [info] 2207#2207: *826 client sent invalid method while reading client request line, client: 73.140.195.45, server: localhost, request: "�   	��rUӤydL+Nd".bZ_U�Vi��X _vw�q����>��p(��O�ʮ����Bh*k�F�Jd���`�:�?'v��)4���~ݪߞ�|Ԭ�뮵SQ�� �=k�|���-��t9��hI"
+2018/06/03 15:18:15 [info] 2207#2207: *827 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:20:15 [info] 2207#2207: *828 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:22:15 [info] 2207#2207: *829 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:24:15 [info] 2207#2207: *830 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:26:16 [info] 2207#2207: *831 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:28:16 [info] 2207#2207: *832 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:30:16 [info] 2207#2207: *833 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:32:14 [info] 2207#2207: *835 client 177.102.135.26 closed keepalive connection
+2018/06/03 15:32:16 [info] 2207#2207: *834 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:34:16 [info] 2207#2207: *836 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:36:16 [info] 2207#2207: *837 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:38:17 [info] 2207#2207: *838 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:40:17 [info] 2207#2207: *839 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:42:05 [info] 2207#2207: *840 client closed connection while waiting for request, client: 42.51.38.170, server: 0.0.0.0:80
+2018/06/03 15:42:06 [info] 2207#2207: *841 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 42.51.38.170, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/06/03 15:42:17 [info] 2207#2207: *844 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:44:17 [info] 2207#2207: *845 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:46:17 [info] 2207#2207: *846 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:48:17 [info] 2207#2207: *847 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:50:17 [info] 2207#2207: *848 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:51:50 [info] 2207#2207: *849 client closed connection while waiting for request, client: 47.91.207.48, server: 0.0.0.0:80
+2018/06/03 15:51:50 [info] 2207#2207: *850 client sent too long header line: "If: <http://localhost/aaaaaaa潨硣睡焳椶䝲稹䭷佰畓穏䡨噣浔桅㥓偬啧杣㍤䘰硅楒吱䱘橑牁䈱瀵塐㙤汇㔹呪倴呃睒偡㈲测水㉇扁㝍兡塢䝳剐㙰畄桪㍴乊硫䥶乳䱪坺潱塊㈰㝮䭉前䡣潌畖畵景癨䑍偰稶手敗畐橲穫睢癘扈攱ご汹偊呢倳㕷橷䅄㌴摶䵆噔䝬敃瘲牸坩䌸扲娰夸呈ȂȂዀ栃汄剖䬷汭佘塚祐䥪塏䩒䅐晍Ꮐ栃䠴攱潃湦瑁䍬Ꮐ栃千橁灒㌰塦䉌灋捆关祁穐䩬> (Not <locktoken:write1>) <http://localhost/bbbbbbb祈慵佃潧歯䡅㙆杵䐳㡱坥婢吵噡楒橓兗㡎奈捕䥱䍤摲㑨䝘煹㍫歕浈偏穆㑱潔瑃奖潯獁㑗慨穲㝅䵉坎呈䰸㙺㕲扦湃䡭㕈慷䵚慴䄳䍥割浩㙱乤渹捓此兆估硯牓材䕓穣焹体䑖漶獹桷穖慊㥅㘹氹䔱㑲卥塊䑎穄氵婖扁湲昱奙吳ㅂ塥奁煐〶坷䑗卡Ꮐ栃湏栀湏栀䉇癪Ꮐ栃䉗佴奇刴䭦䭂瑤硯悂栁儵牺瑺䵇䑙块넓栀ㅶ湯ⓣ栁ᑠ栃̀翾￿￿Ꮐ栃Ѯ栃煮瑰ᐴ栃⧧栁鎑栀㤱普䥕げ呫癫牊祡ᐜ栃清栀眲票䵩㙬䑨䵰艆栀䡷㉓ᶪ栂潪䌵ᏸ栃⧧栁VVYAIAIAIAIAIAIAIAIAIAIAIAIAIAIAjXAQADAZABARALAYAIAQAIAQAIAhAAAZ1AIAIAJ11AIAIABABABQI1AIQIAIQI111AIAJQYAZBABABABABkMAGB9u4JB9lk8sYkPkPypC0CY7uNQfr1TdKNrP0TKPRlLDKaBMDtKqbkxjoh70JNFP1yoP17PDlMls1QlYrnLmP7QXOlMZaI7K2hp22Nw4KqBjpBk12oLKQJ02kq03HE5WPQdOZm18PB0tKMxlXbk0XO0m1j3zCml0IrkLt2kiqxVnQYo01upvLva6ojmyqfgLxyPd5Xt9sQmHxoKqmLdSExbnxBk1Ho49qXSC6rkjlpK2kb8mLja8SDKjdDKKQ6pu90DmTNDaKqKOq1IPZr19ogpOhOo0ZtKzrXksVomqXPnc5qdm0ph1g2IPn0i2iJFR40hPLsGKvIwIoz5P1ioNwaGnw0WofRHnZofSIuWioJ5XkOpQKlqy921nqPjkSoanqrJPPr3r0Ph27ayCoev9oYEXk0OqImaFrNrBHkPp2aPtDNrNrB2r10Rb0S8hknunNoKkOZ5E96faZjp1KRHaplsipKPQygprJm4R0BJkoNvrHQenfeNTFIoiE019oogogNw27QF2HNMjfJxsKkOIEbeupqeMVNkZordu3kPM09pHkXQwyVDYpKPKPK8fLyoKOyonOp..." while reading client request headers, client: 47.91.207.48, server: localhost, request: "PROPFIND / HTTP/1.1", host: "localhost"
+2018/06/03 15:52:18 [info] 2207#2207: *853 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:54:18 [info] 2207#2207: *854 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:56:18 [info] 2207#2207: *855 client 104.179.82.88 closed keepalive connection
+2018/06/03 15:58:18 [info] 2207#2207: *856 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:00:18 [info] 2207#2207: *857 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:02:19 [info] 2207#2207: *858 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:04:19 [info] 2207#2207: *859 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:06:19 [info] 2207#2207: *860 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:08:19 [info] 2207#2207: *861 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:10:19 [info] 2207#2207: *862 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:12:19 [info] 2207#2207: *863 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:14:19 [info] 2207#2207: *864 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:16:20 [info] 2207#2207: *865 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:18:20 [info] 2207#2207: *866 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:20:20 [info] 2207#2207: *867 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:22:20 [info] 2207#2207: *868 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:24:21 [info] 2207#2207: *869 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:26:21 [info] 2207#2207: *870 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:57:55 [info] 2207#2207: *871 client 104.179.82.88 closed keepalive connection
+2018/06/03 16:59:57 [info] 2207#2207: *872 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:01:57 [info] 2207#2207: *873 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:03:57 [info] 2207#2207: *874 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:05:58 [info] 2207#2207: *875 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:07:58 [info] 2207#2207: *876 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:10:03 [info] 2207#2207: *877 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:11:59 [info] 2207#2207: *878 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:13:59 [info] 2207#2207: *879 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:15:59 [info] 2207#2207: *880 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:18:00 [info] 2207#2207: *881 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:20:01 [info] 2207#2207: *882 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:22:00 [info] 2207#2207: *883 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:24:01 [info] 2207#2207: *884 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:26:03 [info] 2207#2207: *885 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:26:42 [info] 2207#2207: *886 client 163.47.87.82 closed keepalive connection
+2018/06/03 17:28:03 [info] 2207#2207: *887 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:30:04 [info] 2207#2207: *888 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:32:05 [info] 2207#2207: *889 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:34:05 [info] 2207#2207: *890 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:36:06 [info] 2207#2207: *891 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:38:06 [info] 2207#2207: *892 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:40:07 [info] 2207#2207: *893 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:41:44 [info] 2207#2207: *894 client 177.189.141.240 closed keepalive connection
+2018/06/03 17:42:07 [info] 2207#2207: *895 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:43:26 [info] 2207#2207: *896 client sent invalid method while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/03 17:43:26 [info] 2207#2207: *896 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/03 17:43:27 [info] 2207#2207: *897 client sent invalid method while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/03 17:43:27 [info] 2207#2207: *897 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/03 17:43:27 [info] 2207#2207: *898 client sent invalid method while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/03 17:43:27 [info] 2207#2207: *898 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/03 17:43:28 [info] 2207#2207: *899 client sent invalid method while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/03 17:43:28 [info] 2207#2207: *899 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/03 17:44:08 [info] 2207#2207: *900 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:46:08 [info] 2207#2207: *901 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:48:09 [info] 2207#2207: *902 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:50:09 [info] 2207#2207: *903 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:52:10 [info] 2207#2207: *904 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:54:10 [info] 2207#2207: *905 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:56:11 [info] 2207#2207: *906 client 104.179.82.88 closed keepalive connection
+2018/06/03 17:58:11 [info] 2207#2207: *907 client 104.179.82.88 closed keepalive connection
+2018/06/03 18:00:05 [info] 2207#2207: *908 client 104.179.82.88 closed keepalive connection
+2018/06/03 18:02:05 [info] 2207#2207: *909 client 104.179.82.88 closed keepalive connection
+2018/06/03 18:04:06 [info] 2207#2207: *910 client 104.179.82.88 closed keepalive connection
+2018/06/03 18:07:57 [info] 2207#2207: *911 client 36.76.152.229 closed keepalive connection
+2018/06/03 19:48:37 [info] 2207#2207: *912 client 131.108.54.169 closed keepalive connection
+2018/06/03 21:34:03 [info] 2207#2207: *914 client 187.136.83.66 closed keepalive connection
+2018/06/03 21:42:46 [info] 2207#2207: *915 client 96.85.5.221 closed keepalive connection
+2018/06/03 22:34:20 [info] 2207#2207: *916 client 177.95.39.42 closed keepalive connection
+2018/06/03 22:50:28 [info] 2207#2207: *917 client 187.147.158.255 closed keepalive connection
+2018/06/03 23:21:08 [info] 2207#2207: *918 client 78.137.75.51 closed keepalive connection
+2018/06/03 23:21:14 [info] 2207#2207: *919 client 78.137.75.51 closed keepalive connection
+2018/06/04 00:43:31 [info] 2207#2207: *920 client 189.141.224.19 closed keepalive connection
+2018/06/04 02:11:05 [info] 2207#2207: *923 client 201.110.219.39 closed keepalive connection
+2018/06/04 02:23:27 [info] 2207#2207: *924 client 103.69.218.218 closed keepalive connection
+2018/06/04 02:55:20 [info] 2207#2207: *925 client 201.123.125.135 closed keepalive connection
+2018/06/04 03:35:14 [info] 2207#2207: *926 client 82.76.44.21 closed keepalive connection
+2018/06/04 04:22:15 [info] 2207#2207: *927 client 107.170.228.245 closed keepalive connection
+2018/06/04 04:48:43 [info] 2207#2207: *928 client 103.110.22.47 closed keepalive connection
+2018/06/04 06:05:14 [info] 2207#2207: *929 client 45.234.222.100 closed keepalive connection
+2018/06/04 06:07:41 [info] 2207#2207: *930 client 91.215.232.105 closed keepalive connection
+2018/06/04 06:15:27 [info] 2207#2207: *931 client 201.103.115.133 closed keepalive connection
+2018/06/04 06:26:28 [info] 2207#2207: *933 client 103.79.156.111 closed keepalive connection
+2018/06/04 06:45:12 [info] 2207#2207: *934 client closed connection while waiting for request, client: 116.252.190.234, server: 0.0.0.0:80
+2018/06/04 06:45:13 [info] 2207#2207: *935 client 116.252.190.234 closed keepalive connection
+2018/06/04 06:45:13 [info] 2207#2207: *936 client 116.252.190.234 closed keepalive connection
+2018/06/04 07:25:58 [info] 2207#2207: *937 client 187.208.147.140 closed keepalive connection
+2018/06/04 07:54:30 [info] 2207#2207: *938 client 189.236.20.128 closed keepalive connection
+2018/06/04 08:00:49 [info] 2207#2207: *939 client 201.152.61.21 closed keepalive connection
+2018/06/04 08:24:41 [info] 2207#2207: *940 client 103.255.234.221 closed keepalive connection
+2018/06/04 08:46:37 [info] 2207#2207: *941 client 222.186.21.69 closed keepalive connection
+2018/06/04 09:16:14 [info] 2207#2207: *942 client 201.76.113.14 closed keepalive connection
+2018/06/04 09:45:16 [info] 2207#2207: *943 client 116.96.196.115 closed keepalive connection
+2018/06/04 09:51:07 [warn] 2207#2207: *944 an upstream response is buffered to a temporary file /var/lib/nginx/tmp/proxy/1/00/0000000001 while reading upstream, client: 172.103.136.167, server: localhost, request: "GET /mot/vendor/plotly-latest.min.js HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/vendor/plotly-latest.min.js", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/06/04 09:51:07 [warn] 2207#2207: *954 an upstream response is buffered to a temporary file /var/lib/nginx/tmp/proxy/2/00/0000000002 while reading upstream, client: 172.103.136.167, server: localhost, request: "GET /mot/packages/modules.js?hash=63cd54920c1a45b731caf0b286e719a73f845dbd HTTP/1.1", upstream: "http://127.0.0.1:3000/mot/packages/modules.js?hash=63cd54920c1a45b731caf0b286e719a73f845dbd", host: "notecc.cs.ualberta.ca", referrer: "http://notecc.cs.ualberta.ca/mot/"
+2018/06/04 09:52:25 [info] 2207#2207: *1030 client 177.103.162.210 closed keepalive connection
+2018/06/04 09:55:09 [info] 2207#2207: *1031 client 189.146.203.34 closed keepalive connection
+2018/06/04 11:15:43 [info] 2207#2207: *1032 client 202.168.244.105 closed keepalive connection
+2018/06/04 11:50:24 [info] 2207#2207: *1038 client 127.0.0.1 closed keepalive connection
+2018/06/04 11:50:24 [info] 2207#2207: *1039 client 127.0.0.1 closed keepalive connection
+2018/06/04 11:50:24 [info] 2207#2207: *1033 client 127.0.0.1 closed keepalive connection
+2018/06/04 11:50:24 [info] 2207#2207: *1043 client 127.0.0.1 closed keepalive connection
+2018/06/04 11:50:26 [info] 2207#2207: *1037 client 127.0.0.1 closed keepalive connection
+2018/06/04 11:50:26 [info] 2207#2207: *1044 client 127.0.0.1 closed keepalive connection
+2018/06/04 13:02:42 [info] 2207#2207: *1161 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/04 13:19:58 [info] 2207#2207: *1162 client 82.147.30.98 closed keepalive connection
+2018/06/04 13:42:12 [info] 2207#2207: *1163 client 189.180.54.193 closed keepalive connection
+2018/06/04 14:03:54 [info] 2207#2207: *1164 client 92.112.50.5 closed keepalive connection
+2018/06/04 14:16:11 [info] 2207#2207: *1165 client 114.69.240.50 closed keepalive connection
+2018/06/04 14:17:11 [info] 2207#2207: *1178 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:17:11 [info] 2207#2207: *1172 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:17:11 [info] 2207#2207: *1171 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:17:11 [info] 2207#2207: *1166 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:17:13 [info] 2207#2207: *1176 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:17:27 [info] 2207#2207: *1170 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:19:53 [info] 2207#2207: *1241 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:19:53 [info] 2207#2207: *1239 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:19:53 [info] 2207#2207: *1238 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:19:54 [info] 2207#2207: *1240 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:19:54 [info] 2207#2207: *1242 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:19:54 [info] 2207#2207: *1237 client 127.0.0.1 closed keepalive connection
+2018/06/04 14:20:27 [info] 2207#2207: *1243 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/04 14:20:54 [info] 2207#2207: *1244 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/04 14:38:20 [info] 2207#2207: *1245 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/04 14:39:18 [info] 2207#2207: *1246 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/04 14:50:59 [info] 2207#2207: *1247 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/04 15:08:14 [info] 2207#2207: *1248 client 185.44.63.5 closed keepalive connection
+2018/06/04 15:38:10 [info] 2207#2207: *1249 client closed connection while waiting for request, client: 188.92.74.189, server: 0.0.0.0:80
+2018/06/04 16:11:15 [info] 2207#2207: *1252 client 187.175.47.215 closed keepalive connection
+2018/06/04 16:13:16 [info] 2207#2207: *1256 client 142.244.5.48 closed keepalive connection
+2018/06/04 16:13:16 [info] 2207#2207: *1258 client 142.244.5.48 closed keepalive connection
+2018/06/04 16:13:16 [info] 2207#2207: *1261 client 142.244.5.48 closed keepalive connection
+2018/06/04 16:13:16 [info] 2207#2207: *1262 client 142.244.5.48 closed keepalive connection
+2018/06/04 16:13:16 [info] 2207#2207: *1260 client 142.244.5.48 closed keepalive connection
+2018/06/04 16:13:16 [info] 2207#2207: *1253 client 142.244.5.48 closed keepalive connection
+2018/06/04 16:13:29 [info] 2207#2207: *1340 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 16:23:20 [info] 2207#2207: *1341 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 16:23:33 [info] 2207#2207: *1342 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 16:24:02 [info] 2207#2207: *1343 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 16:31:11 [info] 2207#2207: *1344 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/04 16:52:12 [info] 2207#2207: *1345 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 16:53:56 [info] 2207#2207: *1346 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 16:54:25 [info] 2207#2207: *1349 client 142.244.5.48 closed keepalive connection
+2018/06/04 16:54:25 [info] 2207#2207: *1348 client 142.244.5.48 closed keepalive connection
+2018/06/04 16:54:25 [info] 2207#2207: *1347 client 142.244.5.48 closed keepalive connection
+2018/06/04 16:54:33 [info] 2207#2207: *1350 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 16:59:56 [info] 2207#2207: *1351 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 17:00:50 [info] 2207#2207: *1363 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:50 [info] 2207#2207: *1359 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:50 [info] 2207#2207: *1358 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:50 [info] 2207#2207: *1361 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:50 [info] 2207#2207: *1362 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:50 [info] 2207#2207: *1360 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:59 [info] 2207#2207: *1364 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:59 [info] 2207#2207: *1365 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:59 [info] 2207#2207: *1366 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:59 [info] 2207#2207: *1367 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:00:59 [info] 2207#2207: *1368 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:01:00 [info] 2207#2207: *1369 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:01:00 [info] 2207#2207: *1372 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:01:00 [info] 2207#2207: *1370 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:01:00 [info] 2207#2207: *1371 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:01:05 [info] 2207#2207: *1376 client 104.128.106.34 closed keepalive connection
+2018/06/04 17:01:12 [info] 2207#2207: *1377 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 17:01:12 [info] 2207#2207: *1378 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 17:01:48 [info] 2207#2207: *1380 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:01:48 [info] 2207#2207: *1375 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:03:27 [info] 2207#2207: *1379 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:03:27 [info] 2207#2207: *1383 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:03:27 [info] 2207#2207: *1374 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:03:27 [info] 2207#2207: *1382 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:03:27 [info] 2207#2207: *1381 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:03:27 [info] 2207#2207: *1373 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:03:54 [info] 2207#2207: *1384 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 17:09:37 [info] 2207#2207: *1401 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 17:14:25 [info] 2207#2207: *1421 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:14:25 [info] 2207#2207: *1417 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:14:25 [info] 2207#2207: *1419 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:14:25 [info] 2207#2207: *1418 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:14:25 [info] 2207#2207: *1420 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:14:25 [info] 2207#2207: *1416 client 142.244.5.48 closed keepalive connection
+2018/06/04 17:17:53 [info] 2207#2207: *1422 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 17:18:29 [info] 2207#2207: *1423 client closed connection while waiting for request, client: 142.244.5.48, server: 0.0.0.0:80
+2018/06/04 17:34:47 [info] 2207#2207: *1424 client 187.44.253.82 closed keepalive connection
+2018/06/04 17:50:20 [info] 2207#2207: *1425 client 41.177.143.5 closed keepalive connection
+2018/06/04 17:50:51 [info] 2207#2207: *1426 client 189.163.190.96 closed keepalive connection
+2018/06/04 18:00:36 [info] 2207#2207: *1427 client 183.87.12.130 closed keepalive connection
+2018/06/04 18:03:00 [info] 2207#2207: *1428 client 188.254.128.153 closed keepalive connection
+2018/06/04 18:44:19 [info] 2207#2207: *1429 client sent invalid method while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:44:19 [info] 2207#2207: *1429 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:44:19 [info] 2207#2207: *1430 client sent invalid method while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:44:19 [info] 2207#2207: *1430 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:44:19 [info] 2207#2207: *1431 client sent invalid method while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:44:19 [info] 2207#2207: *1431 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:44:20 [info] 2207#2207: *1432 client sent invalid method while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:44:20 [info] 2207#2207: *1432 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:44:21 [info] 2207#2207: *1433 client sent invalid method while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:44:21 [info] 2207#2207: *1433 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.222.211.18, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/04 18:53:07 [info] 2207#2207: *1434 client 186.216.98.251 closed keepalive connection
+2018/06/04 19:43:24 [info] 2207#2207: *1435 client 77.38.27.221 closed keepalive connection
+2018/06/04 20:25:18 [info] 2207#2207: *1436 client 187.169.203.71 closed keepalive connection
+2018/06/04 21:15:25 [info] 2207#2207: *1437 client 95.143.131.145 closed keepalive connection
+2018/06/04 21:32:58 [info] 2207#2207: *1438 client 187.0.167.107 closed keepalive connection
+2018/06/04 21:49:47 [info] 2207#2207: *1439 client 71.6.202.198 closed keepalive connection
+2018/06/04 21:56:40 [info] 2207#2207: *1440 client closed connection while waiting for request, client: 186.220.95.17, server: 0.0.0.0:80
+2018/06/04 21:56:44 [info] 2207#2207: *1441 client 186.220.95.17 closed keepalive connection
+2018/06/04 21:56:47 [info] 2207#2207: *1442 client 186.220.95.17 closed keepalive connection
+2018/06/04 21:56:50 [info] 2207#2207: *1443 client 186.220.95.17 closed keepalive connection
+2018/06/04 21:56:54 [info] 2207#2207: *1444 client 186.220.95.17 closed keepalive connection
+2018/06/04 21:59:40 [info] 2207#2207: *1445 client 103.15.80.149 closed keepalive connection
+2018/06/04 22:11:13 [info] 2207#2207: *1446 client 79.107.230.104 closed keepalive connection
+2018/06/04 23:14:40 [info] 2207#2207: *1447 client 187.155.24.138 closed keepalive connection
+2018/06/05 00:41:53 [info] 2207#2207: *1448 client 85.9.70.107 closed keepalive connection
+2018/06/05 00:41:53 [info] 2207#2207: *1449 client 85.9.70.107 closed keepalive connection
+2018/06/05 01:32:34 [info] 2207#2207: *1450 client sent invalid method while reading client request line, client: 185.143.222.5, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/05 01:32:34 [info] 2207#2207: *1450 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.143.222.5, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/05 01:59:46 [info] 2207#2207: *1451 client 222.82.61.150 closed keepalive connection
+2018/06/05 02:27:25 [info] 2207#2207: *1452 client 201.110.179.168 closed keepalive connection
+2018/06/05 03:08:07 [info] 2207#2207: *1453 client 189.159.19.14 closed keepalive connection
+2018/06/05 03:59:14 [info] 2207#2207: *1454 client 189.163.203.0 closed keepalive connection
+2018/06/05 04:22:15 [info] 2207#2207: *1455 client 111.125.136.178 closed keepalive connection
+2018/06/05 04:30:11 [info] 2207#2207: *1456 client 92.45.19.17 closed keepalive connection
+2018/06/05 04:47:12 [info] 2207#2207: *1457 client 107.170.228.245 closed keepalive connection
+2018/06/05 05:05:31 [info] 2207#2207: *1460 client 54.81.33.117 closed keepalive connection
+2018/06/05 05:05:31 [info] 2207#2207: *1459 client 54.81.33.117 closed keepalive connection
+2018/06/05 05:37:46 [info] 2207#2207: *1461 client 176.216.1.186 closed keepalive connection
+2018/06/05 05:50:24 [info] 2207#2207: *1462 client 187.102.42.255 closed keepalive connection
+2018/06/05 06:28:32 [info] 2207#2207: *1463 client 37.238.143.27 closed keepalive connection
+2018/06/05 07:33:08 [info] 2207#2207: *1464 client 200.161.144.154 closed keepalive connection
+2018/06/05 07:33:08 [info] 2207#2207: *1465 client 200.161.144.154 closed keepalive connection
+2018/06/05 09:43:23 [info] 2207#2207: *1468 client 188.124.22.112 closed keepalive connection
+2018/06/05 10:22:34 [info] 2207#2207: *1470 client 41.72.216.14 closed keepalive connection
+2018/06/05 11:42:19 [info] 2207#2207: *1472 client 66.102.6.213 closed keepalive connection
+2018/06/05 11:42:19 [info] 2207#2207: *1471 client 66.102.6.209 closed keepalive connection
+2018/06/05 12:06:01 [info] 2207#2207: *1473 client 81.225.115.162 closed keepalive connection
+2018/06/05 13:20:24 [info] 2207#2207: *1474 client 185.47.163.196 closed keepalive connection
+2018/06/05 13:45:43 [info] 2207#2207: *1476 client closed connection while waiting for request, client: 129.128.164.36, server: 0.0.0.0:80
+2018/06/05 13:47:38 [info] 2207#2207: *1488 client 127.0.0.1 closed keepalive connection
+2018/06/05 13:47:38 [info] 2207#2207: *1486 client 127.0.0.1 closed keepalive connection
+2018/06/05 13:47:38 [info] 2207#2207: *1482 client 127.0.0.1 closed keepalive connection
+2018/06/05 13:47:38 [info] 2207#2207: *1477 client 127.0.0.1 closed keepalive connection
+2018/06/05 13:47:40 [info] 2207#2207: *1484 client 127.0.0.1 closed keepalive connection
+2018/06/05 13:47:40 [info] 2207#2207: *1480 client 127.0.0.1 closed keepalive connection
+2018/06/05 14:25:25 [info] 2207#2207: *1514 client 103.46.236.129 closed keepalive connection
+2018/06/05 14:37:29 [info] 2207#2207: *1517 client 127.0.0.1 closed keepalive connection
+2018/06/05 15:04:29 [info] 2207#2207: *1521 client 127.0.0.1 closed keepalive connection
+2018/06/05 15:04:44 [info] 2207#2207: *1523 client 201.137.122.52 closed keepalive connection
+2018/06/05 15:20:50 [info] 2207#2207: *1525 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/05 15:21:05 [info] 2207#2207: *1524 client 127.0.0.1 closed keepalive connection
+2018/06/05 15:33:50 [info] 2207#2207: *1526 client 5.57.6.21 closed keepalive connection
+2018/06/05 15:37:27 [info] 2207#2207: *1527 client sent invalid method while reading client request line, client: 185.143.223.191, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/05 15:37:27 [info] 2207#2207: *1527 recv() failed (104: Connection reset by peer) while reading client request line, client: 185.143.223.191, server: localhost, request: "  /*�     Cookie: mstshash=Administr"
+2018/06/05 15:51:32 [info] 2207#2207: *1528 client 189.159.86.0 closed keepalive connection
+2018/06/05 15:51:47 [info] 2207#2207: *1529 client 62.217.168.237 closed keepalive connection
+2018/06/05 15:55:27 [info] 2207#2207: *1530 client 189.132.55.216 closed keepalive connection
+2018/06/05 16:04:49 [info] 2207#2207: *1532 client sent invalid method while reading client request line, client: 5.8.18.92, server: localhost, request: "  +&�     Cookie: mstshash=hello"
+2018/06/05 16:04:49 [info] 2207#2207: *1532 recv() failed (104: Connection reset by peer) while reading client request line, client: 5.8.18.92, server: localhost, request: "  +&�     Cookie: mstshash=hello"
+2018/06/05 16:21:25 [info] 2207#2207: *1533 client 213.211.50.153 closed keepalive connection
+2018/06/05 16:25:10 [info] 2207#2207: *1538 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/05 16:25:25 [info] 2207#2207: *1536 client 127.0.0.1 closed keepalive connection
+2018/06/05 16:28:11 [info] 2207#2207: *1539 client 36.77.132.157 closed keepalive connection
+2018/06/05 16:42:28 [info] 2207#2207: *1541 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/05 16:43:09 [info] 2207#2207: *1618 client 127.0.0.1 closed keepalive connection
+2018/06/05 17:18:49 [info] 2207#2207: *1620 client 189.146.125.93 closed keepalive connection
+2018/06/05 17:24:35 [info] 2207#2207: *1621 client 190.199.68.59 closed keepalive connection
+2018/06/05 17:48:01 [info] 2207#2207: *1622 client 141.212.122.128 closed keepalive connection
+2018/06/05 19:42:30 [info] 2207#2207: *1624 client 209.126.136.4 closed keepalive connection
+2018/06/05 19:59:01 [info] 2207#2207: *1625 client timed out (110: Connection timed out) while waiting for request, client: 66.240.205.34, server: 0.0.0.0:80
+2018/06/05 20:08:24 [info] 2207#2207: *1626 client 64.126.136.41 closed keepalive connection
+2018/06/05 20:57:05 [info] 2207#2207: *1627 client 114.7.5.214 closed keepalive connection
+2018/06/05 23:33:54 [info] 2207#2207: *1628 client 145.255.21.120 closed keepalive connection
+2018/06/06 00:42:56 [info] 2207#2207: *1629 client 45.115.172.41 closed keepalive connection
+2018/06/06 01:22:39 [info] 2207#2207: *1630 client 85.97.188.118 closed keepalive connection
+2018/06/06 01:27:34 [info] 2207#2207: *1631 client 189.232.8.42 closed keepalive connection
+2018/06/06 01:54:18 [info] 2207#2207: *1632 client 152.249.215.127 closed keepalive connection
+2018/06/06 02:00:20 [info] 2207#2207: *1633 client 185.154.205.62 closed keepalive connection
+2018/06/06 02:05:27 [info] 2207#2207: *1634 client closed connection while waiting for request, client: 42.51.32.107, server: 0.0.0.0:80
+2018/06/06 02:26:46 [info] 2207#2207: *1637 client 187.110.212.125 closed keepalive connection
+2018/06/06 02:40:21 [info] 2207#2207: *1638 client 201.76.119.192 closed keepalive connection
+2018/06/06 03:52:40 [info] 2207#2207: *1641 client 189.153.128.162 closed keepalive connection
+2018/06/06 03:52:40 [info] 2207#2207: *1640 client 189.153.128.162 closed keepalive connection
+2018/06/06 04:36:38 [info] 2207#2207: *1642 client 92.124.56.194 closed keepalive connection
+2018/06/06 04:45:22 [info] 2207#2207: *1643 client 82.150.57.94 closed keepalive connection
+2018/06/06 05:18:53 [info] 2207#2207: *1644 client sent invalid method while reading client request line, client: 134.119.212.87, server: localhost, request: " "
+2018/06/06 05:52:39 [info] 2207#2207: *1645 client sent invalid method while reading client request line, client: 134.119.212.87, server: localhost, request: " P�w�' "
+2018/06/06 06:53:11 [info] 2207#2207: *1648 client 187.202.145.182 closed keepalive connection
+2018/06/06 06:53:11 [info] 2207#2207: *1649 client 187.202.145.182 closed keepalive connection
+2018/06/06 07:20:43 [info] 2207#2207: *1651 client 187.207.140.250 closed keepalive connection
+2018/06/06 09:00:08 [info] 2207#2207: *1652 client 187.202.205.116 closed keepalive connection
+2018/06/06 09:55:19 [info] 2207#2207: *1654 client 76.8.9.16 closed keepalive connection
+2018/06/06 10:03:00 [info] 2207#2207: *1655 client 45.70.5.124 closed keepalive connection
+2018/06/06 10:37:24 [info] 2207#2207: *1657 client 92.50.67.98 closed keepalive connection
+2018/06/06 11:28:03 [info] 2207#2207: *1658 client 37.192.16.205 closed keepalive connection
+2018/06/06 11:36:48 [info] 2207#2207: *1659 client 180.97.106.39 closed keepalive connection
+2018/06/06 11:46:52 [info] 2207#2207: *1660 client 116.48.81.245 closed keepalive connection
+2018/06/06 11:59:22 [info] 2207#2207: *1661 client 186.209.19.163 closed keepalive connection
+2018/06/06 12:11:46 [info] 2207#2207: *1662 client 81.171.97.202 closed keepalive connection
+2018/06/06 12:46:09 [info] 2207#2207: *1664 client 107.21.249.139 closed keepalive connection
+2018/06/06 12:47:48 [info] 2207#2207: *1665 client 201.105.224.112 closed keepalive connection
+2018/06/06 13:04:05 [info] 2207#2207: *1714 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:80
+2018/06/06 13:04:40 [info] 2207#2207: *1713 client 127.0.0.1 closed keepalive connection
+2018/06/06 13:15:45 [info] 2207#2207: *1715 client 5.202.146.137 closed keepalive connection
+2018/06/06 13:20:31 [info] 2207#2207: *1716 client 176.12.67.171 closed keepalive connection
+2018/06/06 13:28:08 [info] 2207#2207: *1717 client 87.244.43.50 closed keepalive connection
+2018/06/06 13:52:46 [info] 2207#2207: *1718 client 61.9.32.58 closed keepalive connection
+2018/06/06 13:52:59 [info] 2207#2207: *1719 client 91.217.108.194 closed keepalive connection
+2018/06/06 14:19:53 [info] 2207#2207: *1720 client 95.78.254.147 closed keepalive connection
+2018/06/06 14:42:50 [info] 2207#2207: *1721 client 103.35.109.42 closed keepalive connection
+2018/06/06 15:00:49 [info] 2207#2207: *1747 client 127.0.0.1 closed keepalive connection
+2018/06/06 15:00:49 [info] 2207#2207: *1748 client 127.0.0.1 closed keepalive connection
+2018/06/06 15:00:49 [info] 2207#2207: *1744 client 127.0.0.1 closed keepalive connection
+2018/06/06 15:00:49 [info] 2207#2207: *1743 client 127.0.0.1 closed keepalive connection
+2018/06/06 15:00:52 [info] 2207#2207: *1746 client 127.0.0.1 closed keepalive connection

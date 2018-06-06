@@ -1,16 +1,16 @@
-'''
+"""
 
 Aim is to have a single command detect + track an experiment
 
 
 
-'''
+"""
 
 
 import config
 from lib.Database import Database
 
-import commands.detect_leg_v2 as detect
+import commands.detect_mpyxDatagramDeblur as detect
 import commands.track as track
 import commands.draw as draw
 import commands.export as export
@@ -22,17 +22,29 @@ import shutil
 from uuid import UUID
 from dateutil.parser import parse as dateparse
 
+
 async def main(args):
-    '''
+    """
     Args:
     - a directory to be recursively searched for videos to process
     
-    '''
-    
-    if len(args) < 1: 
+    """
+
+    if len(args) < 1:
         print("""path/to/videos/""")
     else:
         print(await processDirectory(*args))
+
+
+async def vacuum(db):
+    print("Vacuuming...")
+    vacuum_start = time.time()
+    tables = ["track", "particle", "frame", "segment"]
+    for t in tables:
+        print(" `->", t)
+        await db.vacuum(t)
+    print(" '-> took", time.time() - vacuum_start, "s")
+
 
 async def processDirectory(video_directory, date, export_directory):
     # Outer loop: search directory
@@ -41,49 +53,62 @@ async def processDirectory(video_directory, date, export_directory):
         return
     if not os.path.isdir(export_directory):
         os.mkdir(export_directory)
-    
+
     ext = ".avi"
-    
+
     db = Database()
-    
+
     # https://stackoverflow.com/questions/29206384/python-folder-names-in-the-directory
     videos = []
     for root, dirs, files in os.walk(video_directory, topdown=False):
         for name in files:
             if name.endswith(ext):
                 videos.append((root, name))
-    
+
     # Inner loop: detect, track, draw, export
     process_start = time.time()
     for root, name in videos:
         video_start = time.time()
-        parent_dir = video_directory.split('/')[-2]
-        folders = root.split('/')
+        parent_dir = video_directory.split("/")[-2]
+        folders = root.split("/")
         index = folders.index(parent_dir)
-        notes = ', '.join(folders[index:])
-        video_export_directory = '/'.join([export_directory]+folders[index:])
+        notes = ", ".join(folders[index:])
+        video_export_directory = "/".join([export_directory] + folders[index:])
         if not os.path.isdir(video_export_directory):
             os.makedirs(video_export_directory)
-        
+
         video_file = os.path.join(root, name)
-        name = name[:-len(ext)]
-        print("Processing "+video_file+", Notes: "+notes)
-        print("Detecting...")
+        name = name[: -len(ext)]
+
+        await vacuum(db)
+
+        print("Processing " + video_file + ", Notes: " + notes)
+
+        print(" `-> Detecting...")
+        detect_start = time.time()
         detection_uuid = await detect.detect_video(video_file, date, name, notes)
-        print("Tracking...")
+        print("  `-> took", time.time() - detect_start, "s")
+
+        await vacuum(db)
+
+        print(" `-> Tracking...")
+        track_start = time.time()
         tracking_uuid = await track.track_experiment(detection_uuid)
-        print("Drawing...")
-        await draw.draw_tracks([tracking_uuid])
-        print("Exporting...")
+        print("  `-> took", time.time() - track_start, "s")
+
+        # print("Drawing...")
+        # await draw.draw_tracks([tracking_uuid])
+
+        print(" `-> Exporting...")
+        export_start = time.time()
         await export.exportSyncrude2018(tracking_uuid, video_export_directory)
-        print("Processing video took "+str(time.time()-video_start)+" seconds.")
-        
-        print("Vacuuming...")
-        await db.vacuum()
-        #manually trigger garbage collection
+        print("  `-> took", time.time() - export_start, "s")
+
+        print("Processing video took " + str(time.time() - video_start) + " seconds.")
+
+        # manually trigger garbage collection
         print("Collecting Garbage...")
+
         gc.collect()
-        
-        
-    print("Processing all took "+str(time.time()-process_start)+" seconds")
-    
+
+    print("Processing all took " + str(time.time() - process_start) + " seconds")

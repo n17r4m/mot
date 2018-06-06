@@ -1,0 +1,36 @@
+
+# Mockup (in pseudo md format) of CRD Report.
+# TODO: Lyx, latex, tex, pandoc, (html|pdf|etc)
+# TODO: make everything easy by knowing everything.
+# TODO: retire on mars; /_
+! ERRATA
+
+!Multiple Object tracking
+- Our observations' show that a flow graph can accurately describe movement.
+
+
+!Python Experiments
+- Extending research
+  + There is no pythonic way to parralize python,
+  - An attempt: mpyx.
+  + Obvious improvements.
+  - Not improving original goal.
++ A real world problem.
+  - Oil
+  """
+    A tube was made. It was an inch wide, and a millimeter or two deep.
+    Cleaning the tube was crude; probably high pressure steam.
+    Those capturing however, were very elegant.
+  """
+  + NN
+  - Mask
+  - Make obvious what is obvious.
+  
+  
+  
+  - an n-deep problem..
+  
+  
+
+
+

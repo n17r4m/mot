@@ -79,6 +79,7 @@ class SetAProp1(F):
 
     def do(self, frame):
         frame.raw = np.random.random((1729, 2336))
+        print(frame.raw)
         self.put(frame)
 
 

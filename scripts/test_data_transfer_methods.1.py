@@ -1,16 +1,9 @@
 #!/usr/bin/python
 
-"""
-Test the performance of several inter-process transfer methods on a large "video".
-
-
-"""
-
 import os
 import sys
 import time
 import socket
-import array
 from pathlib import Path
 import multiprocessing as mp
 import subprocess as sp
@@ -31,32 +24,26 @@ import shlex
 from skvideo.io import FFmpegReader, FFmpegWriter
 from functools import reduce
 
-video = None
-
-n_frames = 100
-frames_s = (1729, 2336, 1)
-fbytes_s = 1729 * 2336 * 8  # float64
-f_dtype = "float64"
-
 
 def main():
 
-    print("Making 'video' with {} frames".format(n_frames))
-    Timeit.start()
-    global video
-    video = np.random.random(size=(n_frames, *frames_s))
+    n_frames = 1000
+    frames_s = (1729, 2336, 1)
 
-    Timeit.end()
+    print("Making 'video'")
+    start = time.time()
+    video = np.random.randint(
+        low=0, high=255, size=(n_frames, *frames_s), dtype=np.uint8
+    )
 
-    foos = [pipe, ramdisk1, ramdisk2, ramdisk3, posixsocket]
-    a = np.array(range(len(foos)))
-    np.random.shuffle(a)
+    print("Took {}".format(time.time() - start), "seconds")
 
-    print("Running tests...")
-    print("----------------")
+    start = time.time()
+
+    foos = [pipe, ramdisk1, ramdisk2]
 
     for i in a:
-        # dashit(time.time())
+        dashit(time.time())
         foos[i](n_frames)
 
 
@@ -65,58 +52,43 @@ def dashit(it, *args):
     print("---{}---".format(it))
 
 
-class Timeit(object):
-    import time
-
-    startTime = time.time()
-
-    @staticmethod
-    def start():
-        Timeit.startTime = time.time()
-
-    @staticmethod
-    def end():
-        print(" `-> Took {} seconds.".format(time.time() - Timeit.startTime))
+def timeit(then):
+    print("Took {} seconds.".format(time.time() - then))
 
 
 def pipe(n_frames):
-    ez = EZ(RandomFrameEmitterPipe(n_frames), As(1, Sink))
+    """
+    Use normal python provided queues.
+    """
+    pickled = RandomFrameEmitterPipe(n_frames)
     print("Timing decode time with multiprocess pipes")
-    Timeit.start()
-    ez.start().join()
-    Timeit.end()
+    start = time.time()
+    EZ(pickled, As(1, Sink)).start().join()
+    timeit(start)
 
 
 def ramdisk1(n_frames):
-    ez = EZ(RandomFrameEmitterRamdisk(n_frames), As(1, RDRead))
+    ramdisk = RandomFrameEmitterRamdisk(n_frames)
     print("Timing decode time with ramdisk + numpy.tobytes")
-    Timeit.start()
-    ez.start().join()
-    Timeit.end()
+    start = time.time()
+    EZ(ramdisk, As(1, RDRead)).start().join()
+    timeit(start)
 
 
 def ramdisk2(n_frames):
-    ez = EZ(RandomFrameEmitterRamdisk2(n_frames), As(1, RDRead2))
+    ramdisk2 = RandomFrameEmitterRamdisk2(n_frames)
     print("Timing decode time with ramdisk + numpy.save")
-    Timeit.start()
-    ez.start().join()
-    Timeit.end()
-
-
-def ramdisk3(n_frames):
-    ez = EZ(RandomFrameEmitterRamdisk3(n_frames), As(1, RDRead3))
-    print("Timing decode time with ghosted file descriptor passing")
-    Timeit.start()
-    ez.start().join()
-    Timeit.end()
+    start = time.time()
+    EZ(ramdisk2, As(1, RDRead2)).start().join()
+    timeit(start)
 
 
 def posixsocket(n_frames):
-    ez = EZ(PosixSocketEmitter(n_frames), As(1, SXRead))
+    sock = PosixSocketEmitter(n_frames)
     print("Timing decode time over unix domain sockets")
-    Timeit.start()
-    ez.start().join()
-    Timeit.end()
+    start = time.time()
+    EZ(sock, As(1, SXRead)).start().join()
+    timeit(start)
 
 
 def arg_exists(arg, args):
@@ -256,41 +228,26 @@ class RandomFrameEmitterRamdisk2(F):
             self.put(str(uuid))
 
 
-class RandomFrameEmitterRamdisk3(F):
-
-    def setup(self, n_frames):
-        global video
-        for frame in video:
-            uuid = uuid4()
-            fname = "/tmp/frame_" + str(uuid) + ".npy"
-            np.save(fname, frame)
-            f = open(fname, "rb")
-            self.put(f)
-            f.close()
-            os.remove(fname)
-
-
 class PosixSocketEmitter(F):
 
     def setup(self, n_frames):
         global video
-        global fbytes_s
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.sock_id = uuid4()
         self.sock_file = "/tmp/pysocket-{}".format(self.sock_id)
 
-        self.sock.bind(self.sock_file)
+        self.sock.bind(sock_file)
 
         print("waiting for a connection")
         self.sock.listen(1)
         self.put(self.sock_file)
         self.connection, self.client_address = self.sock.accept()
-        print("connection from", self.client_address, self.connection)
+        print("connection from", self.client_address)
 
         for frame in video:
-            self.connection.sendall(frame.tobytes())
+            self.sock.send(frame)  # naive.
 
-        self.connection.close()
+        connection.close()
 
 
 import cv2
@@ -299,12 +256,11 @@ import cv2
 class RDRead(F):
 
     def initialize(self):
-        global frames_s
-        self.output_shape = frames_s
+        self.output_shape = (1729, 2336, 1)
 
     def do(self, uuid):
         with open("/tmp/frame_" + uuid, "rb") as f:
-            frame = np.fromstring(f.read(), dtype="float64").reshape(self.output_shape)
+            frame = np.fromstring(f.read(), dtype="uint8").reshape(self.output_shape)
         os.unlink("/tmp/frame_" + uuid)
         # cv2.imshow("frame", frame)
         # cv2.waitKey(100)
@@ -313,8 +269,7 @@ class RDRead(F):
 class RDRead2(F):
 
     def initialize(self):
-        global frames_s
-        self.output_shape = frames_s
+        self.output_shape = (1729, 2336, 1)
 
     def do(self, uuid):
         frame = np.load("/tmp/frame_" + uuid + ".npy", "r")
@@ -323,51 +278,15 @@ class RDRead2(F):
         # cv2.waitKey(100)
 
 
-class RDRead3(F):
-
-    def initialize(self):
-        global frames_s
-        global f_dtype
-        self.output_shape = frames_s
-        self.data_type = f_dtype
-
-    def do(self, f):
-
-        frame = np.frombuffer(f.read(), dtype=self.data_type)
-        print("got", len(frame))
-        # cv2.imshow("frame", frame)
-        # cv2.waitKey(100)
-
-
 class SXRead(F):
 
     def initialize(self):
-        global frames_s
-        global fbytes_s
-        global n_frames
-        global f_dtype
-        self.output_shape = frames_s
-        self.frame_bytes = fbytes_s
-        self.num_frames = n_frames
-        self.data_type = f_dtype
+        self.output_shape = (1729, 2336, 1)
 
     def do(self, sock_file):
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         print("connecting to {}".format(sock_file))
-        self.sock.connect(sock_file)
-
-        for f in range(self.num_frames):
-            want = self.frame_bytes
-            frame_bytes = b""
-            while want > 0:
-                new_bytes = self.sock.recv(want)
-                frame_bytes += new_bytes
-                want -= len(new_bytes)
-
-            frame = np.frombuffer(frame_bytes, dtype=self.data_type)
-
-        self.sock.close()
-        os.remove(sock_file)
+        sock.connect(sock_file)
 
 
 # class RDRead2(F):

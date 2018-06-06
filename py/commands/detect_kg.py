@@ -10,11 +10,13 @@ from skimage.draw import circle
 
 import config
 
-from mpyx.F import EZ, As, By, F
+from mpyx.F import EZ, As, By, F, Datagram
+
 # from mpyx.F import Serial, Parallel, Broadcast, S, P, B
 # from mpyx.F import Iter, Const, Print, Stamp, Map, Filter, Batch, Seq, Zip, Read, Write
 # from mpyx.Vid import BG
-from mpyx.Vid import FFmpeg, BG, FG, Binary
+from mpyx.Vid import FFmpeg
+
 # from mpyx.Compress import VideoFile, VideoStream
 
 from lib.Database import Database, DBWriter
@@ -47,127 +49,113 @@ import time
 import os
 import sys
 import cv2
+
 # import matplotlib.pyplot as plt
 
 
 async def main(args):
-    if len(args) < 2: 
+    if len(args) < 2:
         print("""path/to/video/file.avi 2017-10-31 Name-of_video "Notes. Notes." """)
     else:
         print(await detect_video(*args))
-        
 
 
+async def detect_video(video_file, date, name="Today", notes=""):
 
-class BGPlayer(F):
-    def do(self, frame_bg):
-        cv2.imshow("bg", frame_bg["bg"])
-        cv2.waitKey(1)
-        self.put(frame_bg)
-
-
-class VideoPlayer(F):
-    def do(self, frame):
-        cv2.imshow("frame", frame)
-        cv2.waitKey(1)
-        self.put(frame)
-        
-
-async def detect_video(video_file, date, name = "Today", notes = ""):
-    # note: "NOW()" may not work.
-    
     cpus = multiprocessing.cpu_count()
 
     experiment_uuid = uuid4()
     experiment_day = dateparse(date)
     experiment_dir = os.path.join(config.experiment_dir, str(experiment_uuid))
     experiment = (experiment_uuid, experiment_day, name, "detection", notes)
-    
+
     try:
-        
+
         print("Creating data directory", experiment_dir)
         os.mkdir(experiment_dir)
-        
-        print("Launching Database Writer")
-        dbwriter = EZ(DBWriter())
-        
-        # Todo
-        print("Inserting experiment", name, "(", experiment_uuid, ") into database.")
-        print("Launching ffmpeg for raw video compression")
-        print("Launching ffmpeg for extracted video compression")
-        print("Launching ffmpeg for binary mask visualization")
-        print("Launching ffmpeg for particle detection visualization")
-        # /Todo
-    
-        
-        scaleby = 1
-        w, h = int(2336/scaleby), int(1729/scaleby)
 
-        
-        
-        # -t 00:00:00.16
+        scaleby = 1
+        w, h = int(2336 / scaleby), int(1729 / scaleby)
+
         # Reads the source video, outputs frames
         print("Launching Video Reader")
-        video_reader = FFmpeg(video_file, "", (h, w, 1), "-t 00:00:00.16 -vf scale={}:{}".format(w,h))
-        
+        video_reader = FFmpeg(
+            video_file,
+            "",
+            (h, w, 1),
+            "-ss 00:00:02.00 -t 00:00:00.50 -vf scale={}:{}".format(w, h),
+            [],
+            False,
+            FrameData,
+        )
+
+        print("Launching Database processor")
+        db_proc = DB_Processor(experiment_uuid, experiment_day, name, notes)
+
+        print("Launching Entry processor")
+        entry_proc = Entry(experiment_uuid)
+
+        print("Launching Magic pixel processor")
+        magic_proc = MagicPixel()
+
+        print("Launching Rescale processor")
+        rescale_proc = Rescaler()
+
         # Computes a background for a frame, outputs {"frame": frame, "bg": bg}
         print("Launching Background Modeler")
-        bg_modeler = BG(model='max', window_size=50, img_shape=(h, w, 1))
-        
+        bg_proc = BG(model="simpleMax", window_size=50, img_shape=(h, w, 1))
+
         # Takes a background and a frame, enhances frame to model foreground
         print("Launching Foreground Modeler")
-        fg_modeler = FG()
-        
+        fg_proc = FG()
+
         # Takes a foreground frame, binarizes it
         print("Launching Binary Mask Processor")
-        binary = Binary("legacyLabeled")
-        
-        # Takes a binary image, segments and computes properties
+        mask_proc = Binary("legacyLabeled")
+
         print("Launching Properties Processor")
-        properties = Properties()
-        
-        # Todo
-        print("Launching Crop Writer")
+        prop_proc = Properties()
+
         print("Launching Crop Processor")
-        print("Launching Detection Video Writer")
-        print("Launching Particle Commmitter")
-        
-        
-        pipeline = EZ(
-                      video_reader,
-                      {[bg_modeler,fg_modeler,binary,properties]}
-                     ).items()
-        
-        for i in pipeline:
-            print("Processed frame "+str(i["count"]))
-            # print(i["crop"].shape, np.min(i["crop"]), np.max(i["crop"]))
-            # cv2.imshow("sample crop", i["crop"])
-            # cv2.waitKey(1)
-        
-        # EZ(
-        #     video_reader, {raw_compressor,
-        #     VideoPlayer()}
-        # ).start().watch().join()
-        
-        """
-        # TODO:
-        EZ(video_reader, {raw_compressor, 
-            [segment_detector, bg_model, foreground_extraction, {extraction_compressor,
-                [segmentation_mask, {mask_compressor,
-                    [segmentation_properties, get_crops, {crop_writer, 
-                        [crop_classifier, write_crops]
-                    ]}]}]]}}).start().watch().join()
-        
-        """
-        
-    
+        crop_proc = Crop_Processor()
+
+        # A utility to view video pipeline output
+        raw_player = RawPlayer()
+        bg_player = BGPlayer()
+        fg_player = FGPlayer()
+        mask_player = MaskPlayer()
+        crop_player = CropPlayer()
+        meta_player = MetaPlayer()
+
+        # A utility to clean up datagram resources
+        cleaner = Cleaner()
+        # Todo
+        # print("Launching Crop Writer")
+
+        # print("Launching Detection Video Writer")
+        # print("Launching Particle Commmitter")
+        # /todo
+
+        EZ(
+            video_reader,
+            entry_proc,
+            magic_proc,
+            meta_player,
+            rescale_proc,
+            raw_player,
+            bg_proc,
+            fg_proc,
+            mask_proc,
+            cleaner,
+        ).start().join()
+
     except Exception as e:
-        
+
         print("Uh oh. Something went wrong")
-        
+
         traceback.print_exc()
-        wq.push(None)
-        
+        # wq.push(None)
+
         if os.path.exists(experiment_dir):
             print("Removing files from", experiment_dir)
             shutil.rmtree(experiment_dir)
@@ -176,277 +164,478 @@ async def detect_video(video_file, date, name = "Today", notes = ""):
         pass
         # dbwriter.commit()
         # wq.push(None)
-        
+
     finally:
-        
+
         print("Fin.")
-        
+
     return experiment_uuid
 
 
-class FrameIter(F):
-    def setup(self, wq, norm_q, video_file, experiment_uuid):
-        
-        print("Starting FrameIter")
-        self.norm_q = norm_q
-        self.meta["experiment_uuid"] = experiment_uuid
-        self.meta["experiment_dir"] = os.path.join(config.experiment_dir, str(experiment_uuid))
-        
-        print("Loading video.")
-        video = Video(video_file)
-        
-        print("Saving background.")
-        io.imsave(os.path.join(self.meta["experiment_dir"], "bg.png"), video.extract_background().squeeze())
-        
-        print("Iterating through", len(video), "frames.")
+class Cleaner(F):
 
+    def do(self, frame):
+        frame.clean()
+
+
+class RawPlayer(F):
+
+    def do(self, frame):
+        cv2.imshow("Raw Display", frame.raw)
+        self.put(frame)
+        cv2.waitKey(1000 // 24)
+
+
+class FGPlayer(F):
+
+    def do(self, frame):
+        cv2.imshow("FG Display", frame.fg)
+        self.put(frame)
+        cv2.waitKey(1000 // 24)
+
+
+class MaskPlayer(F):
+
+    def do(self, frame):
+        cv2.imshow("Mask Display", 1.0 * frame.mask)
+        self.put(frame)
+        cv2.waitKey(1000 // 24)
+
+
+class BGPlayer(F):
+
+    def do(self, frame):
+        cv2.imshow("BG Display", frame.bg)
+        self.put(frame)
+        cv2.waitKey(1000 // 24)
+
+
+class CropPlayer(F):
+
+    def do(self, frame):
+        crops = frame.crops
+
+        crop_h = crops.shape[1]
+        crop_w = crops.shape[2]
+
+        crops_n = crops.shape[0]
+
+        disp_w_n = 30
+        disp_h_n = int(np.ceil(crops_n / disp_w_n))
+        disp_w = int(disp_w_n * crop_w)
+        disp_h = int(disp_h_n * crop_h)
+        disp = np.zeros((disp_h, disp_w))
+
+        # print("------------------")
+        # print("crops:", crops.shape)
+        # print("crop_h", crop_h)
+        # print("crop_w", crop_w)
+        # print("crops_n", crops_n)
+        # print("disp_w", disp_w)
+        # print("disp_h", disp_h)
+
+        for i in range(disp_h_n):
+            for j in range(disp_w_n):
+                n = i * disp_h_n + j
+                if n == crops_n:
+                    break
+                disp[
+                    i * crop_h : i * crop_h + crop_h, j * crop_w : j * crop_w + crop_w
+                ] = crops[n].squeeze()
+
+        cv2.imshow("Crop Display", disp)
+        self.put(frame)
+        cv2.waitKey(1000 // 24)
+
+
+class MetaPlayer(F):
+
+    def do(self, frame):
+        print(
+            "Experiment:",
+            frame.experiment_uuid,
+            ", Segment:",
+            frame.segment_uuid,
+            " Number:",
+            frame.number,
+            " Segment Number:",
+            frame.segment_number,
+        )
+        self.put(frame)
+
+
+class Entry(F):
+
+    def initialize(self, experiment_uuid):
+        self.experiment_uuid = experiment_uuid
+        self.count = 0
+
+    def do(self, frame):
+        frame.experiment_uuid = self.experiment_uuid
+        frame.number = self.count
+        frame.uuid = uuid4()
+        self.count = +1
+        frame.raw = frame.raw / 255
+        self.put(frame)
+
+
+class MagicPixel(F):
+    # Not sure this works currently...
+    def do(self, frame):
         magic_pixel = 255
         magic_pixel_delta = 0.1
         segment_number = -1
+        raw = frame.raw
 
-        
-        for i in range(len(video)):
-            
-            if self.stopped():
-                return
-            
-            else:
-                
-                raw_frame = video.frame(i)
-                frame = video.normal_frame(i)
-                
-                if config.use_magic_pixel_segmentation:
-                    this_frame_magic_pixel = raw_frame[0,4,0]
-                    if abs(this_frame_magic_pixel - magic_pixel) > magic_pixel_delta:
-                        print("Segment Boundry Detected:", i)
-                        segment_number += 1
-                        segment = (uuid4(), experiment_uuid, segment_number)
-                        wq.push(("execute", """
-                            INSERT INTO Segment (segment, experiment, number)
-                            VALUES ($1, $2, $3)
-                        """, segment))
-                    magic_pixel = this_frame_magic_pixel
-                
-                
-                
-                frame_uuid = uuid4()
-                self.meta["frame_uuid"] = frame_uuid
-                self.meta["frame_number"] = i
-                
-                wq.push(("execute", """
-                    INSERT INTO Frame (frame, experiment, segment, number)
-                    VALUES ($1, $2, $3, $4)
-                """, (frame_uuid, experiment_uuid, segment[0], i)))
-                
-                
-                self.norm_q.push(frame.tobytes())
-                
-                
-                self.push(frame)
-        
-        self.stop()
-        
-        
+        if config.use_magic_pixel_segmentation:
+            this_frame_magic_pixel = raw[0, 4, 0]
+            if abs(this_frame_magic_pixel - magic_pixel) > magic_pixel_delta:
+                print("Segment Boundry Detected")
+                segment_number += 1
+                segment = (uuid4(), frame.experiment_uuid, segment_number)
+
+            magic_pixel = this_frame_magic_pixel
+        frame.segment_uuid = segment[0]
+        frame.segment_number = segment[2]
+        self.put(frame)
+
+
+from skimage.transform import rescale
+
+
+class Rescaler(F):
+
+    def do(self, frame):
+        frame.raw = rescale(frame.raw, 0.5)
+        self.put(frame)
+
+
+import math
+from collections import deque
+
+
+class BG(F):
+
+    def setup(self, model="median", window_size=20, *args, env=None, **kwArgs):
+        self.frame_que = deque(maxlen=window_size)
+        self.window_size = window_size
+        # self.q_len = math.ceil(window_size / 2)
+        # self.q_count = 0
+        self.model = getattr(self, model)(window_size=window_size, *args, **kwArgs)
+
+    def do(self, frame):
+        # import cv2
+        # from uuid import uuid4
+        self.frame_que.append(frame)
+        # self.q_count += 1
+        self.bg = self.model.process(frame.raw)
+        # cv2.imwrite('/home/mot/tmp/bg_'+str(uuid4())+'.png', self.bg)
+
+        if len(self.frame_que) > self.window_size:
+            # bg = self.que.popleft()
+            frame = self.frame_que.popleft()
+            frame.bg = self.bg
+            self.put(frame)
+
     def teardown(self):
-        self.norm_q.push(None)
+        while len(self.frame_que) > 0:
+            # self.q_count -= 1
+            frame = self.frame_que.popleft()
+            frame.bg = self.bg
+            self.put(frame)
+
+    class simpleMax:
+
+        def __init__(self, window_size=20, img_shape=None):
+
+            # print("simpleMax maxlen: "+str(math.ceil(window_size / 2)-5))
+            self.window_size = window_size
+            self.que = deque(maxlen=window_size)
+            self.bg = None
+
+        def process(self, frame):
+            # like erosion, but faster
+            from skimage.filters.rank import minimum
+
+            # parameter: minimum lighting (dynamic range), threshold below
+            min_range = 20
+
+            if len(self.que) < self.window_size:
+                self.que.append(frame)
+            elif len(self.que) == self.window_size:
+                # print("computing bg...")
+                if self.bg is None:
+                    bg = np.max(self.que, axis=0)
+                    bg[bg < min_range] = 0
+                    bg = minimum(bg.squeeze(), square(8))
+                    bg = np.expand_dims(bg, axis=-1)
+                    self.bg = bg
+            return self.bg
+
+
+class FG(F):
+
+    def setup(self, model="division", *args, **kwargs):
+        # If your process needs to do any kind of setup once it has been forked,
+        # or if it the first process in a workflow and expected to generate
+        # values for the rest of the pipeline, that code should go here.
+        self.model = getattr(self, model)()
+
+    def do(self, frame):
+        # The main workhorse of a process. Items will flow in here, potentially
+        # be modified, mapped, reduced, or otherwise morgified, and output can
+        # be then pushed downstream using the self.put() method.
+        # Here, for example, any items are simply passed along.
+        frame.fg = self.model.process(frame)
+
+        self.put(frame)
+
+    class division:
+
+        def __init__(self):
+            pass
+
+        def process(self, frame):
+            """
+            Expects a dict with bg, frame
+            """
+            eps = 0.0001
+            div = frame.raw / (frame.bg + eps)
+            # div[np.isnan(div)] = 1.0  # get rid of nan's from 0/0
+            return np.clip(div, 0, 1)
+
+
+from skimage.filters import threshold_sauvola
+from skimage.morphology import binary_opening, remove_small_objects, square, erosion
+from skimage.segmentation import clear_border
+
+
+class Binary(F):
+
+    def setup(self, model="simple", *args, **kwargs):
+        # If your process needs to do any kind of setup once it has been forked,
+        # or if it the first process in a workflow and expected to generate
+        # values for the rest of the pipeline, that code should go here.
+        self.model = getattr(self, model)(*args, **kwargs)
+
+    def do(self, frame):
+        # The main workhorse of a process. Items will flow in here, potentially
+        # be modified, mapped, reduced, or otherwise morgified, and output can
+        # be then pushed downstream using the self.put() method.
+        # Here, for example, any items are simply passed along.
+        frame.mask = self.model.process(frame)
+        self.put(frame)
+
+    class legacyLabeled:
+
+        def __init__(self, threshold=0.5):
+            self.threshold = threshold
+
+        def process(self, frame):
+            # Take the center, removing edge artifacts
+            # frame = frame[200:-200, 200:-200]
+            sframe = frame.fg.squeeze()
+            binary = sframe < self.threshold
+            binary = binary_opening(binary, square(3))
+            binary = clear_border(binary)
+            # opened = binary_opening(binary, square(3))
+            # cleared = clear_border(opened)
+            return binary
+
+
+from skimage.measure import label, regionprops
+
 
 class Properties(F):
-    '''
-    Take a binary image and produce region props.
-    Note: this does not accommodate intensity image
-    '''
-    def setup(self):
-        self.count = 0
+
     def do(self, frame):
-        '''
-        Expects a binary frame
-        '''
-        labeled = label(frame)
-        filtered = remove_small_objects(labeled, 64)
-        properties = regionprops(filtered, frame)
-        # area, eccentricity, orientation
-        s = "{area}, {eccentricity}, {orientation}\n"
-        self.count += 1
-        with open("testProperties.txt", "a") as f:
-            cropper = Crop(frame)
-            sampled = False
-            crop = np.zeros((64,64))
-            for r in properties:
-                if r.area < 64: # rough filter
-                    continue
-                f.write(s.format(area=r.area,
-                                 eccentricity=r.eccentricity,
-                                 orientation=r.orientation))
-                
-                if not sampled and \
-                   int(np.random.random()+1.0) and \
-                   r.area > 150 and \
-                   r.area < 1000 and \
-                   r.eccentricity > 0.95:
-                    coord = (r.centroid[1], r.centroid[0])
-                    bbox = ((r.bbox[1], r.bbox[0]), (r.bbox[3], r.bbox[2]))
-                    crop = np.array(cropper.crop(int(round(coord[0])), int(round(coord[1]))))
-                    sampled = True
-                    break
-                    
-        self.put({"count":self.count, "crop":crop})
+        labelled = label(frame.mask)
+        frame.regionprops = regionprops(labelled, frame.fg.squeeze())
+        frame.track_uuids = [uuid4() for i in range(len(properties))]
+        self.put(frame)
 
-class FrameProcessor(F):
-    def setup(self, experiment_dir, mask_q):
-        self.mask_q = mask_q
-    
+
+from lib.Crop import Crop
+
+
+class Crop_Processor(F):
+
     def do(self, frame):
-        
-        sframe = frame.squeeze()
-        thresh  = threshold(sframe)
-        binary  = binary_opening((sframe < thresh), square(3))
-        cleared = clear_border(binary)
-        labeled = label(cleared)
-        filtered = remove_small_objects(labeled, 64)
-        properties = regionprops(filtered, sframe)
-        
-        self.mask_q.push((filtered.squeeze().astype("uint8") * 255).tobytes())
-        
-        self.meta["frame"] = frame
-        self.push(properties)
-            
-    def teardown(self):
-        self.mask_q.push(None)
+        regionprops = frame.regionprops
+        cropper = Crop(frame.fg)
+
+        coords = [(p.centroid[1], p.centroid[0]) for p in regionprops]
+        bboxes = [((p.bbox[1], p.bbox[0]), (p.bbox[3], p.bbox[2])) for p in regionprops]
+        crops = np.array(
+            [cropper.crop(int(round(c[0])), int(round(c[1]))) for c in coords]
+        )
+        frame.crops = crops
+        self.put(frame)
 
 
-class PropertiesProcessor(F):
-    def setup(self):
-        from lib.models.Classifier import Classifier
-        self.Classifier = Classifier
-    def do(self, properties):
-        
-        cropper = Crop(self.meta["frame"])
-    
-        coords = [(p.centroid[1], p.centroid[0]) for p in properties]
-        bboxes = [((p.bbox[1], p.bbox[0]), (p.bbox[3], p.bbox[2])) for p in properties]
-        crops = np.array([cropper.crop(int(round(c[0])), int(round(c[1]))) for c in coords])
-        pcrops = np.array([self.Classifier.preproc(None, crop) for crop in crops])
-        
-        self.meta["properties"] = properties
-        self.push((crops, pcrops, properties, coords, bboxes))
-    
+class Crop_writer(F):
 
-class CropProcessor(F):
-    def setup(self, batchSize = 512):
-        from lib.models.Classifier import Classifier
-        self.classifier = Classifier().load()
-        self.batchSize = batchSize
-    
-    def make_batch(self, iterable, n=1):
-        #https://stackoverflow.com/a/8290508
-        l = len(iterable)
-        for ndx in range(0, l, n):
-            yield iterable[ndx:min(ndx + n, l)]
-    
-    def do(self, cpcb):
-        crops, pcrops, properties, coords, bboxes = cpcb
-        latents, categories = [], []
-        
-        for crop_batch in self.make_batch(pcrops, self.batchSize):
-                
-            # need to pad the array of crop images into a number divisible by the # of GPUs
-            crop_batch_padded = np.lib.pad(crop_batch, ((0, len(crop_batch) % config.GPUs), (0,0), (0,0), (0,0)), 'constant', constant_values=0)
-            
-            l = self.classifier.encoder.predict(crop_batch_padded.reshape((len(crop_batch_padded), *(crop_batch_padded[0].shape))))
-            c = [np.argmax(c) for c in self.classifier.featureclassifier.predict(l.reshape(len(l), *(l[0].shape)))]
-            
-            latents += list(l[0:len(crop_batch)])
-            categories += list(c[0:len(crop_batch)])
-        
-        self.push((crops, latents, categories, coords, bboxes))
-        
+    def do(self, frame):
+        crops = frame.crops
 
-class DetectionProcessor(F):
-    def setup(self, experiment_dir, det_q):
-        from PIL import Image, ImageDraw
-        self.PilImage, self.PilDraw = Image, ImageDraw
-        self.det_q = det_q
-        # [(Outline colour), (Fill colour)]
-        self.cat_colors = [
-            [(200, 200,   0), (200, 200,   0, 80)],
-            [(0,   200, 200), (0,   200, 200, 80)],
-            [(0,     0, 200), (0,     0, 200, 80)],
-            [(200,   0,   0), (200,   0,   0, 80)],
-            [(0,   200,   0), (0,   200,   0, 80)],
+
+class FrameData(Datagram):
+
+    def initialize(self):
+        self.experiment_uuid = None
+        self.segment_uuid = None
+        self.segment_number = None
+        self.uuid = None
+        self.number = None
+
+
+class DB_Processor(F):
+
+    async def initialize(
+        self, experiment_uuid, experiment_day, name, notes, verbose=False
+    ):
+        self.verbose = verbose
+        self.experiment_uuid = experiment_uuid
+        self.experiment_day = experiment_day
+        self.name = name
+        self.notes = notes
+        self.tx, self.transaction = await Database().transaction()
+        self.csv_files = [
+            "/tmp/{}_segment.csv",
+            "/tmp/{}_frame.csv",
+            "/tmp/{}_track.csv",
+            "/tmp/{}_particle.csv",
         ]
-        
-    def do(self, detections):
-        
-        (crops, latents, categories, coords, bboxes) = detections
-        properties = self.meta["properties"]
-        
-        detection_frame = gray2rgb(self.meta["frame"]).squeeze().astype("uint8")
-        
-        im = self.PilImage.fromarray(detection_frame)
-        draw = self.PilDraw.Draw(im, mode="RGBA")
-        
-        
-        
-        
-        for x, p in enumerate(properties):
-            draw.ellipse(bboxes[x], 
-                outline=self.cat_colors[categories[x]][0],
-                fill=self.cat_colors[categories[x]][1])
-            
-            """
-            rr, cc = circle(*p.centroid, p.major_axis_length, detection_frame.shape)
-            if categories[x] == 0: # Undefined
-                detection_frame[rr, cc, 0] += 25
-                detection_frame[rr, cc, 1] += 25 # R+G = Orange
-            if categories[x] == 1: # Unknown
-                detection_frame[rr, cc, 1] += 25
-                detection_frame[rr, cc, 2] += 25 # G+B = Cyan
-            if categories[x] == 2: # Bitumen
-                detection_frame[rr, cc, 2] += 50 # Blue
-            if categories[x] == 3: # Sand
-                detection_frame[rr, cc, 0] += 50 # Red
-            if categories[x] == 4: # Bubbple
-                detection_frame[rr, cc, 1] += 50 # Green
-            """
-            
-        self.det_q.push(im.tobytes())
-        self.push("Detection Visualized") # Dummy value
-    
-    def teardown(self):
-        self.det_q.push(None)
-        
 
-class ParticleCommitter(F):
-    def setup(self, wq):
-        self.wq = wq
-    
-    def do(self, detections):
-        
-        (crops, latents, categories, coords, bboxes) = detections
-        
-        experiment_uuid = self.meta["experiment_uuid"]
-        frame_uuid = self.meta["frame_uuid"]
-        properties = self.meta["properties"]
-            
-        particles = [(uuid4(), experiment_uuid, p.area, p.mean_intensity, p.perimeter, p.major_axis_length, categories[i]) 
-            for i, p in enumerate(properties)]
-            
-        track_uuids = [uuid4() for i in range(len(properties))]
-            
-        tracks = [(track_uuids[i], frame_uuid, particles[i][0], coords[i], bboxes[i], ",".join(list(latents[i].astype("str"))))
-            for i, p in enumerate(properties)]
-            
-        self.wq.push(("executemany", """
-            INSERT INTO Particle (particle, experiment, area, intensity, perimeter, radius, category)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
-        """, (particles,)))
-        
-        
-        self.wq.push(("executemany", """
-            INSERT INTO Track (track, frame, particle, location, bbox, latent)
-            VALUES ($1, $2, $3, $4, $5, $6)
-        """, (tracks,)))
-            
-            
-        self.push((track_uuids, crops))
-        
+    def add_segment(self, frame):
+        data = (frame.segment_uuid, frame.experiment_uuid, frame.segment_number)
+        s = "{}\t{}\t{}\n"
+        with open("/tmp/{}_segment.csv".format(self.experiment_uuid), "a") as f:
+            for g in [data]:
+                f.write(s.format(segment[0], segment[1], segment[2]))
+
+    def add_frame(self, frame):
+
+        data = (frame.uuid, frame.experiment_uuid, frame.segment_uuid, frame.number)
+
+        s = "{}\t{}\t{}\t{}\n"
+        with open("/tmp/{}_frame.csv".format(self.experiment_uuid), "a") as f:
+            for g in [data]:
+                f.write(s.format(g[0], g[1], g[2], g[3]))
+
+    def add_detections(self, frame):
+        regionprops = frame.regionprops
+        DEFAULT_CATEGORY = 1  # set to unknown for now
+        particles = [
+            (
+                uuid4(),
+                self.experiment_uuid,
+                p.area,
+                p.mean_intensity,
+                p.perimeter,
+                p.major_axis_length,
+                p.minor_axis_length,
+                p.orientation,
+                p.solidity,
+                p.eccentricity,
+                DEFAULT_CATEGORY,
+            )
+            for i, p in enumerate(regionprops)
+        ]
+
+        coords = [(p.centroid[1], p.centroid[0]) for p in regionprops]
+        bboxes = [((p.bbox[1], p.bbox[0]), (p.bbox[3], p.bbox[2])) for p in regionprops]
+
+        track_uuids = frame.track_uuids
+
+        tracks = [
+            (track_uuids[i], frame_uuid, p[0], coords[i], bboxes[i])
+            for i, p in enumerate(regionprops)
+        ]
+        s = "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n"
+        with open("/tmp/{}_particle.csv".format(self.experiment_uuid), "a") as f:
+            for p in particles:
+                f.write(
+                    s.format(
+                        p[0],
+                        p[1],
+                        p[2],
+                        p[3],
+                        p[4],
+                        p[5],
+                        p[6],
+                        p[7],
+                        p[8],
+                        p[9],
+                        p[10],
+                    )
+                )
+
+            s = "{}\t{}\t{}\t{}\t{}\n"
+            with open("/tmp/{}_track.csv".format(self.experiment_uuid), "a") as f:
+                for t in tracks:
+                    f.write(s.format(t[0], t[1], t[2], t[3], t[4]))
+
+    def do(self, sql_drop):
+        method, query, args = sql_drop
+
+        if self.verbose:
+            print("DBWriter Exiting")
+
+    async def teardown(self):
+        if self.verbose:
+            print("Inserting experiment into database.")
+        await tx.execute(
+            """
+            INSERT INTO Experiment (experiment, day, name, method, notes) 
+            VALUES ($1, $2, $3, $4, $5)
+            """,
+            self.experiment_uuid,
+            self.experiment_day,
+            self.name,
+            "DetectionMpyxDatagram",
+            self.notes,
+        )
+
+        if self.verbose:
+            print("Inserting segments into database.")
+        await self.tx.execute(
+            """
+            COPY segment FROM '/tmp/{}_segment.csv' DELIMITER '\t' CSV;
+            """.format(
+                self.experiment_uuid
+            )
+        )
+        if self.verbose:
+            print("Inserting frames into database.")
+        await self.tx.execute(
+            """
+            COPY frame FROM '/tmp/{}_frame.csv' DELIMITER '\t' CSV;
+            """.format(
+                self.experiment_uuid
+            )
+        )
+        if self.verbose:
+            print("Inserting particles into database.")
+        await self.tx.execute(
+            """
+            COPY particle (particle, experiment, area, intensity, perimeter, major, minor, orientation, solidity, eccentricity, category\n)FROM '/tmp/{}_particle.csv' DELIMITER '\t' CSV;
+            """.format(
+                self.experiment_uuid
+            )
+        )
+        if self.verbose:
+            print("Inserting tracks into database.")
+        await tx.execute(
+            """
+            COPY track (track, frame, particle, location, bbox\n) FROM '/tmp/{}_track.csv' DELIMITER '\t' CSV;
+            """.format(
+                experiment_uuid
+            )
+        )
+
+        await self.transaction.commit()
+
+        for f in csv_files:
+            if os.path.isfile(f.format(self.experiment_uuid)):
+                os.remove(f.format(self.experiment_uuid))

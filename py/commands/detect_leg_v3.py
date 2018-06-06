@@ -397,7 +397,7 @@ class VideoFrameGetter(multiprocessing.Process):
     def __init__(self, video_path, experiment_uuid, frame_queue, frame_bytes_norm):
         super(VideoFrameGetter, self).__init__()
         print("VideoFrameGetter: path " + video_path)
-        self.verbose = False
+        self.verbose = True
         self.video_path = video_path
         self.experiment_uuid = experiment_uuid
         self.frame_queue = frame_queue
@@ -448,6 +448,7 @@ class VideoFrameGetter(multiprocessing.Process):
                 # print("NEW frame stats: shape "+str(frame.shape)+", min/max "+str(np.min(frame))+"/"+str(np.max(frame)))
                 if config.use_magic_pixel_segmentation:
                     this_frame_magic_pixel = raw_frame[0, 4, 0]
+                    print("magic:", this_frame_magic_pixel)
                     if abs(this_frame_magic_pixel - magic_pixel) > magic_pixel_delta:
                         if self.verbose:
                             print("Segment Boundry Detected:", i)

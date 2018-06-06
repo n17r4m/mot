@@ -39,7 +39,7 @@ def main():
     ### MegaSpeed 2
     ms2_areas = []
     ms2_velocities = []
-    with open(ms2_path) as f:
+    wdiameter_lowith open(ms2_path) as f:
         for line in f:
             l = line.split(",")
             area = float(l[2])
@@ -96,8 +96,8 @@ def main():
     
     plt.suptitle(name,fontsize='xx-large')
     plt.subplots_adjust(hspace = 0.5)
-    # plt.savefig('/home/mot/tmp/'+name.replace(' ','_')+'_diameters.png', dpi=my_dpi)
-    plt.waitforbuttonpress(0)
+    plt.savefig('/home/mot/tmp/batchprocess_blur'+name.replace(' ','_')+'_diameters.png', dpi=my_dpi) #CHANGE folder location
+    #plt.waitforbuttonpress(0)
     plt.close('all')
     
     plt.close('all')

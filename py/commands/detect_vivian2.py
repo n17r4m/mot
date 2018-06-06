@@ -397,13 +397,41 @@ class VideoFrameProcessor(multiprocessing.Process):
         self.frame_processor_mask_queue = frame_processor_mask_queue
         self.stop_event = multiprocessing.Event()
 
+    def gkern(self, l=1, sig=1):
+        ax = np.arange(-l // 2 + 1., l // 2 + 1.)
+        xx, yy = np.meshgrid(ax, ax)
+        kernel = np.exp(-(xx ** 2 + yy ** 2) / (2. * sig ** 2))
+
+        return kernel / np.sum(kernel)
+
+    def viv_richardson_lucy(self, image, psf, iterations=1, clip=True):
+        from scipy.signal import convolve
+
+        image = image.astype("float64")
+
+        im_deconv = 0.5 * np.ones(image.shape)
+        psf_mirror = psf[::-1, ::-1]
+
+        for _ in range(iterations):
+            eps = np.finfo(image.dtype).eps
+            x = convolve(im_deconv, psf, "same")
+            np.place(x, x == 0, eps)
+            relative_blur = image / x + eps
+            im_deconv *= convolve(relative_blur, psf_mirror, "same")
+
+        if clip:
+            im_deconv[im_deconv > 1] = 255
+            im_deconv[im_deconv < -1] = 0
+        return im_deconv
     
     def run(self):
         
+        # Method 1: new line
+        #bg_psf1 = Image.open("/home/mot/py/bg.png").convert("L")
+        
         while True:
             if self.stopped():
-                break
-            
+                break            
             
             frame_data = self.frame_queue.get()
             if frame_data is None:
@@ -413,8 +441,44 @@ class VideoFrameProcessor(multiprocessing.Process):
 
             sframe = frame.squeeze()
             
-            thresh  = threshold(sframe)
-            binary  = binary_opening((sframe < thresh), square(1))
+            ############################################################################
+            # Method 1: psf from bg
+            """bg_psf1 = np.array(bg_psf1)
+            x = 1485 #1485(C info lost) #407(D info lost) #change for diff psf 
+            y = 952 #952(C info lost) #807(D info lost)
+            h = 15
+            w = 15
+            bg_psf2 = bg_psf1[y:y+h, x:x+w]
+            bg_psf2 = ~bg_psf2
+            bg_psf2 = bg_psf2.squeeze() #fix to 1x1
+            iters = 15
+            
+            deconv = self.viv_richardson_lucy(sframe, bg_psf2, iters, True)"""
+
+            # Method 2: psf from gauss kernel
+            kernel = self.gkern(7.0, 0.85)  # 1.0495833333333333
+            iters = 15 #10 #15
+
+            deconv = self.viv_richardson_lucy(sframe, kernel, iters, True)
+
+            from scipy.misc import imsave
+
+            try:
+                if not os.path.exists("/home/mot/tmp/deconv"):
+                    os.mkdir("/home/mot/tmp/deconv")  # make new dir
+                imsave("/home/mot/tmp/deconv/deconv-" + str(i) + ".png", deconv)
+                if not os.path.exists("/home/mot/tmp/sframe"):
+                    os.mkdir("/home/mot/tmp/sframe")  # make new dir
+                imsave("/home/mot/tmp/sframe/sframe-" + str(i) + ".png", sframe)
+
+            except Exception as e:
+                print(e)  # pass
+            ############################################################################
+
+            # thresh  = threshold(deconv) #sframe
+            thresh = 130 #0.5
+
+            binary  = binary_opening((deconv < thresh), square(1))
             cleared = clear_border(binary)
             labeled = label(cleared)
             # filtered = remove_small_objects(labeled, 64)

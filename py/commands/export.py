@@ -220,6 +220,7 @@ async def exportSyncrude2018(experiment_uuid, directory):
         AND t2.particle = p.particle
         AND s.segment = f1.segment
         AND f1.experiment = '{experiment}'
+        AND p.valid = True
         """
 
     
