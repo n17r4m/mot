@@ -1,0 +1,8 @@
+[submodule "py/mpyx"] 
+	path = py/mpyx
+	url = https://github.com/n17r4m/mpyx
+
+[submodule "py/lib/pymot"] 
+  path = py/lib/pymot 
+  url = https://github.com/ktgordon/pymot.git
+
