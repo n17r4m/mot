@@ -79,10 +79,11 @@ async def main(args):
 
 
 class SegmentEmitter(F):
+
     def setup(self, experiment):
         self.async(query(experiment))
-        
-    async def query(self,experiment):
+
+    async def query(self, experiment):
         async for segment in tx.cursor(
             """
                                 SELECT segment, number
@@ -93,7 +94,7 @@ class SegmentEmitter(F):
             experiment_uuid,
         ):
             self.put(segment)
-        
+
 
 async def track_experiment(experiment_uuid, method="Tracking", model=None):
     """
@@ -121,21 +122,8 @@ async def track_experiment(experiment_uuid, method="Tracking", model=None):
 
         # 2) Perform tracking analysis
 
-        
-
-
-
-
-        async for segment in tx.cursor(
-            """
-                                SELECT segment, number
-                                FROM segment
-                                WHERE experiment = $1
-                                ORDER BY number ASC
-                                """,
-            experiment_uuid,
-        ):
-
+        segments = EZ(SegmentEmitter(experiment_uuid)).items()
+        for segment in segments:
             if verbose:
                 print("tracking segment", segment["number"])
             mcf_graph = MCF_GRAPH_HELPER()
