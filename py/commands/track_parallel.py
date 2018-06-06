@@ -103,6 +103,7 @@ class Tracker(F):
         self.tx = tx
 
     async def getEdges(self, segment):
+        db = Database()
         q = """
             SELECT f1.frame as fr1, f2.frame as fr2,
                    t1.location as location1, t2.location as location2,
@@ -187,8 +188,8 @@ class Tracker(F):
             ORDER BY f1.number ASC;
             """
         s = q.format(segment=segment)
-        async for edges in tx.execute(s):
-            if edges["tr1"] not in edge_data:
+        async for edges in db.query(s):
+            if edges["tr1"] not in self.edge_data:
                 self.edge_data[edges["tr1"]] = {
                     "track": edges["tr1"],
                     "frame": edges["fr1"],
@@ -465,7 +466,7 @@ async def track_experiment(experiment_uuid, method="Tracking", model=None):
 
         # 2) Perform tracking analysis
 
-        segments = EZ(SegmentEmitter(experiment_uuid), Tracker(tx)).start().join()
+        segments = EZ(SegmentEmitter(experiment_uuid), Tracker(tx, new_experiment_uuid, frame_uuid_map, track_uuid_map)).start().join()
 
     except Exception as e:  ### ERROR: UNDO EVERYTHING !    #################
         print("Uh oh. Something went wrong")
