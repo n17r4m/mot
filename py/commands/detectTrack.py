@@ -490,7 +490,7 @@ class Passthrough(F):
         self.put(frame)
 
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import re
 
@@ -530,7 +530,8 @@ class PerformanceMonitor(F):
             # Todo: does this work?
             print("Completed frame", frame.number)
         if self.visualize:
-            self._visualize()
+            pass
+            # self._visualize()
         self.put(frame)
 
     def teardown(self):
@@ -542,41 +543,41 @@ class PerformanceMonitor(F):
             else:
                 print(" `-> {} {:.2f} s".format(label, total_time))
 
-    def _visualize(self):
+    # def _visualize(self):
 
-        if self.fig is None:
-            self.fig, self.ax = plt.subplots()
-            plt.show(block=False)
-            ind = np.arange(1, len(self.labels) + 1)
+    #     if self.fig is None:
+    #         self.fig, self.ax = plt.subplots()
+    #         plt.show(block=False)
+    #         ind = np.arange(1, len(self.labels) + 1)
 
-            bars = plt.bar(ind, self.timings)
-            self._visBars = {}
-            for i in range(len(self.labels)):
-                self._visBars[self.labels[i]] = bars[i]
+    #         bars = plt.bar(ind, self.timings)
+    #         self._visBars = {}
+    #         for i in range(len(self.labels)):
+    #             self._visBars[self.labels[i]] = bars[i]
 
-            self.ax.set_title("Node Processing Time")
-            self.ax.set_ylabel("Seconds")
-            self.ax.set_xticks(ind)
-            self.ax.set_xticklabels(self.labels)
-            self.ax.tick_params("x", labelrotation=45)
-        else:
-            for i in range(len(self.labels)):
-                bar = self._visBars[self.labels[i]]
-                bar.set_height(self.timings[i])
-            # ask the canvas to re-draw itself the next time it
-            # has a chance.
-            # For most of the GUI backends this adds an event to the queue
-            # of the GUI frameworks event loop.
-            self.fig.canvas.draw_idle()
-            self.ax.set_xticklabels(self.labels)
-            try:
-                # make sure that the GUI framework has a chance to run its event loop
-                # and clear any GUI events.  This needs to be in a try/except block
-                # because the default implementation of this method is to raise
-                # NotImplementedError
-                self.fig.canvas.flush_events()
-            except NotImplementedError:
-                pass
+    #         self.ax.set_title("Node Processing Time")
+    #         self.ax.set_ylabel("Seconds")
+    #         self.ax.set_xticks(ind)
+    #         self.ax.set_xticklabels(self.labels)
+    #         self.ax.tick_params("x", labelrotation=45)
+    #     else:
+    #         for i in range(len(self.labels)):
+    #             bar = self._visBars[self.labels[i]]
+    #             bar.set_height(self.timings[i])
+    #         # ask the canvas to re-draw itself the next time it
+    #         # has a chance.
+    #         # For most of the GUI backends this adds an event to the queue
+    #         # of the GUI frameworks event loop.
+    #         self.fig.canvas.draw_idle()
+    #         self.ax.set_xticklabels(self.labels)
+    #         try:
+    #             # make sure that the GUI framework has a chance to run its event loop
+    #             # and clear any GUI events.  This needs to be in a try/except block
+    #             # because the default implementation of this method is to raise
+    #             # NotImplementedError
+    #             self.fig.canvas.flush_events()
+    #         except NotImplementedError:
+    #             pass
 
     def _log(self):
         pass
