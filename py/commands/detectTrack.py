@@ -107,7 +107,7 @@ async def detect_video(video_file, date, name="", notes=""):
             video_file,
             "",
             (h, w, 1),
-            "-vf scale={}:{}".format(w, h),
+            " -ss 00:00:02.00 -t 00:00:00.50 -vf scale={}:{}".format(w, h),
             [],
             False,
             FrameData,
@@ -1217,6 +1217,7 @@ class DBProcessor(F):
         )
 
     def teardown(self):
+        start = time.time()
         self.tx, self.transaction = self.async(Database().transaction())
         try:
             self.async(self.copy_to_database())
@@ -1319,6 +1320,7 @@ class Tracker(F):
         self.mcf_graph.add_node("END")
 
         # TODO: FIND NEAREST NEIGHBOUR FOR LOCAL CONNECTIVITY
+        # O(N), where N is the number of detections in segment
         for i in range(len(self.regionprops)):
             keyname = "regionprops_{}".format(i)
             r = self.regionprops[i]
@@ -1334,6 +1336,8 @@ class Tracker(F):
                 self.mcf_graph.add_edge("START", u, capacity=1, weight=Cen)
                 self.mcf_graph.add_edge(v, "END", capacity=1, weight=Cex)
 
+        # O(M*(N*LogN + LogN)), where M is number of frames and N 
+        # is the number of detections in a frame
         for i in range(segment.num_frames - 1):
             r1 = self.regionprops[i]
             coords1 = [(p.centroid[1], p.centroid[0]) for p in r1]
@@ -1506,21 +1510,27 @@ class Tracker(F):
             )
 
     def do(self, segment):
-
+        start = time.time()
+        
+        
         self.regionprops = []
         for i in range(segment.num_frames):
             keyname = "regionprops_{}".format(i)
             self.regionprops.append(segment.load(keyname))
-
+        print("Getting rp", time.time()-start)
+        start = time.time()
         self.buildGraph(segment)
-
+        print("Building graph", time.time()-start)
+        start = time.time()
         self.solve()
-
+        print("solving", time.time()-start)
+        start = time.time()
         if self.verbose:
             print("Tracks reconstructed", len(self.tracks))
 
+    
         self.computeAverages(segment)
-
+        print("Averages", time.time()-start)
         segment.save("particles", self.particle_inserts)
         segment.save("tracks", self.track_inserts)
 
