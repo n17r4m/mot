@@ -32,7 +32,10 @@ from lib.Database import Database, DBWriter
 
 
 """
-Note: currently modified to dump results to csv
+Trying viewing linescan on an "absolute" scale, where intensity is proportional
+to incident photons (the cameras colour channels adjust for exposure 
+independently).
+
 """
 
 
@@ -56,6 +59,7 @@ async def detect_linescan(path, dump_path=None, *args):
     else:
         path = Path(path)
 
+    """
     if dump_path is None:
         raise ValueError("Data dump directory {} not found".format(dump_path))
 
@@ -68,6 +72,7 @@ async def detect_linescan(path, dump_path=None, *args):
             )
 
     dump_path = Path(dump_path)
+    """
 
     # Load linescan data
 
@@ -169,7 +174,7 @@ async def detect_linescan(path, dump_path=None, *args):
     n_str = str(np.count_nonzero(mask))
 
     print("Statictics collected")
-
+    """
     # Generate some summary charts
 
     figsize, dpi = (7, 5), 300
@@ -381,7 +386,7 @@ async def detect_linescan(path, dump_path=None, *args):
                 )
 
                 # Frame ID, Particle ID, Area (prop), Area (circ),            Velocity, Intensity,        Perimeter,   X Position,    Y Position,    Major Axis,          Minor Axis,          Orientation,   Solidity,   Eccentricity,   Diameter, Width, Height.
-                attrs = [
+                csv_attrs = [
                     frame,
                     uid,
                     p.area,
@@ -401,10 +406,10 @@ async def detect_linescan(path, dump_path=None, *args):
                     h,
                 ]
 
-                csv_line = ",".join(list(map(str, attrs))) + "\n"
+                csv_line = ",".join(list(map(str, csv_attrs))) + "\n"
 
                 detections.write(csv_line)
-
+    """
     print("All done")
 
 

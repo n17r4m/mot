@@ -15,3 +15,6 @@ GPUs = 4
 crop_size = 64
 
 use_magic_pixel_segmentation = True
+
+ms_metric_cal = 13.94736842
+ms_rescale = 1 / 4

@@ -39,7 +39,7 @@ def main():
     ### MegaSpeed 2
     ms2_areas = []
     ms2_velocities = []
-    wdiameter_lowith open(ms2_path) as f:
+    with open(ms2_path) as f:
         for line in f:
             l = line.split(",")
             area = float(l[2])
@@ -59,7 +59,7 @@ def main():
     
     my_dpi = 192
     plt.figure(figsize=(2800/my_dpi, 1600/my_dpi), dpi=my_dpi)
-    plot_boxes = 20 #100
+    plot_boxes = 50 #100
     
     # Plot filtering
     ms1_diameter_lo, ms1_diameter_hi = filt(ms1_diameters)
@@ -96,11 +96,11 @@ def main():
     
     plt.suptitle(name,fontsize='xx-large')
     plt.subplots_adjust(hspace = 0.5)
-    plt.savefig('/home/mot/tmp/batchprocess_blur'+name.replace(' ','_')+'_diameters.png', dpi=my_dpi) #CHANGE folder location
-    #plt.waitforbuttonpress(0)
+    # plt.savefig('/home/mot/tmp/batchprocess_blur'+name.replace(' ','_')+'_diameters.png', dpi=my_dpi) #CHANGE folder location
+    plt.waitforbuttonpress(0)
     plt.close('all')
     
-    plt.close('all')
+    # plt.close('all')
     # End diameter plot
     
 

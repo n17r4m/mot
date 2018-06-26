@@ -66,7 +66,7 @@ from uuid import uuid4, UUID
 
 import pyMCFSimplex
 
-from mpyx.F import EZ, As, By, F, Seq, Data as Datagram
+from mpyx.F import EZ, As, By, F, Seq, Data
 
 
 async def main(args):
@@ -81,38 +81,41 @@ async def main(args):
 class SegmentEmitter(F):
 
     def setup(self, experiment_uuid):
+        self.verbose = False
         self.async(self.query(experiment_uuid))
 
     async def query(self, experiment_uuid):
         db = Database()
         async for segment in db.query(
             """
-                                SELECT segment, number
-                                FROM segment
-                                WHERE experiment = $1
-                                ORDER BY number ASC
-                                """,
+            SELECT segment, number
+            FROM segment
+            WHERE experiment = $1
+            ORDER BY number ASC
+            """,
             experiment_uuid,
         ):
+            if self.verbose:
+                print("Emitting segment", segment["number"], "for processing...")
             self.put(segment["segment"])
 
 
 class Tracker(F):
 
-    def setup(self, tx, new_experiment_uuid, frame_uuid_map, track_uuid_map):
-        self.tx = tx
+    def setup(self, new_experiment_uuid, frame_uuid_map, track_uuid_map):
+        self.db = Database()
+        self.tx, self.transaction = self.async(self.db.transaction())
         self.new_experiment_uuid = new_experiment_uuid
         self.frame_uuid_map = frame_uuid_map
         self.track_uuid_map = track_uuid_map
-        self.verbose  = True
+        self.verbose = False
 
     async def getEdges(self, segment):
-        db = Database()
-        
+
         Ci = -100
         Cen = 150
         Cex = 150
-        
+
         q = """
             SELECT f1.frame as fr1, f2.frame as fr2,
                    t1.location as location1, t2.location as location2,
@@ -197,7 +200,7 @@ class Tracker(F):
             ORDER BY f1.number ASC;
             """
         s = q.format(segment=segment)
-        async for edges in db.query(s):
+        async for edges in self.db.query(s):
             if edges["tr1"] not in self.edge_data:
                 self.edge_data[edges["tr1"]] = {
                     "track": edges["tr1"],
@@ -306,7 +309,6 @@ class Tracker(F):
         )
 
     def do(self, segment):
-        print(segment)
 
         self.mcf_graph = MCF_GRAPH_HELPER()
         self.mcf_graph.add_node("START")
@@ -318,14 +320,14 @@ class Tracker(F):
         self.async(self.getEdges(segment))
 
         if self.mcf_graph.n_nodes == 2:  # only START and END nodes present (empty)
-            if verbose:
+            if self.verbose:
                 print("Nothing in segment")
             return
 
-        if verbose:
+        if self.verbose:
             print("cost", np.min(self.costs), np.mean(self.costs), np.max(self.costs))
 
-        if verbose:
+        if self.verbose:
             print("Solving min-cost-flow for segment")
 
         demand = goldenSectionSearch(
@@ -337,10 +339,10 @@ class Tracker(F):
             memo=None,
         )
 
-        if verbose:
+        if self.verbose:
             print("Optimal number of tracks", demand)
         min_cost = self.mcf_graph.solve(demand)
-        if verbose:
+        if self.verbose:
             print("Min cost", min_cost)
 
         mcf_flow_dict = self.mcf_graph.flowdict()
@@ -359,7 +361,7 @@ class Tracker(F):
 
             tracks[new_particle_uuid] = track
 
-        if verbose:
+        if self.verbose:
             print("Tracks reconstructed", len(tracks))
 
         """
@@ -407,18 +409,17 @@ class Tracker(F):
                 mean_eccentricity += data["eccentricity"] / len(track)
                 category.append(data["category"])
 
-                new_frame_uuid = frame_uuid_map[data["frame"]]
-                new_track_uuid = track_uuid_map[data["track"]]
+                new_frame_uuid = self.frame_uuid_map[data["frame"]]
+                new_track_uuid = self.track_uuid_map[data["track"]]
+
+                loc = (data["location"][0], data["location"][1])
+                bbox = (
+                    (data["bbox"][0][0], data["bbox"][0][1]),
+                    (data["bbox"][1][0], data["bbox"][1][1]),
+                )
 
                 self.track_inserts.append(
-                    (
-                        new_track_uuid,
-                        new_frame_uuid,
-                        new_particle_uuid,
-                        data["location"],
-                        data["bbox"],
-                        data["latent"],
-                    )
+                    (new_track_uuid, new_frame_uuid, new_particle_uuid, loc, bbox)
                 )
 
             category = np.argmax(np.bincount(category))
@@ -426,7 +427,7 @@ class Tracker(F):
             self.particle_inserts.append(
                 (
                     new_particle_uuid,
-                    new_experiment_uuid,
+                    self.new_experiment_uuid,
                     mean_area,
                     mean_intensity,
                     mean_perimeter,
@@ -439,13 +440,129 @@ class Tracker(F):
                 )
             )
 
-        self.async(self.inserts())
+        # self.async(self.inserts())
 
-        if verbose:
-            print("Tracks inserted", time.time() - start, "s")
+        trackingData = TrackingData()
+        trackingData.save("particles", self.particle_inserts)
+        trackingData.save("tracks", self.track_inserts)
+
+        self.put(trackingData)
+
+    def teardown(self,):
+        self.async(self.transaction.commit())
+        # self.async(self.db.vacuum('track'))
 
 
-async def track_experiment(experiment_uuid, method="Tracking", model=None):
+class TrackingData(Data):
+
+    def initialize(self):
+        pass
+
+
+class CSVWriter(F):
+
+    def initialize(self, experiment_uuid):
+        self.experiment_uuid = experiment_uuid
+        self.verbose = True
+        if self.verbose:
+            print("Launching CSV processor")
+
+        self.csv_files = ["/tmp/{}_track.csv", "/tmp/{}_particle.csv"]
+
+    def do(self, trackingData):
+        # Add detections
+        self.add_tracking_data(trackingData)
+        trackingData.erase("particles")
+        trackingData.erase("tracks")
+        self.put(trackingData)
+
+    def add_tracking_data(self, trackingData):
+        particles = list(trackingData.load("particles"))
+        tracks = trackingData.load("tracks")
+
+        s = "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n"
+        with open("/tmp/{}_particle.csv".format(self.experiment_uuid), "a") as f:
+            for p in particles:
+                f.write(
+                    s.format(
+                        p[0],
+                        p[1],
+                        p[2],
+                        p[3],
+                        p[4],
+                        p[5],
+                        p[6],
+                        p[7],
+                        p[8],
+                        p[9],
+                        p[10],
+                    )
+                )
+
+        s = "{}\t{}\t{}\t{}\t{}\n"
+        with open("/tmp/{}_track.csv".format(self.experiment_uuid), "a") as f:
+            for t in tracks:
+                f.write(s.format(t[0], t[1], t[2], t[3], t[4]))
+
+
+class DBProcessor(F):
+
+    def initialize(self, experiment_uuid):
+        self.verbose = True
+        if self.verbose:
+            print("Launching DB processor")
+        self.experiment_uuid = experiment_uuid
+
+        self.csv_files = ["/tmp/{}_track.csv", "/tmp/{}_particle.csv"]
+
+    async def copy_to_database(self):
+        if self.verbose:
+            print("Copying to database.")
+
+        if self.verbose:
+            print("Inserting particles into database.")
+        await self.tx.execute(
+            """
+            COPY particle (particle, experiment, area, intensity, perimeter, major, minor, orientation, solidity, eccentricity, category\n)FROM '/tmp/{}_particle.csv' DELIMITER '\t' CSV;
+            """.format(
+                self.experiment_uuid
+            )
+        )
+        if self.verbose:
+            print("Inserting tracks into database.")
+        await self.tx.execute(
+            """
+            COPY track (track, frame, particle, location, bbox\n) FROM '/tmp/{}_track.csv' DELIMITER '\t' CSV;
+            """.format(
+                self.experiment_uuid
+            )
+        )
+
+    def teardown(self):
+        self.tx, self.transaction = self.async(Database().transaction())
+        try:
+            self.async(self.copy_to_database())
+        except Exception as e:
+            print(e)
+            print("rolling back database")
+            self.async(self.transaction.rollback())
+        else:
+            self.async(self.transaction.commit())
+        self.cleanupFS()
+
+    def cleanupFS(self):
+        for f in self.csv_files:
+            if os.path.isfile(f.format(self.experiment_uuid)):
+                os.remove(f.format(self.experiment_uuid))
+
+
+class Cleaner(F):
+
+    def do(self, trackingData):
+        trackingData.clean()
+
+
+async def track_experiment(experiment_uuid, method="Tracking_Parallel", model=None):
     """
     
     """
@@ -461,6 +578,7 @@ async def track_experiment(experiment_uuid, method="Tracking", model=None):
         new_experiment_uuid, frame_uuid_map, track_uuid_map = await clone_experiment(
             experiment_uuid, tx, testing=False, method=method
         )
+        await transaction.commit()
         new_experiment_dir = os.path.join(
             config.experiment_dir, str(new_experiment_uuid)
         )
@@ -471,7 +589,17 @@ async def track_experiment(experiment_uuid, method="Tracking", model=None):
 
         # 2) Perform tracking analysis
 
-        segments = EZ(SegmentEmitter(experiment_uuid), Tracker(tx, new_experiment_uuid, frame_uuid_map, track_uuid_map)).start().join()
+        segments = (
+            EZ(
+                SegmentEmitter(experiment_uuid),
+                As(12, Tracker, new_experiment_uuid, frame_uuid_map, track_uuid_map),
+                CSVWriter(new_experiment_uuid),
+                DBProcessor(new_experiment_uuid),
+                Cleaner(),
+            )
+            .start()
+            .join()
+        )
 
     except Exception as e:  ### ERROR: UNDO EVERYTHING !    #################
         print("Uh oh. Something went wrong")
@@ -487,7 +615,7 @@ async def track_experiment(experiment_uuid, method="Tracking", model=None):
         ##################  OK: COMMIT DB TRANSACTRION    ###############
         if verbose:
             print("made it! :)")
-        await transaction.commit()
+        # await transaction.commit()
 
     return str(new_experiment_uuid)
 
@@ -576,12 +704,6 @@ async def clone_experiment(experiment_uuid, tx, method, testing=False):
             "number": s["number"],
         }
         segment_insert.append((segment_uuid, new_experiment_uuid, s["number"]))
-
-    # Create null segment for frames with no segment.
-    # A workaround until segment is improved
-    # segment_uuid = uuid4()
-    # segment_uuid_map[None] = {"segment": segment_uuid, "number": -1}
-    # segment_insert.append((segment_uuid, new_experiment_uuid, -1))
 
     await tx.executemany(
         "INSERT INTO Segment (segment, experiment, number) VALUES ($1, $2, $3)",
@@ -783,266 +905,3 @@ def goldenSectionSearch(f, a, c, b, absolutePrecision, memo=None):
         return goldenSectionSearch(f, c, d, b, absolutePrecision, memo)
     else:
         return goldenSectionSearch(f, d, c, a, absolutePrecision, memo)
-
-
-class DataBatch:
-
-    def __init__(self):
-        self.data = dict()
-
-        self.data["frame"] = {"A": [], "B": []}
-        self.data["latent"] = {"A": [], "B": []}
-        self.data["location"] = {"A": [], "B": []}
-        self.data["output"] = []
-        self.current = 0
-
-    def copy(self):
-        """
-        return a copy of this databatch
-        """
-        foo = DataBatch()
-
-        for k, v in self.data.items():
-            if isinstance(v, dict):
-                for _k, _v in v.items():
-                    foo.data[k][_k] = _v.copy()
-            else:
-                foo.data[k] = v.copy()
-
-        return foo
-
-    def combine(self, dataBatch):
-        """
-        combines two databatches using the randomMasks method
-        """
-        self.randomMasks()
-        self.data["frame"]["A"][self.mask["frame"]["A"]] = dataBatch.data["frame"]["A"][
-            self.mask["frame"]["A"]
-        ]
-        self.data["frame"]["B"][self.mask["frame"]["B"]] = dataBatch.data["frame"]["B"][
-            self.mask["frame"]["B"]
-        ]
-        self.data["latent"]["A"][self.mask["latent"]["A"]] = dataBatch.data["latent"][
-            "A"
-        ][self.mask["latent"]["A"]]
-        self.data["latent"]["B"][self.mask["latent"]["B"]] = dataBatch.data["latent"][
-            "B"
-        ][self.mask["latent"]["B"]]
-        self.data["location"]["A"][self.mask["location"]["A"]] = dataBatch.data[
-            "location"
-        ]["A"][self.mask["location"]["A"]]
-        self.data["location"]["B"][self.mask["location"]["B"]] = dataBatch.data[
-            "location"
-        ]["B"][self.mask["location"]["B"]]
-        # self.data["output"][self.mask["output"]] = dataBatch.data["output"][self.mask["output"]]
-
-    def randomMasks(self):
-        self.mask = dict()
-
-        self.mask["frame"] = {"A": [], "B": []}
-        self.mask["latent"] = {"A": [], "B": []}
-        self.mask["location"] = {"A": [], "B": []}
-        self.mask["output"] = []
-
-        # Probability of a feature remaining unchanged... sort of
-        # we'll take the complement for A B state pairs probability
-        # to guarantee only either A or B are randomized
-        probs = {"frame": 0.5, "latent": 0.5, "location": 0.5}
-
-        keys = ["frame", "latent", "location"]
-
-        selectedKeys = np.random.choice(keys, size=1, replace=False)
-
-        for key in selectedKeys:
-            prob = probs[key]
-            self.mask[key]["A"] = np.random.random(len(self.data[key]["A"]))
-            self.mask[key]["B"] = 1.0 - self.mask[key]["A"]
-            self.mask[key]["A"][self.mask[key]["A"] >= prob] = 1
-            self.mask[key]["A"][self.mask[key]["A"] < prob] = 0
-            self.mask[key]["B"][self.mask[key]["B"] >= prob] = 1
-            self.mask[key]["B"][self.mask[key]["B"] < prob] = 0
-            self.mask[key]["A"] = np.array(self.mask[key]["A"], dtype=bool)
-            self.mask[key]["B"] = np.array(self.mask[key]["B"], dtype=bool)
-
-        # self.mask["frame"]["A"] = np.random.random(len(self.data["frame"]["A"]))
-        # self.mask["frame"]["B"] = 1.0 - self.mask["frame"]["A"]
-        # self.mask["latent"]["A"] = np.random.random(len(self.data["latent"]["A"]))
-        # self.mask["latent"]["B"] = 1.0 - self.mask["latent"]["A"]
-        # self.mask["location"]["A"] = np.random.random(len(self.data["location"]["A"]))
-        # self.mask["location"]["B"] = 1.0 - self.mask["location"]["A"]
-
-        # self.mask["frame"]["A"][self.mask["frame"]["A"]>=frameProb] = 1
-        # self.mask["frame"]["A"][self.mask["frame"]["A"]<frameProb] = 0
-        # self.mask["frame"]["B"][self.mask["frame"]["B"]>=frameProb] = 1
-        # self.mask["frame"]["B"][self.mask["frame"]["B"]<frameProb] = 0
-        # self.mask["latent"]["A"][self.mask["latent"]["A"]>=latentProb] = 1
-        # self.mask["latent"]["A"][self.mask["latent"]["A"]<latentProb] = 0
-        # self.mask["latent"]["B"][self.mask["latent"]["B"]>=latentProb] = 1
-        # self.mask["latent"]["B"][self.mask["latent"]["B"]<latentProb] = 0
-        # self.mask["location"]["A"][self.mask["location"]["A"]>=locationProb] = 1
-        # self.mask["location"]["A"][self.mask["location"]["A"]<locationProb] = 0
-        # self.mask["location"]["B"][self.mask["location"]["B"]>=locationProb] = 1
-        # self.mask["location"]["B"][self.mask["location"]["B"]<locationProb] = 0
-
-        # self.mask["frame"]["A"] = np.array(self.mask["frame"]["A"], dtype=bool)
-        # self.mask["frame"]["B"] = np.array(self.mask["frame"]["B"], dtype=bool)
-        # self.mask["latent"]["A"] = np.array(self.mask["latent"]["A"], dtype=bool)
-        # self.mask["latent"]["B"] = np.array(self.mask["latent"]["B"], dtype=bool)
-        # self.mask["location"]["A"] = np.array(self.mask["location"]["A"], dtype=bool)
-        # self.mask["location"]["B"] = np.array(self.mask["location"]["B"], dtype=bool)
-
-        # self.mask["frame"]["A"][:split] = False
-        # self.mask["frame"]["B"][:split] = False
-        # self.mask["latent"]["A"][:split] = False
-        # self.mask["latent"]["B"][:split] = False
-        # self.mask["location"]["A"][:split] = False
-        # self.mask["location"]["B"][:split] = False
-
-        # self.mask["output"] = np.zeros(len(self.data["output"]), dtype=bool)
-        # self.mask["output"][split:] = True
-
-    def join(self, dataBatch):
-        self.data["frame"]["A"].extend(dataBatch.data["frame"]["A"])
-        self.data["frame"]["B"].extend(dataBatch.data["frame"]["B"])
-        self.data["latent"]["A"].extend(dataBatch.data["latent"]["A"])
-        self.data["latent"]["B"].extend(dataBatch.data["latent"]["B"])
-        self.data["location"]["A"].extend(dataBatch.data["location"]["A"])
-        self.data["location"]["B"].extend(dataBatch.data["location"]["B"])
-        self.data["output"].extend(dataBatch.data["output"])
-
-    def toNumpy(self):
-        self.data["frame"]["A"] = np.array(self.data["frame"]["A"], dtype=float)
-        self.data["frame"]["B"] = np.array(self.data["frame"]["B"], dtype=float)
-        self.data["latent"]["A"] = np.array(self.data["latent"]["A"])
-        self.data["latent"]["B"] = np.array(self.data["latent"]["B"])
-        self.data["location"]["A"] = np.array(self.data["location"]["A"])
-        self.data["location"]["B"] = np.array(self.data["location"]["B"])
-        self.data["output"] = np.array(self.data["output"])
-
-    def shuffle(self):
-        rng_state = np.random.get_state()
-
-        for k, v in self.data.items():
-            if isinstance(v, dict):
-                for _k, _v in v.items():
-                    np.random.shuffle(_v)
-                    np.random.set_state(rng_state)
-            else:
-                np.random.shuffle(v)
-                np.random.set_state(rng_state)
-
-    def normParams(self):
-        d = {"frame": None, "location": None}
-        frameMean = np.mean(self.data["frame"]["A"] + self.data["frame"]["B"])
-        frameStd = np.std(self.data["frame"]["A"] + self.data["frame"]["B"])
-        locMean = np.mean(self.data["location"]["A"] + self.data["location"]["B"])
-        locStd = np.std(self.data["location"]["A"] + self.data["location"]["B"])
-
-        # print("######   Frame std normalize param set to 1.0 -KG    ######")
-        # frameStd = 1.0
-
-        d["frame"] = (frameMean, frameStd)
-        d["location"] = (locMean, locStd)
-        # print("Computed norms", (frameMean, frameStd), (locMean, locStd))
-        # print("######   Manual normalize params set. -KG    ######")
-        # d["frame"] = (118.67253073730468, 30.679692465465511)
-        # d["location"] = (1026.3889721524438, 611.5679274993953)
-
-        self.normalizeParams = d
-
-    def normalize(self, params):
-        for feature, stats in params.items():
-            mean, std = stats
-            self.data[feature]["A"] -= mean
-            self.data[feature]["A"] /= std
-            self.data[feature]["B"] -= mean
-            self.data[feature]["B"] /= std
-
-    def denormalize(self, params):
-        for feature, stats in params.items():
-            mean, std = stats
-            self.data[feature]["A"] *= std
-            self.data[feature]["A"] += mean
-            self.data[feature]["B"] *= std
-            self.data[feature]["B"] += mean
-
-    def addInput(self, A):
-        """
-        eng = [locationA, latentA, frameA,
-               locationB, latentB, frameB]
-        """
-        self.addLocation(A[0], A[3])
-        self.addLatent(A[1], A[4])
-        self.addFrame(A[2], A[5])
-
-    def addDataPoint(self, d):
-        self.addLocation(d["loc1"], d["loc2"])
-        self.addLatent(d["lat1"], d["lat2"])
-        self.addFrame(d["frame1"], d["frame2"])
-        self.addOutput(d["output"])
-
-    def getDataPoint(self, i):
-        r = {
-            "frame1": self.data["frame"]["A"][i],
-            "frame2": self.data["frame"]["B"][i],
-            "lat1": self.data["latent"]["A"][i],
-            "lat2": self.data["latent"]["B"][i],
-            "loc1": self.data["location"]["A"][i],
-            "loc2": self.data["location"]["B"][i],
-            "output": self.data["output"][i],
-        }
-        return r
-
-    def getInput(self, start=None, end=None):
-        engA = [
-            self.data["location"]["A"][start:end],
-            self.data["latent"]["A"][start:end],
-            self.data["frame"]["A"][start:end],
-        ]
-
-        engB = [
-            self.data["location"]["B"][start:end],
-            self.data["latent"]["B"][start:end],
-            self.data["frame"]["B"][start:end],
-        ]
-
-        return engA + engB
-
-    def getOutput(self, start=None, end=None):
-        return self.data["output"][start:end]
-
-    def addOutput(self, A):
-        self.data["output"].append(A)
-
-    def addLocation(self, A, B):
-        self.data["location"]["A"].append(A)
-        self.data["location"]["B"].append(B)
-
-    def addLatent(self, A, B):
-        self.data["latent"]["A"].append(A)
-        self.data["latent"]["B"].append(B)
-
-    def addFrame(self, A, B):
-        self.data["frame"]["A"].append(A)
-        self.data["frame"]["B"].append(B)
-
-    def setOutput(self, A):
-        self.data["output"] = A
-
-    def __len__(self):
-        return len(self.data["output"])
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.current > len(self):
-            raise StopIteration
-        else:
-            self.current += 1
-
-            dataInputs = self.getInput(self.current - 1, self.current)
-            dataInput = [i[0] for i in dataInputs]
-            dataOutput = self.getOutput(self.current - 1, self.current)
-
-            return (dataInput, dataOutput)

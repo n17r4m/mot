@@ -97,11 +97,9 @@ class LoadLinescanSegment(F):
             mk = tf.square(tf.divide(tf.reduce_sum(dv, axis=2), 3.0))
 
             # first (coarse) threshold
-
-            mk = tf.tile(
-                tf.expand_dims(tf.greater(mk, threshold_yen(mk.numpy())), -1), [1, 1, 3]
-            )
-            mk = binary_dilation(mk, iterations=5)
+            th = 0.15  # threshold_yen(mk.numpy())
+            mk = tf.tile(tf.expand_dims(tf.greater(mk, th), -1), [1, 1, 3])
+            mk = binary_dilation(mk, iterations=3)
 
             # pass 2 - better background estimation
 
@@ -125,10 +123,10 @@ class LoadLinescanSegment(F):
 
             # second (fine) threshold
             mk = tf.square(tf.divide(tf.reduce_sum(dv, axis=2), 3.0))
-            th = threshold_yen(mk.numpy())
+            th = 0.15  # threshold_yen(mk.numpy())
             mk = tf.greater(mk, th)
 
-            mk = binary_opening(binary_closing(mk.numpy()))
+            # mk = binary_opening(binary_closing(mk.numpy()))
 
             # normalize for uint8 RGB
 
@@ -210,19 +208,79 @@ class Linescan2:
                     LoadLinescanSegment(
                         self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
                     ),
-                    # CPU
                     LoadLinescanSegment(
-                        self.crop,
-                        self.debug,
-                        env={"CUDA_VISIBLE_DEVICES": ""},
-                        device="/cpu:0",
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
                     ),
                     LoadLinescanSegment(
-                        self.crop,
-                        self.debug,
-                        env={"CUDA_VISIBLE_DEVICES": ""},
-                        device="/cpu:0",
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
                     ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
+                    ),
+                    LoadLinescanSegment(
+                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
+                    ),
+                    # # CPU
+                    # LoadLinescanSegment(
+                    #     self.crop,
+                    #     self.debug,
+                    #     env={"CUDA_VISIBLE_DEVICES": ""},
+                    #     device="/cpu:0",
+                    # ),
+                    # LoadLinescanSegment(
+                    #     self.crop,
+                    #     self.debug,
+                    #     env={"CUDA_VISIBLE_DEVICES": ""},
+                    #     device="/cpu:0",
+                    # ),
                 ),
                 Stamp(),
             ),
@@ -250,7 +308,7 @@ class Linescan2:
         print("concat took", time.time() - start, "seconds")
 
         start = time.time()
-        self.mk = binary_erosion(binary_erosion(closing(self.mk))).astype("bool")
+        self.mk = closing(self.mk).astype("bool")
         print("morphology took", time.time() - start, "seconds")
 
         start = time.time()

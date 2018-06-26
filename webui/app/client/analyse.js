@@ -63,9 +63,9 @@ Template.analyse.events({
 
 
 
-function flowNearestZero(fcs){
+function valueNearestZero(fcs){
     return fcs.reduce((min, fc) => {
-        return Math.abs(fc.flow) < Math.abs(min) ? fc.flow : min
+        return Math.abs(fc.value) < Math.abs(min) ? fc.value : min
     }, Infinity)
 }
 
@@ -91,11 +91,31 @@ function updateChart(instance){
                 plt.on("plotly_click", (data) => {
                     
                     $("#crop_loader").addClass("active")
+                    
                     console.info(plt, data.points)
                     console.info(data.points.map(query.isolate, plt.data))
+                    console.log(q)
+                    switch(q) {
+                        case "flow_vs_intensity_histogram":
+                            var method_name = "experiment_particles_with_flow_near"
+                            var value = valueNearestZero(data.points.map(query.isolate, plt.data))
+                            break;
+                        case "flow_vs_category_histogram":
+                            var method_name = "experiment_particles_with_flow_near"
+                            var value = valueNearestZero(data.points.map(query.isolate, plt.data))
+                            break;
+                        case "particle_size_distribution":
+                            var method_name = "experiment_particles_with_area_near"
+                            var value = valueNearestZero(data.points.map(query.isolate, plt.data))
+                            break;
+                        default:
+                            break
+                    } 
                     
-                    const flow = flowNearestZero(data.points.map(query.isolate, plt.data))
-                    Meteor.call("experiment_particles_with_flow_near", experiment, flow, (err, res) => {
+                    
+                    
+                    
+                    Meteor.call(method_name, experiment, value, (err, res) => {
                         $("#crop_loader").removeClass("active")
                         if(err){
                             console.info(err)

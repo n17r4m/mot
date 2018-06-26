@@ -27,7 +27,7 @@ from base64 import b64encode
 from itertools import repeat
 import warnings
 
-from PIL import Image
+# from PIL import Image
 from io import BytesIO
 from uuid import uuid4
 
@@ -51,6 +51,8 @@ import os
 import sys
 import cv2
 
+import warnings
+
 # import matplotlib.pyplot as plt
 
 
@@ -69,7 +71,11 @@ async def detect_video(video_file, date, name="", notes=""):
     experiment_day = dateparse(date)
     experiment_dir = os.path.join(config.experiment_dir, str(experiment_uuid))
     experiment = (experiment_uuid, experiment_day, name, "detection", notes)
-    method = "detection"
+    method = "TrackingPrefix DetectionMpyx"
+
+    def e_handler(e, tb):
+        print("Exception occured:", e)
+        print(tb)
 
     try:
 
@@ -77,6 +83,7 @@ async def detect_video(video_file, date, name="", notes=""):
         os.mkdir(experiment_dir)
 
         w, h = 2336, 1729
+        ms_metric_cal = 13.94736842
 
         # Reads the source video, outputs frames
         # -ss 00:00:02.00 -t 00:00:00.50
@@ -84,7 +91,7 @@ async def detect_video(video_file, date, name="", notes=""):
             video_file,
             "",
             (h, w, 1),
-            " -vf scale={}:{}".format(w, h),
+            "-vf scale={}:{}".format(w, h),
             [],
             False,
             FrameData,
@@ -96,6 +103,14 @@ async def detect_video(video_file, date, name="", notes=""):
         # Computes a background for a frame, outputs {"frame": frame, "bg": bg}
         bg_proc = BG(model="simpleMax", window_size=20, img_shape=(h, w, 1))
 
+        fines_proc = BG(
+            model="rollingMax",
+            window_size=20,
+            img_shape=(h, w, 1),
+            inputProp="div",
+            saveAs="fines",
+        )
+
         # Utilities for viewing various stages of processing.
         raw_player = RawPlayer()
         bg_player = BGPlayer()
@@ -104,32 +119,34 @@ async def detect_video(video_file, date, name="", notes=""):
         crop_player = CropPlayer()
         meta_player = MetaPlayer()
 
-        # A utility to clean up datagram resources
-        cleaner = Cleaner()
-
         # Number of processes to spawn for particular processors
         n_prop_procs = 10
         n_crop_procs = 4
         n_binary = 5
         n_crop_writer = 10
-        n_csv_procs = 5
+        n_csv_procs = 10
         n_deblur_procs = 20
 
         # Main pipeline
         EZ(
             video_reader,
-            # Counter(),
-            Entry(experiment_uuid),
+            Counter(),
+            Entry(experiment_uuid, ms_metric_cal),
             MagicPixel(),
-            Rescaler(scale=1 / 1),
+            Rescaler(scale=1 / 4),
+            Counter("Rescaled"),
             bg_proc,
-            FG(),
+            FG(saveAs="div"),
+            fines_proc,
+            Counter("fines"),
+            FG("finesDivision", saveAs="fg"),
             Seq(
                 # As(n_deblur_procs, Deblur),
                 As(n_binary, Binary, "legacyLabeled"),
                 As(n_prop_procs, Properties),
                 As(n_crop_procs, Crop_Processor),
                 As(n_crop_writer, CropWriter, experiment_dir),
+                Counter("crops"),
                 As(
                     n_csv_procs,
                     CSVWriter,
@@ -139,26 +156,34 @@ async def detect_video(video_file, date, name="", notes=""):
                     method,
                     notes,
                 ),
+                Counter("csv"),
             ),
             db_proc,
+            Counter("db"),
             Passthrough(),
-            # PerformanceMonitor(
-            #     {
-            #         "Properties": n_prop_procs,
-            #         "Crop_Processor": n_crop_procs,
-            #         "Binary": n_binary,
-            #         "CropWriter": n_crop_writer,
-            #         "CSVWriter": n_csv_procs,
-            #         "Deblur": n_deblur_procs,
-            #     }
-            # ),
+            PerformanceMonitor(
+                {
+                    "Properties": n_prop_procs,
+                    "Crop_Processor": n_crop_procs,
+                    "Binary": n_binary,
+                    "CropWriter": n_crop_writer,
+                    "CSVWriter": n_csv_procs,
+                    "Deblur": n_deblur_procs,
+                }
+            ),
+            Counter("performance"),
             # raw_player,
             # bg_player,
             # fg_player,
             # mask_player,
-            cleaner,
+            # MetaPlayer(),
+            ImageSampleWriter(
+                str(experiment_dir), ["bg", "div", "fg", "raw", "mask", "fines"]
+            ),
+            Counter("samplewriter"),
+            Cleaner(),
             # qsize=10,
-        ).start().join()
+        ).catch(e_handler).start().join()
 
     except Exception as e:
 
@@ -178,6 +203,41 @@ async def detect_video(video_file, date, name="", notes=""):
         # print("Fin.")
 
     return experiment_uuid
+
+
+class ImageSampleWriter(F):
+
+    def setup(self, experiment_dir, props=[]):
+        self.sampleFreq = 100
+        self.props = props
+        self.count = 0
+        self.experiment_dir = experiment_dir
+        # self.path = "/home/mot/tmp/samples/" + experiment_uuid + "/"
+        # os.makedirs(self.path)
+        self.filename = "sample_{}_{}.png"
+
+    def do(self, frame):
+        self.count += 1
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            if self.count % self.sampleFreq == 0:
+                for k in self.props:
+                    try:
+                        im = frame.load(k)
+                    except:
+                        continue
+
+                    if im.shape[-1] == 1:
+                        im = im.squeeze()
+                    if im.dtype == np.bool:
+                        im = (im * 255).astype("uint8")
+
+                    # print(k, im.shape, np.max(im))
+                    fname = os.path.join(
+                        self.experiment_dir, self.filename.format(k, self.count)
+                    )
+                    io.imsave(fname, im)
+        self.put(frame)
 
 
 class Deblur(F):
@@ -210,8 +270,8 @@ class Deblur(F):
 
         if clip:
             # Todo: REVISIT
-            im_deconv[im_deconv > 1] = 1
-            im_deconv[im_deconv < 0] = 0
+            im_deconv[im_deconv > 1.0] = 1
+            im_deconv[im_deconv < -1.0] = 0
 
         return im_deconv
 
@@ -366,7 +426,7 @@ import re
 
 class PerformanceMonitor(F):
 
-    def setup(self, parallelisms={}, visualize=True, log=False, verbose=True):
+    def setup(self, parallelisms={}, visualize=False, log=False, verbose=False):
         self.visualize = visualize
         self.log = log
         self.fig = None
@@ -395,20 +455,20 @@ class PerformanceMonitor(F):
             self.timings.append(timing)
 
         if self.verbose:
-            print(
-                "Completed frame",
-                frame.number,
-                "Num particles",
-                len(frame.load("regionprops")),
-            )
+            # Todo: does this work?
+            print("Completed frame", frame.number)
         if self.visualize:
             self._visualize()
         self.put(frame)
 
     def teardown(self):
-        print("PerformanceMonitor Total Times")
-        for k, v in self.total_times.items():
-            print(" `->", k, v, "s")
+        print("PerformanceMonitor Total / Node Total Times")
+        for label, total_time in self.total_times.items():
+            if label in self.parallelisms:
+                avg_time = total_time / self.parallelisms[label]
+                print(" `-> {} {:.2f} s / {:.2f} s".format(label, total_time, avg_time))
+            else:
+                print(" `-> {} {:.2f} s".format(label, total_time))
 
     def _visualize(self):
 
@@ -454,17 +514,11 @@ class MetaPlayer(F):
     Print data related to the frame at current node.
     """
 
+    def setup(self,):
+        self.last_segment = None
+
     def do(self, frame):
-        print(
-            "Experiment:",
-            frame.experiment_uuid,
-            ", Segment:",
-            frame.segment_uuid,
-            " Number:",
-            frame.number,
-            " Segment Number:",
-            frame.segment_number,
-        )
+        print(" Number:", frame.number)
         self.put(frame)
 
 
@@ -492,14 +546,16 @@ class Entry(F):
     and convert the uint8 [0,255] frame to float64 [0,1]
     """
 
-    def initialize(self, experiment_uuid):
+    def initialize(self, experiment_uuid, metric_cal=None):
         self.experiment_uuid = experiment_uuid
         self.count = 0
+        self.metric_cal = metric_cal
 
     def do(self, frame):
         frame.experiment_uuid = self.experiment_uuid
         frame.number = self.count
         frame.uuid = uuid4()
+        frame.metric_cal = self.metric_cal
         self.count += 1
         frame.save("raw", frame.load("raw") / 255)
         # print("Frame", self.count, "entering...")
@@ -555,10 +611,9 @@ class Rescaler(F):
         # the following error from skimage rescale on the frame.load return
         # - ValueError: buffer source array is read-only
         # frame.save("raw", rescale(frame.load("raw"), self.scale))
+        frame.scale = self.scale
         if self.scale != 1:
-            raw = np.copy(frame.load("raw"))
-            rescaled = rescale(raw, self.scale)
-            frame.save("raw", rescaled)
+            frame.save("raw", rescale(np.copy(frame.load("raw")), self.scale))
 
         self.put(frame)
 
@@ -572,11 +627,22 @@ class BG(F):
     Compute a background.
     """
 
-    def setup(self, model="median", window_size=20, *args, env=None, **kwArgs):
+    def setup(
+        self,
+        model="median",
+        window_size=50,
+        inputProp="raw",
+        saveAs="bg",
+        *args,
+        env=None,
+        **kwArgs
+    ):
         self.frame_que = deque()
         self.window_size = window_size
         # self.q_len = math.ceil(window_size / 2)
         # self.q_count = 0
+        self.saveAs = saveAs
+        self.inputProp = inputProp
         self.model = getattr(self, model)(window_size=window_size, *args, **kwArgs)
 
     def do(self, frame):
@@ -584,20 +650,20 @@ class BG(F):
         # from uuid import uuid4
         self.frame_que.append(frame)
         # self.q_count += 1
-        self.bg = self.model.process(frame.load("raw"))
+        self.bg = self.model.process(frame.load(self.inputProp))
         # cv2.imwrite('/home/mot/tmp/bg_'+str(uuid4())+'.png', self.bg)
 
         if len(self.frame_que) > self.window_size:
             # bg = self.que.popleft()
             frame = self.frame_que.popleft()
-            frame.save("bg", self.bg)
+            frame.save(self.saveAs, self.bg)
             self.put(frame)
 
     def teardown(self):
         while len(self.frame_que) > 0:
             # self.q_count -= 1
             frame = self.frame_que.popleft()
-            frame.save("bg", self.bg)
+            frame.save(self.saveAs, self.bg)
             self.put(frame)
 
     class simpleMax:
@@ -614,7 +680,6 @@ class BG(F):
             self.bg = None
 
         def process(self, frame):
-            # like erosion, but faster
             from skimage.morphology import erosion
 
             # parameter: minimum lighting (dynamic range), threshold below
@@ -627,9 +692,40 @@ class BG(F):
                 if self.bg is None:
                     bg = np.max(self.que, axis=0)
                     bg[bg < min_range] = 0
-                    bg = erosion(bg.squeeze(), square(8))
+                    bg = bg.squeeze()
+                    # bg = erosion(bg, square(8))
                     bg = np.expand_dims(bg, axis=-1)
                     self.bg = bg
+            return self.bg
+
+    class rollingMax:
+        """
+        Computes the max over the first window_size frames.
+        Good for approximating the lighting in a backlit scene.
+        """
+
+        def __init__(self, window_size=20, img_shape=None):
+
+            # print("simpleMax maxlen: "+str(math.ceil(window_size / 2)-5))
+            self.window_size = window_size
+            self.que = deque(maxlen=window_size)
+            self.bg = None
+
+        def process(self, frame):
+            from skimage.morphology import erosion
+
+            # parameter: minimum lighting (dynamic range), threshold below
+            min_range = 20 / 255.0
+
+            self.que.append(frame)
+            if len(self.que) == self.window_size:
+                # print("computing bg...")
+                bg = np.max(self.que, axis=0)
+                bg[bg < min_range] = 0
+                bg = bg.squeeze()
+                # bg = erosion(bg, square(8))
+                bg = np.expand_dims(bg, axis=-1)
+                self.bg = bg
             return self.bg
 
 
@@ -638,10 +734,11 @@ class FG(F):
     Process the image to yield the scene foreground.
     """
 
-    def setup(self, model="division", *args, **kwargs):
+    def setup(self, model="bgDivision", saveAs="fg", *args, **kwargs):
         # If your process needs to do any kind of setup once it has been forked,
         # or if it the first process in a workflow and expected to generate
         # values for the rest of the pipeline, that code should go here.
+        self.saveAs = saveAs
         self.model = getattr(self, model)()
 
     def do(self, frame):
@@ -649,11 +746,11 @@ class FG(F):
         # be modified, mapped, reduced, or otherwise morgified, and output can
         # be then pushed downstream using the self.put() method.
         # Here, for example, any items are simply passed along.
-        frame.save("fg", self.model.process(frame))
+        frame.save(self.saveAs, self.model.process(frame))
 
         self.put(frame)
 
-    class division:
+    class bgDivision:
         """
         In a backlit scene that roughly obeys Beer-Lambert laws, dividing the
         raw image by the background (backlit scene lighting) yields the 
@@ -667,13 +764,38 @@ class FG(F):
             eps = 0.0001
             raw = frame.load("raw")
             bg = frame.load("bg")
-            div = frame.load("raw") / (frame.load("bg") + eps)
+            div = raw / (bg + eps)
+            # div[np.isnan(div)] = 1.0  # get rid of nan's from 0/0
+            return np.clip(div, 0, 1)
+
+    class finesDivision:
+        """
+        In a backlit scene that roughly obeys Beer-Lambert laws, dividing the
+        raw image by the background (backlit scene lighting) yields the 
+        transmittance, which for our application is useful.
+        """
+
+        def __init__(self):
+            pass
+
+        def process(self, frame):
+            eps = 0.0001
+            fg = frame.load("div")
+            fines = frame.load("fines")
+            div = fg / (fines + eps)
             # div[np.isnan(div)] = 1.0  # get rid of nan's from 0/0
             return np.clip(div, 0, 1)
 
 
 from skimage.filters import threshold_sauvola
-from skimage.morphology import binary_opening, remove_small_objects, square, erosion
+from skimage.morphology import (
+    binary_opening,
+    binary_erosion,
+    remove_small_objects,
+    square,
+    disk,
+    erosion,
+)
 from skimage.segmentation import clear_border
 
 
@@ -698,16 +820,31 @@ class Binary(F):
 
     class legacyLabeled:
 
-        def __init__(self, threshold=0.5):
+        def __init__(self, threshold=0.4):
             self.threshold = threshold
 
         def process(self, frame):
+
             # Take the center, removing edge artifacts
             # frame = frame[200:-200, 200:-200]
             sframe = frame.load("fg").squeeze()
             binary = sframe < self.threshold
-            binary = binary_opening(binary, square(3))
+            # binary = binary_erosion(binary, disk(6))
             binary = clear_border(binary)
+
+            if frame.metric_cal is not None:
+                config_small_object_diameter = 100  # microns diameter
+                # Area of equivalent circle
+                small_threshold = (
+                    np.pi
+                    * (
+                        (config_small_object_diameter / 2)
+                        / frame.metric_cal
+                        * frame.scale
+                    )
+                    ** 2
+                )
+                binary = remove_small_objects(binary, small_threshold)
             # opened = binary_opening(binary, square(3))
             # cleared = clear_border(opened)
             return binary
@@ -718,9 +855,20 @@ from skimage.measure import label, regionprops
 
 class Properties(F):
 
+    def setup(self, filter_area=False, filter_area_low=100, filter_area_high=2000):
+        self.filter_area = filter_area
+        self.filter_area_low = 100
+        self.filter_area_high = 2000
+
     def do(self, frame):
         labelled = label(frame.load("mask"))
         properties = regionprops(labelled, frame.load("fg").squeeze())
+        if self.filter_area:
+            properties = [
+                p
+                for p in properties
+                if p.area > self.filter_area_low and p.area < self.filter_area_high
+            ]
         frame.save("regionprops", properties)
         frame.save("track_uuids", [uuid4() for i in range(len(properties))])
         self.put(frame)
@@ -779,12 +927,14 @@ class CropWriter(F):
 
 class FrameData(Datagram):
 
-    def initialize(self):
+    def initialize(self, metric_cal=None, scale=1 / 1):
         self.experiment_uuid = None
         self.segment_uuid = None
         self.segment_number = None
         self.uuid = None
         self.number = None
+        self.metric_cal = metric_cal
+        self.scale = scale
 
 
 class CSVWriter(F):
@@ -832,16 +982,38 @@ class CSVWriter(F):
 
     def add_detections(self, frame):
         regionprops = frame.load("regionprops")
-        DEFAULT_CATEGORY = 1  # set to unknown for now
+        metric_cal = frame.metric_cal
+        scale = frame.scale
+        DEFAULT_CATEGORY = 0  # set to unknown for now
+
+        equivCircleRadius = lambda area: np.sqrt(area / np.pi)
+
+        if False:
+            # A failed attempt to adjust the metric properties to
+            # glass beads physical ground truth
+            cal = 0.7638888888888888
+        else:
+            cal = 1.0
+
+        if metric_cal is not None:
+            radius_function = lambda x: cal * equivCircleRadius(x) * metric_cal / scale
+            linear_function = lambda x: cal * x * metric_cal / scale
+            area_function = lambda x: cal ** 2 * x * metric_cal ** 2 / scale ** 2
+        else:
+            radius_function = equivalentCircleRadius
+            linear_function = lambda x: x
+            area_function = lambda x: x
+
         particles = [
             (
                 uuid4(),
                 self.experiment_uuid,
-                p.area,
+                area_function(p.filled_area),
+                radius_function(p.filled_area),
                 p.mean_intensity,
-                p.perimeter,
-                p.major_axis_length,
-                p.minor_axis_length,
+                linear_function(p.perimeter),
+                linear_function(p.major_axis_length),
+                linear_function(p.minor_axis_length),
                 p.orientation,
                 p.solidity,
                 p.eccentricity,
@@ -859,7 +1031,7 @@ class CSVWriter(F):
             (track_uuids[i], frame.uuid, particles[i][0], coords[i], bboxes[i])
             for i, p in enumerate(regionprops)
         ]
-        s = "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n"
+        s = "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n"
         with open("/tmp/{}_particle.csv".format(self.experiment_uuid), "a") as f:
             for p in particles:
                 f.write(
@@ -875,6 +1047,7 @@ class CSVWriter(F):
                         p[8],
                         p[9],
                         p[10],
+                        p[11],
                     )
                 )
 
@@ -933,7 +1106,7 @@ class DBProcessor(F):
             self.experiment_uuid,
             self.experiment_day,
             self.exp_name,
-            "DetectionMpyxDatagram",
+            self.method,
             self.notes,
         )
 
@@ -973,7 +1146,7 @@ class DBProcessor(F):
             print("Inserting particles into database.")
         await self.tx.execute(
             """
-            COPY particle (particle, experiment, area, intensity, perimeter, major, minor, orientation, solidity, eccentricity, category\n)FROM '/tmp/{}_particle.csv' DELIMITER '\t' CSV;
+            COPY particle (particle, experiment, area, radius, intensity, perimeter, major, minor, orientation, solidity, eccentricity, category\n)FROM '/tmp/{}_particle.csv' DELIMITER '\t' CSV;
             """.format(
                 self.experiment_uuid
             )
@@ -998,6 +1171,7 @@ class DBProcessor(F):
             self.async(self.transaction.rollback())
         else:
             self.async(self.transaction.commit())
+        self.cleanupFS()
 
     def cleanupFS(self):
         for f in self.csv_files:

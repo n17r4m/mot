@@ -95,9 +95,9 @@ function addExperiment(instance, experiment, name){
 
 
 
-function flowNearestZero(fcs){
+function valueNearestZero(fcs){
     return fcs.reduce((min, fc) => {
-        return Math.abs(fc.flow) < Math.abs(min) ? fc.flow : min
+        return Math.abs(fc.value) < Math.abs(min) ? fc.value : min
     }, Infinity)
 }
 
@@ -123,18 +123,30 @@ function updateChart(instance){
                     $("#crop_loader").addClass("active")
                     
                     
-                    const flow = flowNearestZero(data.points.map(query.isolate, plt.data))
+                    // const flow = flowNearestZero(data.points.map(query.isolate, plt.data))
                     var points = data.points.map(query.isolate, plt.data)
-                    
-                    
-                    
                     var experiment = exps[points[0].category]
+                    console.log(q)
+                    switch(q) {
+                        case "flow_vs_intensity_histogram":
+                            var method_name = "experiment_particles_with_flow_near"
+                            var value = valueNearestZero(points)
+                            break;
+                        case "compare_particle_size_distribution":
+                            var method_name = "experiment_particles_with_area_near"
+                            var value = valueNearestZero(points)
+                            break;
+                        default:
+                            break
+                    } 
                     
                     
-                    console.info(plt, points, flow, experiment, exps)
                     
                     
-                    Meteor.call("experiment_particles_with_flow_near", experiment, flow, (err, res) => {
+                    console.info(plt, points, value, experiment, exps)
+                    
+                    
+                    Meteor.call(method_name, experiment, value, (err, res) => {
                         $("#crop_loader").removeClass("active")
                         if(err){
                             console.info(err)

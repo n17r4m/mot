@@ -488,7 +488,9 @@ class VideoFrameProcessor(multiprocessing.Process):
     def viv_richardson_lucy(self, image, psf, iterations=1, clip=True):
         from scipy.signal import convolve
 
-        image = image.astype("float64")
+        image = image.astype("float64") / 255
+
+        print("Input range:", np.min(image), np.mean(image), np.max(image))
 
         im_deconv = 0.5 * np.ones(image.shape)
         psf_mirror = psf[::-1, ::-1]
@@ -501,14 +503,14 @@ class VideoFrameProcessor(multiprocessing.Process):
             im_deconv *= convolve(relative_blur, psf_mirror, "same")
 
         if clip:
-            im_deconv[im_deconv > 50.0] = 255
-            im_deconv[im_deconv < -50.0] = 0
-        return im_deconv
+            im_deconv[im_deconv > 1.0] = 1.0
+            im_deconv[im_deconv < 0.0] = 0.0
+        return (im_deconv * 255).astype("uint8")
 
     def run(self):
 
         # Method 1: new line
-        #bg_psf1 = Image.open("/home/mot/py/bg.png").convert("L")
+        # bg_psf1 = Image.open("/home/mot/py/bg.png").convert("L")
 
         while True:
             if self.stopped():
@@ -538,13 +540,13 @@ class VideoFrameProcessor(multiprocessing.Process):
 
             # Method 2: psf from gauss kernel
             kernel = self.gkern(7.0, 0.85)  # 1.0495833333333333
-            iters = 20 #10 #15
+            iters = 10  # 20 #10 #15
 
             deconv = self.viv_richardson_lucy(sframe, kernel, iters, True)
 
             from scipy.misc import imsave
 
-            '''try:
+            try:
                 if not os.path.exists("/home/mot/tmp/deconv"):
                     os.mkdir("/home/mot/tmp/deconv")  # make new dir
                 imsave("/home/mot/tmp/deconv/deconv-" + str(i) + ".png", deconv)
@@ -553,11 +555,11 @@ class VideoFrameProcessor(multiprocessing.Process):
                 imsave("/home/mot/tmp/sframe/sframe-" + str(i) + ".png", sframe)
 
             except Exception as e:
-                print(e)  # pass'''
+                print(e)  # pass
             ############################################################################
 
             # thresh  = threshold(deconv) #sframe
-            thresh = 130 #0.5
+            thresh = 130  # 0.5
             binary = binary_opening((deconv < thresh), square(1))  # sframe
             cleared = clear_border(binary)
             labeled = label(cleared)
@@ -568,7 +570,9 @@ class VideoFrameProcessor(multiprocessing.Process):
             # bbox: (min_row, min_col, max_row, max_col)
             # properties = [i for i in properties if i.bbox[3]-i.bbox[1] > WIDTH_FILTER]
 
-            self.frame_processor_mask_queue.put((i, (filtered.squeeze().astype("uint8") * 255).tobytes()))
+            self.frame_processor_mask_queue.put(
+                (i, (filtered.squeeze().astype("uint8") * 255).tobytes())
+            )
             self.frame_properties_queue.put((frame_uuid, i, frame, properties))
 
         self.frame_processor_mask_queue.put(None)

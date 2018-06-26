@@ -5,6 +5,7 @@ import { Pool } from 'pg'
 const pg = new Pool()
 
 
+
 Meteor.methods({
     
     categories(){
@@ -25,14 +26,16 @@ Meteor.methods({
     
     experiment_days(){
         return pg.query(
-            "SELECT DISTINCT to_char(day, 'YYYY-MM-DD') as day \
-             FROM Experiment WHERE method ILIKE 'tracking%' ORDER BY day DESC ")
+            "SELECT DISTINCT to_char(day, 'YYYY-MM-DD') as day  \
+             FROM Experiment \
+             ORDER BY day DESC ")
     },
     
     experiments_on_day(day){
         return pg.query(
             "SELECT experiment as _id, name \
-            FROM Experiment WHERE method ILIKE 'tracking%' AND day = $1 ORDER BY _id ASC", [day])
+            FROM Experiment \
+            WHERE day = $1 ORDER BY _id ASC", [day])
     },
     
     experiment_segments(experiment){
@@ -90,7 +93,26 @@ Meteor.methods({
             LIMIT $3`,
             [flow, experiment, limit || 50])
     },
-    
+    experiment_particles_with_area_near(experiment, area, limit){
+        
+        return pg.query(`
+            SELECT 
+                p.particle AS particle, 
+                p.experiment || '/' || MAX( t1.frame || '/' || t1.track || '.jpg' ) AS path,
+                ABS(2*p.radius-$1) as dDiameter,
+                c.label as category,
+                valid
+            FROM Track t1, Frame f1, Particle p, Category c
+            WHERE p.particle = t1.particle
+            AND p.experiment = f1.experiment
+            AND t1.frame = f1.frame
+            AND p.category = c.category
+            AND p.experiment = $2
+            GROUP BY p.experiment, p.particle, c.label, p.valid
+            ORDER BY dDiameter ASC 
+            LIMIT $3`,
+            [area, experiment, limit || 50])
+    },
     update_particle_category(particle, category){
         
         return pg.query(`

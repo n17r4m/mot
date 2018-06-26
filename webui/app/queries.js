@@ -8,37 +8,37 @@ export const Queries = {
                     "class": "threshold",
                     label: "Intensity threshold",
                     type: "number",
-                    value: 130,
+                    value: 0.5,
                     min: 0,
-                    max: 255
+                    max: 1
                 }
             ]
         },
         flow_vs_intensity_distribution: { 
-            type: "analyse", 
+            type: "_analyse", 
             label: "Flow vs. Intensity (dist)",
             args: [
                 {
                     "class": "threshold",
                     label: "Intensity threshold",
                     type: "number",
-                    value: 130,
+                    value: 0.5,
                     min: 0,
-                    max: 255
+                    max: 1
                 }
             ]
         },
         flow_vs_intensity_violin: { 
-            type: "analyse", 
+            type: "_analyse", 
             label: "Flow vs. Intensity (violin)",
             args: [
                 {
                     "class": "threshold",
                     label: "Intensity threshold",
                     type: "number",
-                    value: 130,
+                    value: 0.5,
                     min: 0,
-                    max: 255
+                    max: 1
                 }
             ]
         },
@@ -47,16 +47,26 @@ export const Queries = {
             label: "Flow vs. Category (hist)"
         },
         flow_vs_category_distribution: { 
-            type: "analyse", 
+            type: "_analyse", 
             label: "Flow vs. Category (dist)"
         },
         flow_vs_category_violin: { 
-            type: "analyse", 
+            type: "_analyse", 
             label: "Flow vs. Category (violin)" 
         },
         
-        compare_flow_vs_category_violin2: {
+        particle_size_distribution: {
+            type: "analyse",
+            label: "Particle Size Distribution"
+        },
+        
+        compare_particle_size_distribution: {
             type: "compare",
+            label: "Compare PSD"
+        },
+        
+        compare_flow_vs_category_violin2: {
+            type: "_compare",
             label: "Compare Flow"
         }
         /// ... 
@@ -95,19 +105,19 @@ export const Queries = {
 
 var isolateParticleMaps = {
     histogram: function(p){ return {
-        flow: p.x,
+        value: p.x,
         category: p.curveNumber
     }},
     distribution: function(p){ return {
-        flow: p.x,
+        value: p.x,
         category: p.curveNumber % (this.length / 2)
     }},
     violin: function(p){ return {
-        flow: p.y,
+        value: p.y,
         category: Math.floor(p.curveNumber/(this.length / 5)) 
     }},
     violin2: function(p){ return {
-        flow: p.y,
+        value: p.y,
         category: Math.floor(p.curveNumber/10) 
     }}
 }

@@ -11,9 +11,10 @@ import config
 from lib.Database import Database
 
 import commands.detect_mpyxDatagramDeblur as detect
-import commands.track as track
-import commands.draw as draw
-import commands.export as export
+
+# import commands.track as track
+# import commands.draw as draw
+# import commands.export as export
 
 import time
 import os
@@ -29,7 +30,7 @@ async def main(args):
     - a directory to be recursively searched for videos to process
     
     """
-
+    print("Hello, World!")
     if len(args) < 1:
         print("""path/to/videos/""")
     else:
@@ -67,13 +68,22 @@ async def processDirectory(video_directory, date, export_directory):
 
     # Inner loop: detect, track, draw, export
     process_start = time.time()
+
+    seen_dirs = []
+
     for root, name in videos:
         video_start = time.time()
         parent_dir = video_directory.split("/")[-2]
         folders = root.split("/")
         index = folders.index(parent_dir)
         notes = ", ".join(folders[index:])
+        notes += "... No cal, quarter scale, filter less than 100 micron diameter"
         video_export_directory = "/".join([export_directory] + folders[index:])
+
+        if video_export_directory in seen_dirs:
+            continue
+        seen_dirs.append(video_export_directory)
+
         if not os.path.isdir(video_export_directory):
             os.makedirs(video_export_directory)
 
@@ -90,7 +100,7 @@ async def processDirectory(video_directory, date, export_directory):
         print("  `-> took", time.time() - detect_start, "s")
 
         await vacuum(db)
-
+        """
         print(" `-> Tracking...")
         track_start = time.time()
         tracking_uuid = await track.track_experiment(detection_uuid)
@@ -103,7 +113,7 @@ async def processDirectory(video_directory, date, export_directory):
         export_start = time.time()
         await export.exportSyncrude2018(tracking_uuid, video_export_directory)
         print("  `-> took", time.time() - export_start, "s")
-
+        """
         print("Processing video took " + str(time.time() - video_start) + " seconds.")
 
         # manually trigger garbage collection
