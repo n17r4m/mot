@@ -49,7 +49,6 @@ import tempfile
 import time
 import os
 import sys
-import cv2
 
 import warnings
 
@@ -74,6 +73,7 @@ class Datagram(Data):
 
 
 async def main(args):
+    print("Hello World!")
     if len(args) < 2:
         print("""path/to/video/file.avi 2017-10-31 Name-of_video "Notes. Notes." """)
     else:
@@ -378,77 +378,77 @@ class Filter(F):
         self.put(frame)
 
 
-class RawPlayer(F):
+# class RawPlayer(F):
 
-    def do(self, frame):
-        cv2.imshow("Raw Display", frame.load("raw"))
-        self.put(frame)
-        cv2.waitKey(1000 // 24)
-
-
-class FGPlayer(F):
-
-    def setup(self, win_name="FG Display"):
-        self.win_name = win_name
-
-    def do(self, frame):
-        cv2.imshow(self.win_name, frame.load("fg"))
-        self.put(frame)
-        cv2.waitKey(1000 // 24)
+#     def do(self, frame):
+#         cv2.imshow("Raw Display", frame.load("raw"))
+#         self.put(frame)
+#         cv2.waitKey(1000 // 24)
 
 
-class MaskPlayer(F):
+# class FGPlayer(F):
 
-    def do(self, frame):
-        cv2.imshow("Mask Display", 1.0 * frame.load("mask"))
-        self.put(frame)
-        cv2.waitKey(1000 // 24)
+#     def setup(self, win_name="FG Display"):
+#         self.win_name = win_name
 
-
-class BGPlayer(F):
-
-    def do(self, frame):
-        cv2.imshow("BG Display", frame.load("bg"))
-        self.put(frame)
-        cv2.waitKey(1000 // 24)
+#     def do(self, frame):
+#         cv2.imshow(self.win_name, frame.load("fg"))
+#         self.put(frame)
+#         cv2.waitKey(1000 // 24)
 
 
-class CropPlayer(F):
+# class MaskPlayer(F):
 
-    def do(self, frame):
-        crops = frame.load("crops")
+#     def do(self, frame):
+#         cv2.imshow("Mask Display", 1.0 * frame.load("mask"))
+#         self.put(frame)
+#         cv2.waitKey(1000 // 24)
 
-        crop_h = crops.shape[1]
-        crop_w = crops.shape[2]
 
-        crops_n = crops.shape[0]
+# class BGPlayer(F):
 
-        disp_w_n = 30
-        disp_h_n = int(np.ceil(crops_n / disp_w_n))
-        disp_w = int(disp_w_n * crop_w)
-        disp_h = int(disp_h_n * crop_h)
-        disp = np.zeros((disp_h, disp_w))
+#     def do(self, frame):
+#         cv2.imshow("BG Display", frame.load("bg"))
+#         self.put(frame)
+#         cv2.waitKey(1000 // 24)
 
-        # print("------------------")
-        # print("crops:", crops.shape)
-        # print("crop_h", crop_h)
-        # print("crop_w", crop_w)
-        # print("crops_n", crops_n)
-        # print("disp_w", disp_w)
-        # print("disp_h", disp_h)
 
-        for i in range(disp_h_n):
-            for j in range(disp_w_n):
-                n = i * disp_h_n + j
-                if n == crops_n:
-                    break
-                disp[
-                    i * crop_h : i * crop_h + crop_h, j * crop_w : j * crop_w + crop_w
-                ] = crops[n].squeeze()
+# class CropPlayer(F):
 
-        cv2.imshow("Crop Display", disp)
-        self.put(frame)
-        cv2.waitKey(1000 // 24)
+#     def do(self, frame):
+#         crops = frame.load("crops")
+
+#         crop_h = crops.shape[1]
+#         crop_w = crops.shape[2]
+
+#         crops_n = crops.shape[0]
+
+#         disp_w_n = 30
+#         disp_h_n = int(np.ceil(crops_n / disp_w_n))
+#         disp_w = int(disp_w_n * crop_w)
+#         disp_h = int(disp_h_n * crop_h)
+#         disp = np.zeros((disp_h, disp_w))
+
+#         # print("------------------")
+#         # print("crops:", crops.shape)
+#         # print("crop_h", crop_h)
+#         # print("crop_w", crop_w)
+#         # print("crops_n", crops_n)
+#         # print("disp_w", disp_w)
+#         # print("disp_h", disp_h)
+
+#         for i in range(disp_h_n):
+#             for j in range(disp_w_n):
+#                 n = i * disp_h_n + j
+#                 if n == crops_n:
+#                     break
+#                 disp[
+#                     i * crop_h : i * crop_h + crop_h, j * crop_w : j * crop_w + crop_w
+#                 ] = crops[n].squeeze()
+
+#         cv2.imshow("Crop Display", disp)
+#         self.put(frame)
+#         cv2.waitKey(1000 // 24)
 
 
 class MockPerformanceInfo(F):
