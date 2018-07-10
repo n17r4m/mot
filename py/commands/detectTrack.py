@@ -1,4 +1,4 @@
-
+# STABLE before chagng :)
 from skimage import io
 from skimage.transform import downscale_local_mean
 from skimage.filters import threshold_sauvola as threshold
@@ -52,7 +52,7 @@ import sys
 
 import warnings
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 
 class Datagram(Data):
@@ -71,9 +71,13 @@ class Datagram(Data):
     def pop(self, key):
         self.np_file_store.pop(key)
 
+    def save_gen_fname(self, key):
+        return os.path.join(config.tmp_dir, "mpyx_datagram_{}_{}.npy").format(
+            key, str(uuid4())
+        )
+
 
 async def main(args):
-    print("Hello World!")
     if len(args) < 2:
         print("""path/to/video/file.avi 2017-10-31 Name-of_video "Notes. Notes." """)
     else:
@@ -88,7 +92,7 @@ async def detect_video(video_file, date, name="", notes=""):
     experiment_day = dateparse(date)
     experiment_dir = os.path.join(config.experiment_dir, str(experiment_uuid))
     experiment = (experiment_uuid, experiment_day, name, "detection", notes)
-    method = "TrackingPrefix DetectionMpyx"
+    method = "DetectTrack"
 
     def e_handler(e, tb):
         print("Exception occured:", e)
@@ -107,90 +111,74 @@ async def detect_video(video_file, date, name="", notes=""):
             video_file,
             "",
             (h, w, 1),
-            " -ss 00:00:02.00 -t 00:00:00.50 -vf scale={}:{}".format(w, h),
+            " -vf scale={}:{}".format(w, h),
             [],
             False,
             FrameData,
         )
 
-        # csv_proc = CSVWriter(experiment_uuid, experiment_day, name, method, notes)
-        # db_proc = DBProcessor(experiment_uuid, experiment_day, name, method, notes)
-
-        # Computes a background for a frame, outputs {"frame": frame, "bg": bg}
-        # bg_proc = BG(model="simpleMax", window_size=20, img_shape=(h, w, 1))
-
-        # fines_proc = BG(
-        #     model="rollingMax",
-        #     window_size=20,
-        #     img_shape=(h, w, 1),
-        #     inputProp="div",
-        #     saveAs="fines",
-        # )
-
         # Utilities for viewing various stages of processing.
-        raw_player = RawPlayer()
-        bg_player = BGPlayer()
-        fg_player = FGPlayer()
-        mask_player = MaskPlayer()
-        crop_player = CropPlayer()
-        meta_player = MetaPlayer()
+        raw_player = ImagePlayer("raw")
+        crop_player = CropPlayer("crops")
 
         # Number of processes to spawn for particular processors
-        n_prop_procs = 5
+        n_prop_procs = 3
         n_crop_procs = 2
-        n_binary = 2
-        n_crop_writer = 5
-        n_csv_procs = 5
-        n_deblur_procs = 10
-        n_tracker = 5
-        n_bg_proc = 5
+        n_binary = 1
+        n_crop_writer = 2
+        n_csv_procs = 2
+        n_deblur_procs = 5
+        n_tracker = 15
         n_fines_proc = 1
 
+        startTime = time.time()
         # Main pipeline
         EZ(
             video_reader,
-            Counter(),
-            Entry(experiment_uuid),
+            Entry(experiment_uuid, startTime=startTime),
             MagicPixel(),
+            ImageSlice("raw", ((950, 1450), (650, 1150))),
             Rescaler(scale=config.ms_rescale),
-            # Counter("Rescaled"),
             BG(model="simpleMax", window_size=20, img_shape=(h, w, 1)),
-            # Counter("BG"),
-            FG(saveAs="div"),
-            # Counter("FG1"),
-            As(
-                n_fines_proc,
-                BG,
+            FG(saveAs="fg_light", name="FG_light"),
+            BG(
                 model="rollingMax",
                 window_size=20,
                 img_shape=(h, w, 1),
-                inputProp="div",
-                saveAs="fines",
+                inputProp="fg_light",
+                saveAs="bg_fines",
+                name="BG_Fines",
             ),
-            # Counter("fines"),
-            FG("finesDivision", saveAs="fg"),
-            # Counter("FG2"),
+            FG(
+                "propDivision",
+                num="fg_light",
+                den="bg_fines",
+                saveAs="fg",
+                name="FG_fines",
+            ),
             Seq(
-                # As(n_deblur_procs, Deblur),
                 As(n_binary, Binary, "legacyLabeled"),
-                # Counter("Binary"),
                 As(n_prop_procs, Properties),
-                # Counter("props"),
                 As(n_crop_procs, Crop_Processor),
                 As(n_crop_writer, CropWriter, experiment_dir),
-                # Counter("crops"),
             ),
-            FrameCSVWriter(),
-            # Counter("FrameCSVWriter"),
+            MockClassifier(),
+            VideoStreamCompressor(experiment_dir=experiment_dir, prop="raw"),
+            VideoStreamCompressor(experiment_dir=experiment_dir, prop="bg"),
+            VideoStreamCompressor(experiment_dir=experiment_dir, prop="fg_light"),
+            VideoStreamCompressor(experiment_dir=experiment_dir, prop="bg_fines"),
+            VideoStreamCompressor(experiment_dir=experiment_dir, prop="fg"),
+            VideoStreamCompressor(experiment_dir=experiment_dir, prop="mask"),
+            ImageSampleWriter(
+                experiment_dir=experiment_dir,
+                props=["raw", "bg", "fg_light", "bg_fines", "fg", "mask"],
+            ),
+            Passthrough(item="Frame"),
             FrameSegmentConverter(),
-            # Counter("FrameSegmentConverter"),
             As(n_tracker, Tracker),
-            # Counter("Tracker"),
             SegmentCSVWriter(),
-            # Counter("segmentCSV"),
             DBProcessor(experiment_uuid, experiment_day, name, method, notes),
-            # Counter("db"),
-            Passthrough(),
+            Passthrough(item="Segment"),
             PerformanceMonitor(
                 {
                     "Properties": n_prop_procs,
@@ -199,13 +187,11 @@ async def detect_video(video_file, date, name="", notes=""):
                     "CropWriter": n_crop_writer,
                     "CSVWriter": n_csv_procs,
                     "Deblur": n_deblur_procs,
-                    "BG": n_bg_proc,
+                    "Fines": n_fines_proc,
                     "Tracker": n_tracker,
                 }
             ),
-            # Counter("performance"),
             Cleaner(),
-            # qsize=150,
         ).catch(e_handler).start().join()
 
     except Exception as e:
@@ -228,6 +214,144 @@ async def detect_video(video_file, date, name="", notes=""):
     return experiment_uuid
 
 
+class ImageSlice(F):
+
+    def setup(self, prop, regionOfInterest):
+        self.prop = prop
+        self.roi = [slice(i, j) for i, j in regionOfInterest]
+
+    def do(self, frame):
+        image = frame.load(self.prop)
+        buf = image[self.roi].copy()
+        frame.save(self.prop, buf)
+        self.put(frame)
+
+
+class VideoStreamCompressor(F):
+
+    def setup(self, experiment_dir, prop="raw", ext=".mp4"):
+        self.verbose = False
+        self.queue = queue
+        self.edir = experiment_dir
+        self.ext = ext
+        self.stop_event = multiprocessing.Event()
+
+        self.prop = prop
+        self.proc = None
+
+    def setupStream(self, frame):
+        fname = self.prop + self.ext
+        array = frame.load(self.prop).squeeze()
+        shape = array.shape
+        width = shape[1]
+        height = shape[0]
+        c_width = width
+        c_height = height
+
+        if self.verbose:
+            print("w:", width, "h:", height, "ndim:", array.ndim)
+
+        if array.ndim == 2:
+            pix_format = "gray"
+        elif array.ndim == 3:
+            pix_format = "rgb24"
+
+        if height % 2:
+            c_height = height - 1
+        if width % 2:
+            c_width = width - 1
+
+        if not c_height == height or not c_width == width:
+            crop_line = ', crop={}:{}:0:0"'.format(c_width, c_height)
+        else:
+            crop_line = '"'
+
+        fps = config.ms_fps
+        rate = 24
+
+        # Todo: commission gpu
+        gpu = -1
+        if gpu < 0:
+            s = " -c:v libx264 -crf 15 -preset fast"
+        else:
+            s = " -c:v h264_nvenc -gpu {} -preset slow".format(gpu)
+
+        cmd = "".join(
+            (
+                "ffmpeg",
+                " -f rawvideo -pix_fmt {}".format(pix_format),
+                " -video_size {}x{}".format(width, height),
+                " -framerate {}".format(fps),
+                " -i -",
+                s,
+                " -pix_fmt yuv420p",
+                ' -filter:v "setpts={}*PTS'.format(fps / rate),
+                crop_line,
+                " -r 24",
+                " -movflags +faststart",
+                ' "{}"'.format(os.path.join(self.edir, fname)),
+            )
+        )
+
+        self.proc = subprocess.Popen(
+            shlex.split(cmd),
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        fcntl.fcntl(self.proc.stdout.fileno(), fcntl.F_SETFL, os.O_NONBLOCK)
+        self.log_file = open("{}.log".format(os.path.join(self.edir, fname)), "wb", 0)
+
+    def do(self, frame):
+
+        if self.proc is None:
+            self.setupStream(frame)
+
+        try:
+            self.log_file.write(self.proc.stdout.read())
+        except:
+            pass
+
+        frame_bytes = (255 * frame.load(self.prop).squeeze()).astype("uint8")
+
+        # print(np.min(frame_bytes), np.max(frame_bytes), frame_bytes.shape)
+
+        try:
+            self.proc.stdin.write(frame_bytes)
+        except:
+            print("VideoStreamCompressor is borked")
+            self.log_file.write(self.proc.stdout.read())
+
+        self.put(frame)
+
+    def teardown(self):
+        self.proc.stdin.close()
+        self.proc.wait()
+        if self.verbose:
+            print("VideoStreamCompressor Exiting")
+
+
+class TimingsPrinter(F):
+
+    def setup(self, prop=None):
+        self.flag = True
+        self.prop = prop
+
+    def do(self, item):
+        found = False
+        if self.flag:
+            if self.prop is None:
+                print(self.meta["timings"])
+            else:
+                for k, v in self.meta["timings"].items():
+                    if self.prop in k:
+                        print(self.prop + " Found", k, v)
+                        found = True
+            if found:
+                self.flag = False
+        self.put(item)
+
+
 class FrameSegmentConverter(F):
     """
     Convert frame data into segment data
@@ -237,8 +361,8 @@ class FrameSegmentConverter(F):
 
     def setup(self):
         self.segment = None
-        self.frames = 0
-        self.frames_uuids = []
+        self.prevTimings = None
+        self.timings = {}
 
     def do(self, frame):
         # Detect new segment
@@ -246,33 +370,49 @@ class FrameSegmentConverter(F):
         if self.segment is None:
             self.newSegment(frame)
         elif frame.segment_uuid != self.segment.segment_uuid:
+            self.setMetaTimings()
             self.put(self.segment)
             self.newSegment(frame)
 
         self.insertFrame(frame)
-        # Discard frames
-        frame.clean()
 
-    def teardown(self):
-        # Todo: need to send last segment down the pipe?
-        self.put(self.segment)
+    def insertFrame(self, frame):
+        self.segment.insertFrame(frame)
+        self.accountTime()
 
     def newSegment(self, frame):
-        self.frames = 0
+        self.timings = {}
         self.segment = SegmentData()
         self.segment.experiment_uuid = frame.experiment_uuid
         self.segment.segment_uuid = frame.segment_uuid
         self.segment.segment_number = frame.segment_number
 
-    def insertFrame(self, frame):
-        # Preserve desired information
-        keyname = "regionprops_{}"
-        self.segment.update(keyname.format(self.frames), frame.getfname("regionprops"))
-        frame.pop("regionprops")
-        self.frames += 1
-        self.segment.frames_uuids.append(frame.uuid)
-        self.segment.frame_track_uuids.append(frame.track_uuids)
-        self.segment.num_frames += 1
+    def setMetaTimings(self):
+        self.prevTimings = {}
+        for k, v in self.meta["timings"].items():
+            self.prevTimings[k] = v
+
+        self.meta["timings"] = {}
+        for k, v in self.timings.items():
+            self.meta["timings"][k] = v
+
+    def accountTime(self):
+        if self.prevTimings is not None:
+            self.timings = self.prevTimings.copy()
+            self.prevTimings = None
+        else:
+            for k, v in self.meta["timings"].items():
+                if "Overhead" in k:
+                    pass
+                    # print("FOUND OVERHEAD")
+                if not k in self.timings:
+                    self.timings[k] = 0.0
+
+                self.timings[k] += self.meta["timings"][k]
+
+    def teardown(self):
+        # Todo: need to send last segment down the pipe?
+        self.put(self.segment)
 
 
 class ImageSampleWriter(F):
@@ -282,8 +422,6 @@ class ImageSampleWriter(F):
         self.props = props
         self.count = 0
         self.experiment_dir = experiment_dir
-        # self.path = "/home/mot/tmp/samples/" + experiment_uuid + "/"
-        # os.makedirs(self.path)
         self.filename = "sample_{}_{}.png"
 
     def do(self, frame):
@@ -363,8 +501,8 @@ class Deblur(F):
 
 class Cleaner(F):
 
-    def do(self, frame):
-        frame.clean()
+    def do(self, data):
+        data.clean()
 
 
 class Filter(F):
@@ -378,77 +516,68 @@ class Filter(F):
         self.put(frame)
 
 
-# class RawPlayer(F):
+class ImagePlayer(F):
 
-#     def do(self, frame):
-#         cv2.imshow("Raw Display", frame.load("raw"))
-#         self.put(frame)
-#         cv2.waitKey(1000 // 24)
+    def setup(self, prop_name):
+        self.freq = 30  # fps
+        self.prop_name = prop_name
+        self.name = self.prop_name + " Image Player"
+        self.disp = None
 
+    def do(self, frame):
+        img = frame.load(self.prop_name)
+        self.show(img)
+        self.put(frame)
 
-# class FGPlayer(F):
+    def show(self, img):
+        cmap = None
+        if img is None:
+            return
+        if len(img.shape) == 3:
+            if img.shape[-1] == 1:
+                img = img.squeeze()
+                cmap = "gray"
+        elif len(img.shape) == 2:
+            cmap = "gray"
 
-#     def setup(self, win_name="FG Display"):
-#         self.win_name = win_name
-
-#     def do(self, frame):
-#         cv2.imshow(self.win_name, frame.load("fg"))
-#         self.put(frame)
-#         cv2.waitKey(1000 // 24)
-
-
-# class MaskPlayer(F):
-
-#     def do(self, frame):
-#         cv2.imshow("Mask Display", 1.0 * frame.load("mask"))
-#         self.put(frame)
-#         cv2.waitKey(1000 // 24)
-
-
-# class BGPlayer(F):
-
-#     def do(self, frame):
-#         cv2.imshow("BG Display", frame.load("bg"))
-#         self.put(frame)
-#         cv2.waitKey(1000 // 24)
+        if self.disp is None:
+            self.disp = plt.imshow(img, cmap=cmap)
+        else:
+            self.disp.set_data(img)
+        plt.pause(1 / self.freq)
+        plt.draw()
 
 
-# class CropPlayer(F):
+class CropPlayer(ImagePlayer):
 
-#     def do(self, frame):
-#         crops = frame.load("crops")
+    def cropsToImg(self, crops):
+        crop_h = crops.shape[1]
+        crop_w = crops.shape[2]
 
-#         crop_h = crops.shape[1]
-#         crop_w = crops.shape[2]
+        crops_n = crops.shape[0]
 
-#         crops_n = crops.shape[0]
+        disp_w_n = 30
+        disp_h_n = int(np.ceil(crops_n / disp_w_n))
+        disp_w = int(disp_w_n * crop_w)
+        disp_h = int(disp_h_n * crop_h)
+        img = np.zeros((disp_h, disp_w))
 
-#         disp_w_n = 30
-#         disp_h_n = int(np.ceil(crops_n / disp_w_n))
-#         disp_w = int(disp_w_n * crop_w)
-#         disp_h = int(disp_h_n * crop_h)
-#         disp = np.zeros((disp_h, disp_w))
+        for i in range(disp_h_n):
+            for j in range(disp_w_n):
+                n = i * disp_h_n + j
+                if n == crops_n:
+                    break
+                img[
+                    i * crop_h : i * crop_h + crop_h, j * crop_w : j * crop_w + crop_w
+                ] = crops[n].squeeze()
 
-#         # print("------------------")
-#         # print("crops:", crops.shape)
-#         # print("crop_h", crop_h)
-#         # print("crop_w", crop_w)
-#         # print("crops_n", crops_n)
-#         # print("disp_w", disp_w)
-#         # print("disp_h", disp_h)
+        return img
 
-#         for i in range(disp_h_n):
-#             for j in range(disp_w_n):
-#                 n = i * disp_h_n + j
-#                 if n == crops_n:
-#                     break
-#                 disp[
-#                     i * crop_h : i * crop_h + crop_h, j * crop_w : j * crop_w + crop_w
-#                 ] = crops[n].squeeze()
-
-#         cv2.imshow("Crop Display", disp)
-#         self.put(frame)
-#         cv2.waitKey(1000 // 24)
+    def do(self, frame):
+        crops = frame.load(self.prop_name)
+        img = self.cropsToImg(crops)
+        self.show(img)
+        self.put(frame)
 
 
 class MockPerformanceInfo(F):
@@ -478,16 +607,29 @@ class MockPerformanceInfo(F):
         return self.get_memory(t), self.get_cpu(t), self.get_net(t)
 
 
+from functools import reduce
+
+
 class Passthrough(F):
 
-    def setup(self):
-        self.start = time.time()
+    def setup(self, item="item"):
+        self.item = item
+        self.start = None
+        self.times = []
 
     def do(self, frame):
-        # print("PASSTHROUGH DO")
-        self.meta["timings"]["Time per item"] = time.time() - self.start
+        if self.start is None:
+            pass
+        else:
+            elapsed = time.time() - self.start
+            self.times.append(elapsed)
+            self.meta["timings"][self.item + " Passthrough"] = elapsed
         self.start = time.time()
         self.put(frame)
+
+    def teardown(self):
+        pass
+        # print(self.item + " Passthrough ", reduce(lambda x, s: x + s, self.times))
 
 
 # import matplotlib.pyplot as plt
@@ -506,25 +648,35 @@ class PerformanceMonitor(F):
         self.parallelisms = parallelisms
         self.verbose = verbose
         self.total_times = {}
+        self.total_times_array = {}
 
     def do(self, frame):
-        # print("PERFORMANCE DO")
-        # print("Meta", self.meta["timings"])
         self.timings = []
         self.labels = []
 
         for k, v in self.meta["timings"].items():
             # Processes are labelled eg. "MyProc-6"
             label = re.split("-\d+", k)[0]
+
+            if label == "Passthrough":
+                continue
+            if label == "Overhead":
+                self.total_times[label] = v
+                continue
+
             self.labels.append(label)
-            if not label in self.total_times:
-                self.total_times[label] = 0.0
-            self.total_times[label] += v
+
             if label in self.parallelisms:
                 timing = v / self.parallelisms[label]
             else:
                 timing = v
             self.timings.append(timing)
+
+            if not label in self.total_times:
+                self.total_times[label] = 0.0
+                self.total_times_array[label] = []
+            self.total_times[label] += v
+            self.total_times_array[label].append(v)
 
         if self.verbose:
             # Todo: does this work?
@@ -535,49 +687,77 @@ class PerformanceMonitor(F):
         self.put(frame)
 
     def teardown(self):
-        print("PerformanceMonitor Total / Node Total Times")
+        # print(self.total_times)
+        # print(self.total_times_array)
+        print()
+        print("  ----------------------  PerformanceMonitor  ----------------------  ")
+        print()
+        print("                     Node Name          Total / Node Times")
+        print()
         for label, total_time in self.total_times.items():
+            if "Passthrough" in label:
+                continue
+
             if label in self.parallelisms:
                 avg_time = total_time / self.parallelisms[label]
-                print(" `-> {} {:.2f} s / {:.2f} s".format(label, total_time, avg_time))
+                print(
+                    "{:>30} {:>12.2f} s / {:.2f} s".format(label, total_time, avg_time)
+                )
             else:
-                print(" `-> {} {:.2f} s".format(label, total_time))
+                print("{:>30} {:>12.2f} s".format(label, total_time))
+        print()
 
-    # def _visualize(self):
+        for label, total_time in self.total_times.items():
+            if not "Overhead" in label:
+                continue
+            print("{:>30} {:>12.2f} s".format(label, total_time))
 
-    #     if self.fig is None:
-    #         self.fig, self.ax = plt.subplots()
-    #         plt.show(block=False)
-    #         ind = np.arange(1, len(self.labels) + 1)
+        print()
 
-    #         bars = plt.bar(ind, self.timings)
-    #         self._visBars = {}
-    #         for i in range(len(self.labels)):
-    #             self._visBars[self.labels[i]] = bars[i]
+        for label, total_time in self.total_times.items():
+            if not "Passthrough" in label:
+                continue
 
-    #         self.ax.set_title("Node Processing Time")
-    #         self.ax.set_ylabel("Seconds")
-    #         self.ax.set_xticks(ind)
-    #         self.ax.set_xticklabels(self.labels)
-    #         self.ax.tick_params("x", labelrotation=45)
-    #     else:
-    #         for i in range(len(self.labels)):
-    #             bar = self._visBars[self.labels[i]]
-    #             bar.set_height(self.timings[i])
-    #         # ask the canvas to re-draw itself the next time it
-    #         # has a chance.
-    #         # For most of the GUI backends this adds an event to the queue
-    #         # of the GUI frameworks event loop.
-    #         self.fig.canvas.draw_idle()
-    #         self.ax.set_xticklabels(self.labels)
-    #         try:
-    #             # make sure that the GUI framework has a chance to run its event loop
-    #             # and clear any GUI events.  This needs to be in a try/except block
-    #             # because the default implementation of this method is to raise
-    #             # NotImplementedError
-    #             self.fig.canvas.flush_events()
-    #         except NotImplementedError:
-    #             pass
+            print("{:>30} {:>12.2f} s".format(label, total_time))
+        print()
+        print("  ------------------------------------------------------------------  ")
+        print()
+
+    def _visualize(self):
+
+        if self.fig is None:
+            self.fig, self.ax = plt.subplots()
+            plt.show(block=False)
+            ind = np.arange(1, len(self.labels) + 1)
+
+            bars = plt.bar(ind, self.timings)
+            self._visBars = {}
+            for i in range(len(self.labels)):
+                self._visBars[self.labels[i]] = bars[i]
+
+            self.ax.set_title("Node Processing Time")
+            self.ax.set_ylabel("Seconds")
+            self.ax.set_xticks(ind)
+            self.ax.set_xticklabels(self.labels)
+            self.ax.tick_params("x", labelrotation=45)
+        else:
+            for i in range(len(self.labels)):
+                bar = self._visBars[self.labels[i]]
+                bar.set_height(self.timings[i])
+            # ask the canvas to re-draw itself the next time it
+            # has a chance.
+            # For most of the GUI backends this adds an event to the queue
+            # of the GUI frameworks event loop.
+            self.fig.canvas.draw_idle()
+            self.ax.set_xticklabels(self.labels)
+            try:
+                # make sure that the GUI framework has a chance to run its event loop
+                # and clear any GUI events.  This needs to be in a try/except block
+                # because the default implementation of this method is to raise
+                # NotImplementedError
+                self.fig.canvas.flush_events()
+            except NotImplementedError:
+                pass
 
     def _log(self):
         pass
@@ -602,7 +782,7 @@ class Counter(F):
     """
 
     def setup(self, name="Dracula"):
-        self.name = name
+        self.name = "Count " + name
         self.count = 0
 
     def do(self, frame):
@@ -610,7 +790,7 @@ class Counter(F):
         self.put(frame)
 
     def teardown(self):
-        print("Counter {} counted {}".format(self.name, self.count))
+        print("{} counted {}".format(self.name, self.count))
 
 
 class Entry(F):
@@ -620,8 +800,10 @@ class Entry(F):
     and convert the uint8 [0,255] frame to float64 [0,1]
     """
 
-    def initialize(self, experiment_uuid):
+    def initialize(self, experiment_uuid, startTime=None):
         self.experiment_uuid = experiment_uuid
+        self.startTime = startTime
+        self.overhead = None
         self.count = 0
 
     def do(self, frame):
@@ -632,6 +814,12 @@ class Entry(F):
         frame.save("raw", frame.load("raw") / 255)
         # print("Frame", self.count, "entering...")
         self.put(frame)
+
+        if self.startTime is not None:
+            self.overhead = time.time() - self.startTime
+            self.startTime = None
+        if self.overhead is not None:
+            self.meta["timings"]["Overhead"] = self.overhead
 
 
 class MagicPixel(F):
@@ -664,6 +852,7 @@ class MagicPixel(F):
             self.magic_pixel = this_frame_magic_pixel
         frame.segment_uuid = self.segment_uuid
         frame.segment_number = self.segment_number
+
         self.put(frame)
 
 
@@ -704,11 +893,13 @@ class BG(F):
         window_size=50,
         inputProp="raw",
         saveAs="bg",
+        name="BG",
         *args,
         env=None,
         **kwArgs
     ):
         self.frame_que = deque()
+        self.name = name
         self.window_size = window_size
         # self.q_len = math.ceil(window_size / 2)
         # self.q_count = 0
@@ -717,12 +908,10 @@ class BG(F):
         self.model = getattr(self, model)(window_size=window_size, *args, **kwArgs)
 
     def do(self, frame):
-        # import cv2
         # from uuid import uuid4
         self.frame_que.append(frame)
         # self.q_count += 1
         self.bg = self.model.process(frame.load(self.inputProp))
-        # cv2.imwrite('/home/mot/tmp/bg_'+str(uuid4())+'.png', self.bg)
 
         if len(self.frame_que) > self.window_size:
             # bg = self.que.popleft()
@@ -805,12 +994,13 @@ class FG(F):
     Process the image to yield the scene foreground.
     """
 
-    def setup(self, model="bgDivision", saveAs="fg", *args, **kwargs):
+    def setup(self, model="bgDivision", saveAs="fg", name="FG", *args, **kwargs):
         # If your process needs to do any kind of setup once it has been forked,
         # or if it the first process in a workflow and expected to generate
         # values for the rest of the pipeline, that code should go here.
         self.saveAs = saveAs
-        self.model = getattr(self, model)()
+        self.name = name
+        self.model = getattr(self, model)(*args, **kwargs)
 
     def do(self, frame):
         # The main workhorse of a process. Items will flow in here, potentially
@@ -857,6 +1047,25 @@ class FG(F):
             # div[np.isnan(div)] = 1.0  # get rid of nan's from 0/0
             return np.clip(div, 0, 1)
 
+    class propDivision:
+        """
+        In a backlit scene that roughly obeys Beer-Lambert laws, dividing the
+        raw image by the background (backlit scene lighting) yields the 
+        transmittance, which for our application is useful.
+        """
+
+        def __init__(self, num="raw", den="bg"):
+            self.numerator = num
+            self.denominator = den
+
+        def process(self, frame):
+            eps = 0.0001
+            numerator = frame.load(self.numerator)
+            denominator = frame.load(self.denominator)
+            div = numerator / (denominator + eps)
+            # div[np.isnan(div)] = 1.0  # get rid of nan's from 0/0
+            return np.clip(div, 0, 1)
+
 
 from skimage.filters import threshold_sauvola
 from skimage.morphology import (
@@ -892,8 +1101,8 @@ class Binary(F):
 
     class legacyLabeled:
 
-        def __init__(self, threshold=0.4):
-            self.threshold = threshold
+        def __init__(self,):
+            self.threshold = config.ms_detection_threshold
 
         def process(self, frame):
 
@@ -934,12 +1143,21 @@ class Properties(F):
         # print("PROPS DO")
         labelled = label(frame.load("mask"))
         properties = regionprops(labelled, frame.load("fg").squeeze())
+        frame.turbidity = np.mean(frame.load("bg_fines"))
         frame.save("regionprops", properties)
         frame.track_uuids = [uuid4() for i in range(len(properties))]
         self.put(frame)
 
 
 from lib.Crop import Crop
+
+
+class MockClassifier(F):
+
+    def do(self, frame):
+        for p in frame.load("regionprops"):
+            frame.classes.append(np.random.randint(0, 5))
+        self.put(frame)
 
 
 class Crop_Processor(F):
@@ -1001,6 +1219,8 @@ class FrameData(Datagram):
         # self.metric_cal = metric_cal
         # self.scale = scale
         self.track_uuids = None
+        self.turbidity = None
+        self.classes = []
 
 
 class SegmentData(Datagram):
@@ -1010,121 +1230,18 @@ class SegmentData(Datagram):
         self.experiment_uuid = None
         self.segment_uuid = None
         self.segment_number = None
-        self.num_frames = 0
+        self.frames = []
 
-        self.frames_uuids = []
-        self.frame_track_uuids = []
+    def insertFrame(self, frame):
+        self.frames.append(frame)
 
+    def numFrames(self):
+        return len(self.frames)
 
-class FrameCSVWriter(F):
-
-    def initialize(self, verbose=False):
-        self.verbose = verbose
-        if self.verbose:
-            print("Launching CSV processor")
-
-        self.csv_files = [
-            "/tmp/{}_segment.csv",
-            "/tmp/{}_frame.csv",
-            "/tmp/{}_track.csv",
-            "/tmp/{}_particle.csv",
-        ]
-
-        self.prev_segment_uuid = None
-
-    def do(self, frame):
-
-        # Add frame
-        self.add_frame(frame)
-        # Add segment
-        if config.use_magic_pixel_segmentation:
-            if frame.segment_uuid != self.prev_segment_uuid:
-                self.prev_segment_uuid = frame.segment_uuid
-                self.add_segment(frame)
-
-        self.put(frame)
-
-    def add_segment(self, frame):
-        data = (frame.segment_uuid, frame.experiment_uuid, frame.segment_number)
-        s = "{}\t{}\t{}\n"
-        with open("/tmp/{}_segment.csv".format(frame.experiment_uuid), "a") as f:
-            f.write(s.format(data[0], data[1], data[2]))
-
-    def add_frame(self, frame):
-        if config.use_magic_pixel_segmentation:
-            data = (frame.uuid, frame.experiment_uuid, frame.segment_uuid, frame.number)
-            s = "{}\t{}\t{}\t{}\n"
-            with open("/tmp/{}_frame.csv".format(frame.experiment_uuid), "a") as f:
-                f.write(s.format(data[0], data[1], data[2], data[3]))
-        else:
-            data = (frame.uuid, frame.experiment_uuid, frame.number)
-            s = "{}\t{}\t{}\n"
-            with open("/tmp/{}_frame.csv".format(frame.experiment_uuid), "a") as f:
-                f.write(s.format(data[0], data[1], data[2]))
-
-    def add_detections(self, frame):
-        regionprops = frame.load("regionprops")
-        metric_cal = config.ms_metric_cal
-        scale = config.ms_rescale
-        DEFAULT_CATEGORY = 0  # set to unknown for now
-
-        equivCircleRadius = lambda area: np.sqrt(area / np.pi)
-
-        radius_function = lambda x: cal * equivCircleRadius(x) * metric_cal / scale
-        linear_function = lambda x: cal * x * metric_cal / scale
-        area_function = lambda x: cal ** 2 * x * metric_cal ** 2 / scale ** 2
-
-        particles = [
-            (
-                uuid4(),
-                self.experiment_uuid,
-                area_function(p.filled_area),
-                radius_function(p.filled_area),
-                p.mean_intensity,
-                linear_function(p.perimeter),
-                linear_function(p.major_axis_length),
-                linear_function(p.minor_axis_length),
-                p.orientation,
-                p.solidity,
-                p.eccentricity,
-                DEFAULT_CATEGORY,
-            )
-            for i, p in enumerate(regionprops)
-        ]
-
-        coords = [(p.centroid[1], p.centroid[0]) for p in regionprops]
-        bboxes = [((p.bbox[1], p.bbox[0]), (p.bbox[3], p.bbox[2])) for p in regionprops]
-
-        track_uuids = frame.track_uuids
-
-        tracks = [
-            (track_uuids[i], frame.uuid, particles[i][0], coords[i], bboxes[i])
-            for i, p in enumerate(regionprops)
-        ]
-        s = "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n"
-        with open("/tmp/{}_particle.csv".format(self.experiment_uuid), "a") as f:
-            for p in particles:
-                f.write(
-                    s.format(
-                        p[0],
-                        p[1],
-                        p[2],
-                        p[3],
-                        p[4],
-                        p[5],
-                        p[6],
-                        p[7],
-                        p[8],
-                        p[9],
-                        p[10],
-                        p[11],
-                    )
-                )
-
-        s = "{}\t{}\t{}\t{}\t{}\n"
-        with open("/tmp/{}_track.csv".format(self.experiment_uuid), "a") as f:
-            for t in tracks:
-                f.write(s.format(t[0], t[1], t[2], t[3], t[4]))
+    def clean(self):
+        for frame in self.frames:
+            frame.clean()
+        super().clean()
 
 
 class DBProcessor(F):
@@ -1141,11 +1258,24 @@ class DBProcessor(F):
         self.method = method
         self.notes = notes
 
+        self.segmentFilename = "{}/{}_segment.csv".format(
+            config.tmp_dir, self.experiment_uuid
+        )
+        self.frameFilename = "{}/{}_frame.csv".format(
+            config.tmp_dir, self.experiment_uuid
+        )
+        self.trackFilename = "{}/{}_track.csv".format(
+            config.tmp_dir, self.experiment_uuid
+        )
+        self.particleFilename = "{}/{}_particle.csv".format(
+            config.tmp_dir, self.experiment_uuid
+        )
+
         self.csv_files = [
-            "/tmp/{}_segment.csv",
-            "/tmp/{}_frame.csv",
-            "/tmp/{}_track.csv",
-            "/tmp/{}_particle.csv",
+            self.segmentFilename,
+            self.frameFilename,
+            self.trackFilename,
+            self.particleFilename,
         ]
 
     def do(self, frame):
@@ -1166,54 +1296,42 @@ class DBProcessor(F):
             self.notes,
         )
 
-        if config.use_magic_pixel_segmentation:
-            if self.verbose:
-                print("Inserting segments into database.")
-            await self.tx.execute(
-                """
-                COPY segment FROM '/tmp/{}_segment.csv' DELIMITER '\t' CSV;
-                """.format(
-                    self.experiment_uuid
-                )
+        if self.verbose:
+            print("Inserting segments into database.")
+        await self.tx.execute(
+            """
+            COPY segment FROM '{}' DELIMITER '\t' CSV;
+            """.format(
+                self.segmentFilename
             )
+        )
 
-        if config.use_magic_pixel_segmentation:
-            if self.verbose:
-                print("Inserting frames into database.")
-            await self.tx.execute(
-                """
-                COPY frame FROM '/tmp/{}_frame.csv' DELIMITER '\t' CSV;
-                """.format(
-                    self.experiment_uuid
-                )
+        if self.verbose:
+            print("Inserting frames into database.")
+        await self.tx.execute(
+            """
+            COPY frame FROM '{}' DELIMITER '\t' CSV;
+            """.format(
+                self.frameFilename
             )
-        else:
-            if self.verbose:
-                print("Inserting frames into database.")
-            await self.tx.execute(
-                """
-                COPY frame (frame, experiment, number) FROM '/tmp/{}_frame.csv' DELIMITER '\t' CSV;
-                """.format(
-                    self.experiment_uuid
-                )
-            )
+        )
 
         if self.verbose:
             print("Inserting particles into database.")
         await self.tx.execute(
             """
-            COPY particle (particle, experiment, area, radius, intensity, perimeter, major, minor, orientation, solidity, eccentricity, category\n)FROM '/tmp/{}_particle.csv' DELIMITER '\t' CSV;
+            COPY particle (particle, experiment, area, radius, intensity, perimeter, major, minor, orientation, solidity, eccentricity, category, velocity\n) FROM '{}' DELIMITER '\t' CSV;
             """.format(
-                self.experiment_uuid
+                self.particleFilename
             )
         )
         if self.verbose:
             print("Inserting tracks into database.")
         await self.tx.execute(
             """
-            COPY track (track, frame, particle, location, bbox\n) FROM '/tmp/{}_track.csv' DELIMITER '\t' CSV;
+            COPY track (track, frame, particle, location, bbox) FROM '{}' DELIMITER '\t' CSV;
             """.format(
-                self.experiment_uuid
+                self.trackFilename
             )
         )
 
@@ -1228,12 +1346,12 @@ class DBProcessor(F):
             self.async(self.transaction.rollback())
         else:
             self.async(self.transaction.commit())
-        self.cleanupFS()
+        # self.cleanupFS()
 
     def cleanupFS(self):
         for f in self.csv_files:
-            if os.path.isfile(f.format(self.experiment_uuid)):
-                os.remove(f.format(self.experiment_uuid))
+            if os.path.isfile(f):
+                os.remove(f)
 
 
 """
@@ -1308,8 +1426,13 @@ class Tracker(F):
     def setup(self):
         self.verbose = False
         self.tracks = None
+        self.buildTime = 0
+        self.solveTime = 0
+        self.averageTime = 0
+        self.rps = []
 
     def buildGraph(self, segment):
+
         from sklearn.neighbors import KDTree
 
         Ci = -200
@@ -1322,9 +1445,8 @@ class Tracker(F):
 
         # TODO: FIND NEAREST NEIGHBOUR FOR LOCAL CONNECTIVITY
         # O(N), where N is the number of detections in segment
-        for i in range(len(self.regionprops)):
-            keyname = "regionprops_{}".format(i)
-            r = self.regionprops[i]
+        for i, frame in enumerate(segment.frames):
+            r = self.rps[i]
             coords = [(p.centroid[1], p.centroid[0]) for p in r]
 
             for j, p in enumerate(r):
@@ -1337,17 +1459,17 @@ class Tracker(F):
                 self.mcf_graph.add_edge("START", u, capacity=1, weight=Cen)
                 self.mcf_graph.add_edge(v, "END", capacity=1, weight=Cex)
 
-        # O(M*(N*LogN + LogN)), where M is number of frames and N 
+        # O(M*(N*LogN + LogN)), where M is number of frames and N
         # is the number of detections in a frame
-        for i in range(segment.num_frames - 1):
-            r1 = self.regionprops[i]
+        for i in range(len(segment.frames) - 1):
+            r1 = self.rps[i]
             coords1 = [(p.centroid[1], p.centroid[0]) for p in r1]
 
-            r2 = self.regionprops[i + 1]
+            r2 = self.rps[i + 1]
             coords2 = [(p.centroid[1], p.centroid[0]) for p in r2]
 
             neighbors = 5
-            if len(coords1) <= neighbors:
+            if len(coords2) <= neighbors:
                 indices = [
                     [i for i in range(len(coords2))] for i in range(len(coords1))
                 ]
@@ -1427,33 +1549,23 @@ class Tracker(F):
             print("Min cost", min_cost)
 
     def computeAverages(self, segment):
-        """
-        Headers for Syncrude 2018
-        
-        Frame ID, 
-        Particle ID, 
-        Particle Area, 
-        Particle Velocity, 
-        Particle Intensity, 
-        Particle Perimeter, 
-        X Position, 
-        Y Position, 
-        Major Axis Length, 
-        Minor Axis Length, 
-        Orientation, 
-        Solidity, 
-        Eccentricity.
-        """
+        cal = config.ms_metric_cal
+        scale = config.ms_rescale
+
+        linear_function = lambda x: x * cal / scale
+        square_function = lambda x: x * cal ** 2 / scale ** 2
+
         DEFAULT_CATEGORY = 0  # set to unknown for now
         equivCircleRadius = lambda area: np.sqrt(area / np.pi)
-        start = time.time()
+
         self.particle_inserts = []
         self.track_inserts = []
 
-        coords = [[(p.centroid[1], p.centroid[0]) for p in r] for r in self.regionprops]
+        coords = [[(p.centroid[1], p.centroid[0]) for p in rp] for rp in self.rps]
+
         bboxes = [
-            [((p.bbox[1], p.bbox[0]), (p.bbox[3], p.bbox[2])) for p in r]
-            for r in self.regionprops
+            [((p.bbox[1], p.bbox[0]), (p.bbox[3], p.bbox[2])) for p in rp]
+            for rp in self.rps
         ]
 
         for new_particle_uuid, track in self.tracks.items():
@@ -1466,11 +1578,13 @@ class Tracker(F):
             mean_orientation = 0.0
             mean_solidity = 0.0
             mean_eccentricity = 0.0
-            category = []
+            mean_velocity = np.array([0.0, 0.0])
+            prev_pos = None
 
+            category = []
             for t in track:
                 i, j = int(t.split("_")[0]), int(t.split("_")[1])
-                p = self.regionprops[i][j]
+                p = self.rps[i][j]
 
                 mean_area += p.filled_area / len(track)
                 mean_intensity += p.mean_intensity / len(track)
@@ -1481,12 +1595,20 @@ class Tracker(F):
                 mean_orientation += p.orientation / len(track)
                 mean_solidity += p.solidity / len(track)
                 mean_eccentricity += p.eccentricity / len(track)
-                category.append(DEFAULT_CATEGORY)
+
+                if prev_pos is not None:
+                    mean_velocity += (np.array(p.centroid) - prev_pos) / (
+                        len(track) - 1
+                    )
+                prev_pos = np.array(p.centroid)
+
+                cat = segment.frames[i].classes[j]
+                category.append(cat)
 
                 loc = coords[i][j]
                 bbox = bboxes[i][j]
-                new_track_uuid = segment.frame_track_uuids[i][j]
-                new_frame_uuid = segment.frames_uuids[i]
+                new_track_uuid = segment.frames[i].track_uuids[j]
+                new_frame_uuid = segment.frames[i].uuid
                 self.track_inserts.append(
                     (new_track_uuid, new_frame_uuid, new_particle_uuid, loc, bbox)
                 )
@@ -1497,41 +1619,47 @@ class Tracker(F):
                 (
                     new_particle_uuid,
                     segment.experiment_uuid,
-                    mean_area,
-                    mean_radius,
+                    square_function(mean_area),
+                    linear_function(mean_radius),
                     mean_intensity,
-                    mean_perimeter,
-                    mean_major,
-                    mean_minor,
+                    linear_function(mean_perimeter),
+                    linear_function(mean_major),
+                    linear_function(mean_minor),
                     mean_orientation,
                     mean_solidity,
                     mean_eccentricity,
                     category,
+                    tuple(
+                        linear_function(mean_velocity[::-1]) * config.ms_fps / 1000000
+                    ),
                 )
             )
 
     def do(self, segment):
-        start = time.time()
-        
-        
-        self.regionprops = []
-        for i in range(segment.num_frames):
-            keyname = "regionprops_{}".format(i)
-            self.regionprops.append(segment.load(keyname))
-        print("Getting rp", time.time()-start)
+        self.rps = []
+        for frame in segment.frames:
+            self.rps.append(frame.load("regionprops"))
+
         start = time.time()
         self.buildGraph(segment)
-        print("Building graph", time.time()-start)
+        self.buildTime += time.time() - start
+
         start = time.time()
         self.solve()
-        print("solving", time.time()-start)
-        start = time.time()
+        self.solveTime += time.time() - start
+
         if self.verbose:
             print("Tracks reconstructed", len(self.tracks))
 
-    
-        self.computeAverages(segment)
-        print("Averages", time.time()-start)
+        start = time.time()
+        try:
+            self.computeAverages(segment)
+        except Exception as e:
+            print("Problem in averages", e)
+            raise e
+
+        self.averageTime += time.time() - start
+
         segment.save("particles", self.particle_inserts)
         segment.save("tracks", self.track_inserts)
 
@@ -1539,56 +1667,81 @@ class Tracker(F):
 
     def teardown(self,):
         pass
+        # print("Building graph", self.buildTime)
+        # print("Solving", self.solveTime)
+        # print("Averages", self.averageTime)
 
 
 class SegmentCSVWriter(F):
 
     def initialize(self):
-        self.verbose = True
+        self.verbose = False
         if self.verbose:
             print("Launching CSV processor")
 
-        self.csv_files = ["/tmp/{}_track.csv", "/tmp/{}_particle.csv"]
+        self.trackFilename = os.path.join(config.tmp_dir, "{}_track.csv")
+        self.particleFilename = os.path.join(config.tmp_dir, "{}_particle.csv")
+        self.segmentFilename = os.path.join(config.tmp_dir, "{}_segment.csv")
+        self.frameFilename = os.path.join(config.tmp_dir, "{}_frame.csv")
+        self.experiment_uuid = None
 
     def do(self, segment):
-        # Add detections
-        self.add_segment_data(segment)
-        self.put(segment)
+        try:
+            if self.experiment_uuid is None:
+                self.experiment_uuid = segment.experiment_uuid
+                self.openFiles()
 
-    def add_segment_data(self, segment):
-        cal = config.ms_metric_cal
-        scale = config.ms_rescale
+            self.addSegmentData(segment)
+            self.put(segment)
+        except Exception as e:
+            print(e)
 
-        linear_function = lambda x: x * cal / scale
-        square_function = lambda x: x * cal ** 2 / scale ** 2
+    def openFiles(self):
+        self.trackFilename = self.trackFilename.format(self.experiment_uuid)
+        self.particleFilename = self.particleFilename.format(self.experiment_uuid)
+        self.segmentFilename = self.segmentFilename.format(self.experiment_uuid)
+        self.frameFilename = self.frameFilename.format(self.experiment_uuid)
 
-        particles = list(segment.load("particles"))
+        self.trackFile = open(self.trackFilename, "a")
+        self.particleFile = open(self.particleFilename, "a")
+        self.segmentFile = open(self.segmentFilename, "a")
+        self.frameFile = open(self.frameFilename, "a")
+
+    def closeFiles(self):
+        self.trackFile.close()
+        self.particleFile.close()
+        self.segmentFile.close()
+        self.frameFile.close()
+
+    def addSegmentData(self, segment):
+
+        particles = segment.load("particles")
         tracks = segment.load("tracks")
 
-        s = "{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n"
-        with open("/tmp/{}_particle.csv".format(segment.experiment_uuid), "a") as f:
-            for p in particles:
-                f.write(
-                    s.format(
-                        p[0],
-                        p[1],
-                        square_function(p[2]),
-                        linear_function(p[3]),
-                        p[4],
-                        linear_function(p[5]),
-                        linear_function(p[6]),
-                        linear_function(p[7]),
-                        p[8],
-                        p[9],
-                        p[10],
-                        p[11],
-                    )
-                )
+        data = (segment.segment_uuid, segment.experiment_uuid, segment.segment_number)
+        self.segmentFile.write("\t".join(map(str, data)) + "\n")
 
-        s = "{}\t{}\t{}\t{}\t{}\n"
-        with open("/tmp/{}_track.csv".format(segment.experiment_uuid), "a") as f:
-            for t in tracks:
-                f.write(s.format(t[0], t[1], t[2], t[3], t[4]))
+        for frame in segment.frames:
+            self.addFrameData(frame)
+
+        for p in particles:
+            self.particleFile.write("\t".join(map(str, p)) + "\n")
+
+        for t in tracks:
+            self.trackFile.write("\t".join(map(str, t)) + "\n")
+
+    def addFrameData(self, frame):
+        data = (
+            frame.uuid,
+            frame.experiment_uuid,
+            frame.segment_uuid,
+            frame.number,
+            frame.turbidity,
+        )
+        self.frameFile.write("\t".join(map(str, data)) + "\n")
+
+    def teardown(self,):
+        self.closeFiles()
 
 
 class MCF_GRAPH_HELPER:

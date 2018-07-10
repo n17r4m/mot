@@ -95,6 +95,7 @@ function updateChart(instance){
                     console.info(plt, data.points)
                     console.info(data.points.map(query.isolate, plt.data))
                     console.log(q)
+                    
                     switch(q) {
                         case "flow_vs_intensity_histogram":
                             var method_name = "experiment_particles_with_flow_near"
@@ -108,12 +109,12 @@ function updateChart(instance){
                             var method_name = "experiment_particles_with_area_near"
                             var value = valueNearestZero(data.points.map(query.isolate, plt.data))
                             break;
+                        case "particle_counts_over_time":
+                            var method_name = "experiment_particles_with_frame_near"
+                            var value = valueNearestZero(data.points.map(query.isolate, plt.data))
                         default:
                             break
                     } 
-                    
-                    
-                    
                     
                     Meteor.call(method_name, experiment, value, (err, res) => {
                         $("#crop_loader").removeClass("active")
@@ -121,6 +122,7 @@ function updateChart(instance){
                             console.info(err)
                         } else {
                             console.info(res)
+                            
                             cat_groups = res.rows.reduce((grps, p) => {
                                 p.url = `/mot/data/experiments/${p.path}`
                                 if (!grps[p.category]){
@@ -130,15 +132,59 @@ function updateChart(instance){
                                 }
                                 return grps
                             }, {})
+                            
                             console.info(cat_groups)
-                            merged = []
+                            
+                            
+                            merged_scatters = []
+                            cat_scatters = res.rows.reduce((grps, p) => {
+                                if (!grps[p.category]){
+                                    // Note: need a way to specify trace label
+                                    grps[p.category] = 
+                                    {
+                                        x: [], 
+                                        y: [],
+                                        mode: 'markers',
+                                        type: 'scatter',
+                                        marker: {
+                                            color: 'rgba(31,119,180, 0.5)', // Give transparent markers
+                                            size: 10,
+                                            line: {
+                                                color: 'rgb(68,68,68)',
+                                                width: 1
+                                            }}
+                                        }
+                                    }
+                                                        
+                                grps[p.category].x.push(p.x)
+                                grps[p.category].y.push(p.y)
+                            
+                                return grps
+                            }, {})
+                            for (let cat in cat_scatters){
+                                merged_scatters.push(cat_scatters[cat])
+                            }
+                            
+                            // cat_scatters.push({x: [], y: [], mode: 'markers', type: 'scatter'});
+                            // cat_scatters[p.category].x.push(p.x)
+                            // cat_scatters[p.category].y.push(p.y)
+                            
                             //try{
+                            merged = []
                             for (let cat in cat_groups){
                                 merged.push({category: cat, particles: cat_groups[cat]})
                             }
+                            
                             //} catch(e){
                             //    console.info(e)
                             //}
+                            var layout = 
+                                {   
+                                    yaxis: { autorange: "reversed" },
+                                    title: "Particle Position"
+                                };
+                            
+                            Plotly.newPlot($('#scatter_plot')[0], merged_scatters, layout);
                             
                             console.info(merged)
                             instance.crops.set(merged)

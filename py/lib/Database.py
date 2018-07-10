@@ -108,7 +108,8 @@ class Database(object):
                 frame UUID NOT NULL DEFAULT gen_random_uuid(),
                 experiment UUID NOT NULL,
                 segment UUID,
-                number integer NOT NULL 
+                number integer NOT NULL,
+                turbidity real
             );
             ALTER TABLE Frame ADD CONSTRAINT frame_pk PRIMARY KEY (frame);
             ALTER TABLE Frame ADD CONSTRAINT frame_experiment_fk FOREIGN KEY (experiment) REFERENCES Experiment(experiment) ON UPDATE CASCADE ON DELETE CASCADE ;
@@ -130,6 +131,7 @@ class Database(object):
                 orientation REAL,
                 solidity REAL,
                 eccentricity REAL,
+                velocity POINT,
                 category SMALLINT,
                 valid BOOLEAN
             );

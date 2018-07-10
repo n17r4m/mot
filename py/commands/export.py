@@ -11,31 +11,36 @@ import shutil
 from uuid import UUID
 from dateutil.parser import parse as dateparse
 
+
 async def main(args):
-    
-    if len(args) == 0: print("What you want to export to? [syncrude|pymot|particlesVelocitiesLatents]")
-        
+
+    if len(args) == 0:
+        print("What you want to export to? [syncrude|pymot|particlesVelocitiesLatents]")
+
     else:
         if args[0] == "syncrude":
-            if args[1] == 'all':
+            if args[1] == "all":
                 await exportSyncrudeAll(args[2:])
             else:
                 await exportSyncrude(args[1:])
         if args[0] == "particles":
             await exportParticles(args[1:])
         if args[0] == "particlesVelocitiesLatents":
-            await exportParticlesVelocitiesLatents(args[1:])            
+            await exportParticlesVelocitiesLatents(args[1:])
         if args[0] == "Syncrude2018":
             await exportSyncrude2018(*args[1:])
-        else:                         print("Invalid export sub-command")
+        if args[0] == "DensityExperiment":
+            await exportDensityTest(*args[1:])
+        else:
+            print("Invalid export sub-command")
 
 
 async def exportParticles(args):
     directory = args[0]
     limit = args[1]
-    
+
     db = Database()
-    
+
     q = """
         SELECT e.experiment, f.frame, t.track
         FROM experiment e, frame f, track t, particle p
@@ -50,23 +55,25 @@ async def exportParticles(args):
         """
     s = q.format(limit=limit)
     crops = []
-    
+
     async for result in db.query(s):
-        srcFile = os.path.join(config.experiment_dir, 
-                               str(result["experiment"]),
-                               str(result["frame"]),
-                               str(result["track"])+'.jpg')
-        dstFile = os.path.join(directory,
-                               str(result['track'])+".jpg")
-                               
+        srcFile = os.path.join(
+            config.experiment_dir,
+            str(result["experiment"]),
+            str(result["frame"]),
+            str(result["track"]) + ".jpg",
+        )
+        dstFile = os.path.join(directory, str(result["track"]) + ".jpg")
+
         shutil.copyfile(srcFile, dstFile)
-        
+
+
 async def exportParticlesVelocitiesLatents(args):
     directory = args[0]
     limit = args[1]
-    
+
     db = Database()
-    
+
     q = """
         SELECT e.experiment, f1.frame, t1.track, t1.latent, t2.location-t1.location as delta
         FROM experiment e, frame f1, frame f2, track t1, track t2, particle p
@@ -87,32 +94,35 @@ async def exportParticlesVelocitiesLatents(args):
         """
     s = q.format(limit=limit)
     crops = []
-    
+
     line = "{track}, {dx}, {dy}, {latent}\n"
     outFile = os.path.join(directory, "data.txt")
-    with open(outFile, 'w+') as f:
+    with open(outFile, "w+") as f:
         async for result in db.query(s):
-            srcFile = os.path.join(config.experiment_dir, 
-                                   str(result["experiment"]),
-                                   str(result["frame"]),
-                                   str(result["track"])+'.jpg')
-            dstFile = os.path.join(directory,
-                                   str(result['track'])+".jpg")
-                                   
+            srcFile = os.path.join(
+                config.experiment_dir,
+                str(result["experiment"]),
+                str(result["frame"]),
+                str(result["track"]) + ".jpg",
+            )
+            dstFile = os.path.join(directory, str(result["track"]) + ".jpg")
+
             shutil.copyfile(srcFile, dstFile)
             dx = result["delta"][0]
             dy = result["delta"][1]
-            f.write(line.format(track=result["track"],
-                                dx=dx,
-                                dy=dy,
-                                latent=result["latent"]))
-            
-        
+            f.write(
+                line.format(
+                    track=result["track"], dx=dx, dy=dy, latent=result["latent"]
+                )
+            )
+
+
 async def exportSyncrudeAll(args):
     """
     dir [prefix]
     """
     pass
+
 
 async def exportSyncrude(args):
     """
@@ -123,10 +133,10 @@ async def exportSyncrude(args):
     if len(args) == 3:
         prefix = args[2]
     else:
-        prefix = ''
-    
+        prefix = ""
+
     db = Database()
-    
+
     q = """
         SELECT *
         FROM experiment
@@ -137,18 +147,18 @@ async def exportSyncrude(args):
         day = str(record["day"])
         name = record["name"].strip()
         method = record["method"].strip()
-    
+
     dayDirectory = os.path.join(directory, day)
-    file = name+"_"+method+".txt"
-    
+    file = name + "_" + method + ".txt"
+
     if not os.path.exists(dayDirectory):
         print("created new day directory", dayDirectory)
         os.mkdir(dayDirectory)
-    
+
     categoryMap = await db.category_map()
     outfile = os.path.join(dayDirectory, file)
-    with open(outfile, 'w+') as f:
-    
+    with open(outfile, "w+") as f:
+
         q = """
             SELECT f2.number as fnum, 
                    t2.particle as pid, 
@@ -173,10 +183,70 @@ async def exportSyncrude(args):
             sl = [str(i) for i in l]
             f.write("{}\n".format(", ".join(sl)))
 
-async def exportSyncrude2018(experiment_uuid, directory):
-    
+
+async def exportDensityTest(experiment_uuid):
+    """
+    The purpose of this function is to test if there is a correloation between 
+    the "density" of paarticles in a frame and 
+    the number of "out-of-control" particles
+    """
     db = Database()
-    
+
+    s1 = """
+        SELECT number, frame from frame where experiment ='{experiment}' ORDER BY number;
+        """
+
+    s2 = """
+        SELECT count(*) as count
+        FROM particle p, frame f, track t
+        WHERE p.particle = t.particle
+        AND f.frame = '{frame}'
+        AND f.frame = t.frame
+        """
+
+    s3 = """
+        SELECT count(*) as count
+        FROM particle p, frame f, track t
+        WHERE p.particle = t.particle
+        AND f.frame = '{frame}'
+        AND f.frame = t.frame
+        AND (2*p.radius < 194
+        OR 2*p.radius > 224)
+        """
+
+    all_particles_by_frame = []
+    ooc_particles_by_frame = []
+
+    async for record in db.query(s1.format(experiment=experiment_uuid)):
+
+        async for r in db.query(s2.format(frame=record["frame"])):
+            all_particles_by_frame.append(r["count"])
+
+        async for r in db.query(s3.format(frame=record["frame"])):
+            ooc_particles_by_frame.append(r["count"])
+
+        print(
+            "Frame:",
+            record["number"],
+            all_particles_by_frame[-1],
+            ooc_particles_by_frame[-1],
+        )
+
+    # print(all_particles_by_frame)
+    # print(ooc_particles_by_frame)
+
+    # DO what ya want :)
+
+    import matplotlib.pyplot as plt
+
+    plt.scatter(all_particles_by_frame, ooc_particles_by_frame)
+    plt.show()
+
+
+async def exportSyncrude2018(experiment_uuid, directory):
+
+    db = Database()
+
     q = """
         SELECT *
         FROM experiment
@@ -187,16 +257,15 @@ async def exportSyncrude2018(experiment_uuid, directory):
         day = str(record["day"])
         name = record["name"].strip()
         method = record["method"].strip()
-    
-    
-    file = name+"_"+method+".txt"
-    
+
+    file = name + "_" + method + ".txt"
+
     if not os.path.exists(directory):
         print("created new day directory", directory)
         os.mkdir(directory)
-    
+
     categoryMap = await db.category_map()
-    
+
     s = """
         SELECT f2.number as fnum,
               f2.frame as fid,
@@ -222,36 +291,37 @@ async def exportSyncrude2018(experiment_uuid, directory):
         AND f1.experiment = '{experiment}'
         """
 
-    
     q = s.format(experiment=experiment_uuid)
     # CSV Headers: Frame ID, Particle ID, Particle Area, Particle Velocity, Particle Intensity, Particle Perimeter, X Position, Y Position, Major Axis Length, Minor Axis Length, Orientation, Solidity, Eccentricity.
-    
-    l = "{fid},{pid},{area},{vel},{inten},{per},{xPos},{yPos},{major},{minor},{ori},{solid},{ecc}\n"
-    
-    
+
+    l = (
+        "{fid},{pid},{area},{vel},{inten},{per},{xPos},{yPos},{major},{minor},{ori},{solid},{ecc}\n"
+    )
+
     outfile = os.path.join(directory, file)
-    with open(outfile, 'w+') as f:
+    with open(outfile, "w+") as f:
         async for r in db.query(q):
-            
-            s = l.format(fid = r["fid"],
-                         pid = r["pid"],
-                         area = r["area"],
-                         vel = r["delta_y"],
-                         inten = r["intensity"],
-                         per = r["perimeter"],
-                         xPos = r["xpos"],
-                         yPos = r["ypos"],
-                         major = r["major"],
-                         minor = r["minor"],
-                         ori = r["ori"],
-                         solid = r["solid"],
-                         ecc = r["ecc"])
-                     
+
+            s = l.format(
+                fid=r["fid"],
+                pid=r["pid"],
+                area=r["area"],
+                vel=r["delta_y"],
+                inten=r["intensity"],
+                per=r["perimeter"],
+                xPos=r["xpos"],
+                yPos=r["ypos"],
+                major=r["major"],
+                minor=r["minor"],
+                ori=r["ori"],
+                solid=r["solid"],
+                ecc=r["ecc"],
+            )
+
             f.write(s)
 
+    file = name + "_" + method + "_particleCounts.txt"
 
-    file = name+"_"+method+"_particleCounts.txt"
-    
     s = """
         SELECT
             f.number as number,
@@ -264,14 +334,13 @@ async def exportSyncrude2018(experiment_uuid, directory):
         ORDER BY f.number ASC
         """
     q = s.format(experiment=experiment_uuid)
-    
+
     l = "{segment},{count}\n"
     outfile = os.path.join(directory, file)
-    
-    with open(outfile, 'w+') as f:
+
+    with open(outfile, "w+") as f:
         async for r in db.query(q):
-            
-            s = l.format(segment=r["number"],
-                         count=r["count"])
-                     
+
+            s = l.format(segment=r["number"], count=r["count"])
+
             f.write(s)

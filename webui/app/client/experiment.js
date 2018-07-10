@@ -8,20 +8,29 @@ import './experiment.html';
 
 Template.experiment.onCreated(function sub(){
     this.experiment = new ReactiveVar()
+    this.videos = new ReactiveVar([])
     Meteor.call("experiment", Session.get("experiment"), (err, res) => {
         this.experiment.set(res.rows[0])
+    }),
+    Meteor.call("experiment_videos", Session.get("experiment"), (err, res) => {
+        this.videos.set(res)
     })
 })
 
 Template.experiment.helpers({
-    experiment() { return Template.instance().experiment.get() }
+    experiment() { return Template.instance().experiment.get() },
+    videos() { return Template.instance().videos.get() }
 })
 
 Template.experiment.events({
     "change #video_select": function(e) {
         exp = Session.get("experiment")
         vid = e.currentTarget.value
-        $("#video")[0].src = FlowRouter.path("/data/experiments/:e/:v", {e: exp, v: vid})
+        if(vid) {
+            $("#video")[0].src = FlowRouter.path("/data/experiments/:e/:v", {e: exp, v: vid})
+        } else {
+            $("#video")[0].src = ""
+        }
     },
     "change,click #rate_select": function(e) {
         r = parseFloat(e.currentTarget.value)

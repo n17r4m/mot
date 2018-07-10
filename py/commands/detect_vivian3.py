@@ -550,8 +550,8 @@ class VideoFrameProcessor(multiprocessing.Process):
                 if not os.path.exists("/home/mot/tmp/deconv"):
                     os.mkdir("/home/mot/tmp/deconv")  # make new dir
                 imsave("/home/mot/tmp/deconv/deconv-" + str(i) + ".png", deconv)
-                if not os.path.exists("/home/mot/tmp/sframe"):
-                    os.mkdir("/home/mot/tmp/sframe")  # make new dir
+                if not os.path.exists("/home/mot/tmp/sframe_MSBOT01016"):
+                    os.mkdir("/home/mot/tmp/sframe_MSBOT01016")  # make new dir
                 imsave("/home/mot/tmp/sframe/sframe-" + str(i) + ".png", sframe)
 
             except Exception as e:

@@ -124,7 +124,9 @@ function updateChart(instance){
                     
                     
                     // const flow = flowNearestZero(data.points.map(query.isolate, plt.data))
+
                     var points = data.points.map(query.isolate, plt.data)
+
                     var experiment = exps[points[0].category]
                     console.log(q)
                     switch(q) {
@@ -136,12 +138,13 @@ function updateChart(instance){
                             var method_name = "experiment_particles_with_area_near"
                             var value = valueNearestZero(points)
                             break;
+                        case "compare_particle_counts_over_time":
+                            var method_name = "experiment_particles_with_frame_near"
+                            var value = valueNearestZero(points)
                         default:
                             break
                     } 
-                    
-                    
-                    
+                    console.log("Value:", value)
                     
                     console.info(plt, points, value, experiment, exps)
                     

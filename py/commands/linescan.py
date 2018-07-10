@@ -1,3 +1,6 @@
+import matplotlib as mpl
+
+mpl.use("Cairo")
 
 from lib.Linescan import Linescan2
 import numpy as np
@@ -26,10 +29,9 @@ from scipy import ndimage
 from scipy.misc import imresize
 from dateutil.parser import parse as dateparse
 
-import cv2
-
 from uuid import uuid4
 import shutil
+
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import math
@@ -45,7 +47,7 @@ Note: currently modified to dump results to csv
 
 async def main(args):
 
-    if len(args) < 2:
+    if len(args) < 1:
         print(
             """path/to/linescan/data/ 2018-05-22 Name-of_experiment "Notes. Notes." """
         )
@@ -120,10 +122,11 @@ class LS_Stats:
 
 
 # date, name = "Unknown", notes = "",
-async def detect_linescan(path, date, name, notes="", *args):
+async def detect_linescan(path, date=None, name=None, notes="", *args):
 
     LS_pixelCal = 7.797271
     LS_timeCal = 4000.
+    LS_minWidth = 100
 
     # set up path related stuff
 
@@ -131,6 +134,14 @@ async def detect_linescan(path, date, name, notes="", *args):
         raise ValueError("Directory {} not found".format(path))
     else:
         path = Path(path)
+
+    if date is None:
+        import datetime
+
+        date = datetime.datetime.today().strftime("%Y-%m-%d")
+
+    if name is None:
+        name = "{}/{}".format(path.parent.stem, path.stem)
 
     experiment_uuid = uuid4()
     print("Experiment", experiment_uuid)
@@ -182,13 +193,17 @@ async def detect_linescan(path, date, name, notes="", *args):
 
         print("Saving representitive images.")
 
+        vis = ls.vis[sy:ey, sx:ex]
+        nir = ls.nir[sy:ey, sx:ex]
         im = ls.im[sy:ey, sx:ex]
         dv = ls.dv[sy:ey, sx:ex]
         mk = ls.mk[sy:ey, sx:ex]
 
-        io.imsave(experiment_dir / "image.jpg", im, "pil")
-        io.imsave(experiment_dir / "divided.jpg", dv, "pil")
-        io.imsave(experiment_dir / "mask.jpg", mk, "pil")
+        io.imsave(experiment_dir / "visual.png", vis, "pil")
+        io.imsave(experiment_dir / "near_ir.png", nir, "pil")
+        io.imsave(experiment_dir / "image.png", im, "pil")
+        io.imsave(experiment_dir / "divided.png", dv, "pil")
+        io.imsave(experiment_dir / "mask.png", mk, "pil")
 
         # Calculate summary statistics (pass 1)
         print("Collecting statistics")
@@ -225,7 +240,7 @@ async def detect_linescan(path, date, name, notes="", *args):
                 bb = p.bbox
                 h, w = bb[2] - bb[0], bb[3] - bb[1]
 
-                if w >= 5.0:
+                if w >= LS_minWidth / LS_pixelCal:
 
                     particle_uuid = uuid4()
                     frame = math.floor(bb[0] / 1000.)
@@ -257,7 +272,7 @@ async def detect_linescan(path, date, name, notes="", *args):
                         experiment_dir
                         / str(frame_uuid["uuid"])
                         / "{}.jpg".format(particle_uuid),
-                        collage_crops(ls, p),
+                        collage_crops5(ls, p),
                         "pil",
                     )
 
@@ -539,7 +554,43 @@ async def detect_linescan(path, date, name, notes="", *args):
         print("All done")
 
 
-def collage_crops(ls, p):
+def collage_crops5(ls, p):
+
+    bb = p.bbox
+    n_sq = 5
+
+    w, h = bb[3] - bb[1], bb[2] - bb[0]
+    crop = np.zeros((64 + h, max(w * 5, 64 * n_sq), 3), dtype="uint8")
+
+    vis = ls.vis[bb[0] : bb[2], bb[1] : bb[3]]
+    vis_r = imresize(vis, size=(64, 64))
+
+    nir = np.dstack([ls.nir[bb[0] : bb[2], bb[1] : bb[3]]] * 3)
+    nir_r = imresize(nir, size=(64, 64))
+
+    im = ls.im[bb[0] : bb[2], bb[1] : bb[3]]
+    im_r = imresize(im, size=(64, 64))
+
+    dv = ls.dv[bb[0] : bb[2], bb[1] : bb[3]]
+    dv_r = imresize(dv, size=(64, 64))
+
+    mk = np.dstack([255 * ls.mk[bb[0] : bb[2], bb[1] : bb[3]]] * 3)
+    mk_r = imresize(mk, size=(64, 64))
+
+    crop[0:64, 0 : (64 * n_sq), :] = np.concatenate(
+        [vis_r, nir_r, im_r, dv_r, mk_r], axis=1
+    )
+
+    crop[64 : (64 + h), (w * 0) : (w * 1), :] = vis
+    crop[64 : (64 + h), (w * 1) : (w * 2), :] = nir
+    crop[64 : (64 + h), (w * 2) : (w * 3), :] = im
+    crop[64 : (64 + h), (w * 3) : (w * 4), :] = dv
+    crop[64 : (64 + h), (w * 4) : (w * 5), :] = mk
+
+    return crop
+
+
+def collage_crops3(ls, p):
 
     bb = p.bbox
     n_sq = 3

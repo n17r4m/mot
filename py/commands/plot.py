@@ -5,11 +5,14 @@ from lib.Database import Database
 from uuid import UUID
 
 from plotly import tools, utils
-from lib.plots.violin2 import violin2
+
+# from lib.plots.violin2 import violin2
 
 
 import plotly.offline as py
+
 import plotly.figure_factory as ff
+
 import plotly.graph_objs as go
 import json
 import numpy as np
@@ -23,6 +26,7 @@ async def main(args):
     if len(args) == 0:
         return "Invalid query"
     else:
+
         return await plot_query(*args)
 
 
@@ -38,53 +42,48 @@ def to_json(figure):
 
 
 async def flow_vs_intensity_data(experiment, intensity=130):
+    old_q = """
+                SELECT AVG(-(t2.location[1] - t1.location[1]) * p.area) as flow
+                FROM Track t1, Track t2, Frame f1, Frame f2, Particle p
+                WHERE intensity < $1
+                AND p.particle = t1.particle AND p.particle = t2.particle
+                AND t1.particle = t2.particle
+                AND t1.frame = f1.frame AND t2.frame = f2.frame
+                AND f1.number = f2.number - 1 
+                AND p.experiment = $2
+                AND f1.experiment = $2 AND f2.experiment = $2
+                GROUP BY p.particle
+                """
+    q1 = """
+        SELECT p.velocity[1] as flow
+        FROM particle p
+        WHERE p.experiment = '{experiment}'
+        AND p.intensity < {intensity}
+        """
+    q2 = """
+        SELECT p.velocity[1] as flow
+        FROM particle p
+        WHERE p.experiment = '{experiment}'
+        AND p.intensity > {intensity}
+        """
     return {
         "Dark": [
             row["flow"] async
             for row in db.query(
-                """
-            SELECT AVG(-(t2.location[1] - t1.location[1]) * p.area) as flow
-            FROM Track t1, Track t2, Frame f1, Frame f2, Particle p
-            WHERE intensity < $1
-            AND p.particle = t1.particle AND p.particle = t2.particle
-            AND t1.particle = t2.particle
-            AND t1.frame = f1.frame AND t2.frame = f2.frame
-            AND f1.number = f2.number - 1 
-            AND p.experiment = $2
-            AND f1.experiment = $2 AND f2.experiment = $2
-            GROUP BY p.particle
-        """,
-                float(intensity),
-                UUID(experiment),
+                q1.format(experiment=experiment, intensity=float(intensity))
             )
         ],
         "Light": [
             row["flow"] async
             for row in db.query(
-                """
-            SELECT AVG(-(t2.location[1] - t1.location[1]) * p.area) as flow
-            FROM Track t1, Track t2, Frame f1, Frame f2, Particle p
-            WHERE intensity > $1
-            AND p.particle = t1.particle AND p.particle = t2.particle
-            AND t1.particle = t2.particle
-            AND t1.frame = f1.frame AND t2.frame = f2.frame
-            AND f1.number = f2.number - 1 
-            AND p.experiment = $2
-            AND f1.experiment = $2 AND f2.experiment = $2
-            GROUP BY p.particle
-        """,
-                float(intensity),
-                UUID(experiment),
+                q2.format(experiment=experiment, intensity=float(intensity))
             )
         ],
     }
 
 
 async def flow_vs_category_data(experiment, category):
-    return [
-        row["flow"] async
-        for row in db.query(
-            """
+    old_q = """
             SELECT AVG(-(t2.location[1] - t1.location[1]) * p.area) as flow
             FROM Track t1, Track t2, Frame f1, Frame f2, Particle p
             WHERE category = $1
@@ -95,11 +94,14 @@ async def flow_vs_category_data(experiment, category):
             AND p.experiment = $2
             AND f1.experiment = $2 AND f2.experiment = $2
             GROUP BY p.particle
-        """,
-            category,
-            UUID(experiment),
-        )
-    ]
+        """
+    q = """
+        SELECT p.velocity[1] as flow
+        FROM particle p
+        WHERE p.experiment = $2
+        AND p.category = $1
+        """
+    return [row["flow"] async for row in db.query(q, category, experiment)]
 
 
 async def particle_size_distribution_data(experiment, category):
@@ -111,6 +113,26 @@ async def particle_size_distribution_data(experiment, category):
             FROM  Particle p
             WHERE category = $1
             AND p.experiment = $2
+        """,
+            category,
+            UUID(experiment),
+        )
+    ]
+
+
+async def particle_counts_over_time_data(experiment, category):
+    return [
+        (row["fnumber"], row["num_particles"]) async
+        for row in db.query(
+            """
+            SELECT f.number as fnumber, count(*) as num_particles
+            FROM  Particle p, track t, frame f
+            WHERE category = $1
+            AND p.experiment = $2
+            AND p.particle = t.particle
+            AND t.frame = f.frame
+            GROUP BY f.number
+            ORDER BY f.number
         """,
             category,
             UUID(experiment),
@@ -236,9 +258,11 @@ class Plots:
         )
 
     async def particle_size_distribution(experiment):
+
         _labels = ["Undefined", "Unknown", "Bitumen", "Sand", "Bubble"]
         _data = []
         for category in range(5):
+            # print(3 + category)
             _data.append(await particle_size_distribution_data(experiment, category))
 
         labels = []
@@ -248,13 +272,40 @@ class Plots:
             if len(d) > 0:
                 labels.append(_labels[i])
                 data.append(d)
+        # print(8)
         data = np.nan_to_num(data)
         fig = ff.create_distplot(data, labels, bin_size=20, show_rug=False)
+        # print(9)
         fig["layout"].update(legend=dict(orientation="h"))
         return fig
 
     async def particle_counts_over_time(experiment):
-        pass
+        _labels = ["Undefined", "Unknown", "Bitumen", "Sand", "Bubble"]
+        _data = []
+        for category in range(5):
+            # print(3 + category)
+            _data.append(await particle_counts_over_time_data(experiment, category))
+
+        labels = []
+        data = []
+
+        for i, d in enumerate(_data):
+            if len(d) > 0:
+                labels.append(_labels[i])
+                x, y = list(zip(*d))
+                data.append(go.Scatter(x=x, y=y, name="# " + _labels[i]))
+
+        # print(data)
+        # fig = ff.create_table("Dummy")
+        fig_data = go.Data(data)
+        fig_layout = dict(
+            title="Particle Counts Over Time",
+            xaxis=dict(title="Frame Number"),
+            yaxis=dict(title="# Particles Observed"),
+        )
+        fig = dict(data=fig_data, layout=fig_layout)
+
+        return fig
 
     async def compare_flow_vs_category_violin2(*experiments):
         # print("experiments", experiments)
@@ -293,5 +344,39 @@ class Plots:
                 data.append(d)
         fig = ff.create_distplot(data, labels, bin_size=20, show_rug=False)
 
+        fig["layout"].update(legend=dict(orientation="h"))
+        return fig
+
+    async def compare_particle_counts_over_time(*experiments):
+        # print("experiments", experiments)
+
+        # Todo: all categories; undefined for now
+        category = 0
+        _data = [
+            await particle_counts_over_time_data(experiment, category)
+            for experiment in experiments
+        ]
+        _labels = [
+            await lookup_experiment_name(experiment) for experiment in experiments
+        ]
+
+        labels = []
+        data = []
+
+        for i, d in enumerate(_data):
+            if len(d) > 0:
+                labels.append(_labels[i])
+                x, y = list(zip(*d))
+                data.append(go.Scatter(x=x, y=y, name=_labels[i]))
+
+        # print(data)
+        # fig = ff.create_table("Dummy")
+        fig_data = go.Data(data)
+        fig_layout = dict(
+            title="Particle Counts Over Time",
+            xaxis=dict(title="Frame Number"),
+            yaxis=dict(title="# Particles Observed"),
+        )
+        fig = dict(data=fig_data, layout=fig_layout)
         fig["layout"].update(legend=dict(orientation="h"))
         return fig

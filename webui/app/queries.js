@@ -59,12 +59,18 @@ export const Queries = {
             type: "analyse",
             label: "Particle Size Distribution"
         },
-        
+        particle_counts_over_time: {
+            type: "analyse",
+            label: "Particle Counts Over Time"
+        },
         compare_particle_size_distribution: {
             type: "compare",
             label: "Compare PSD"
         },
-        
+        compare_particle_counts_over_time: {
+            type: "compare",
+            label: "Compare Particle Counts Over Time"
+        },
         compare_flow_vs_category_violin2: {
             type: "_compare",
             label: "Compare Flow"
@@ -119,6 +125,10 @@ var isolateParticleMaps = {
     violin2: function(p){ return {
         value: p.y,
         category: Math.floor(p.curveNumber/10) 
+    }},
+    time: function(p){ return {
+        value: p.x,
+        category: p.curveNumber
     }}
 }
 

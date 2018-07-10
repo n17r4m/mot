@@ -3,6 +3,7 @@
 import numpy as np
 from pathlib import Path
 from PIL import Image
+import pyvips
 
 from skimage import data, io, filters
 from scipy.ndimage.morphology import (
@@ -35,7 +36,15 @@ import os
 
 
 import tensorflow as tf
-import cv2
+
+
+from matplotlib import pyplot as plt
+
+
+class Datagram(Data):
+
+    def tmp_dir(self):
+        return "/tmp/mot/"
 
 
 class LinescanSegment(Data):
@@ -44,8 +53,25 @@ class LinescanSegment(Data):
 
 class LoadLinescanSegment(F):
 
+    def format_to_dtype(self, img_format):
+
+        return {
+            "uchar": np.uint8,
+            "char": np.int8,
+            "ushort": np.uint16,
+            "short": np.int16,
+            "uint": np.uint32,
+            "int": np.int32,
+            "float": np.float32,
+            "double": np.float64,
+            "complex": np.complex64,
+            "dpcomplex": np.complex128,
+        }[img_format]
+
     def setup(self, crop=48, debug=False, env=None, device="/gpu:0"):
         self.crop = crop
+        self.width = 4000
+        self.height = 1000
         self.debug = debug
         self.device = device
         print("Linescan loader running on GPU", os.environ["CUDA_VISIBLE_DEVICES"])
@@ -57,20 +83,51 @@ class LoadLinescanSegment(F):
 
         with tf.device(self.device):
 
+            _vis = pyvips.Image.new_from_file(
+                str(filename_pair[0]), access="sequential"
+            ).crop(self.crop, 0, self.width, self.height)
+            vis = (
+                np.ndarray(
+                    buffer=_vis.write_to_memory(),
+                    dtype=self.format_to_dtype(_vis.format),
+                    shape=[_vis.height, _vis.width, _vis.bands],
+                ).astype("float64")
+                / 255.0
+            )
+
+            _nir = (
+                pyvips.Image.new_from_file(str(filename_pair[0]), access="sequential")
+                .extract_band(0)
+                .crop(self.crop, 0, self.width, self.height)
+            )
+            nir = (
+                np.ndarray(
+                    buffer=_nir.write_to_memory(),
+                    dtype=self.format_to_dtype(_nir.format),
+                    shape=[_nir.height, _nir.width, _nir.bands],
+                ).astype("float64")
+                / 255.0
+            ).squeeze()
+
+            # todo : add noise to reduce quatization artifacts (+/- 1/255)
+            # todo : compare tensorflow performance to libvips for image ops
+
+            """
             vis = np.array(Image.open(filename_pair[0]), dtype="float64")[
                 :, self.crop : -self.crop, :
             ]
             nir = np.array(Image.open(filename_pair[1]), dtype="float64")[
                 :, self.crop : -self.crop, np.newaxis
             ][:, :, 0]
+            """
 
-            #               Red, Green,                           Blue
+            print("vis", np.min(vis), np.max(vis))
+            print("nir", np.min(nir), np.max(nir))
+
             im = tf.stack(
                 [nir, tf.divide(tf.add(vis[:, :, 0], vis[:, :, 1]), 2.0), vis[:, :, 2]],
                 axis=2,
             )
-
-            im = tf.divide(im, 255.0)
 
             bg = tf.expand_dims(tf.reduce_mean(im, axis=0), 0)
 
@@ -97,7 +154,7 @@ class LoadLinescanSegment(F):
             mk = tf.square(tf.divide(tf.reduce_sum(dv, axis=2), 3.0))
 
             # first (coarse) threshold
-            th = 0.15  # threshold_yen(mk.numpy())
+            th = 0.1  # threshold_yen(mk.numpy())
             mk = tf.tile(tf.expand_dims(tf.greater(mk, th), -1), [1, 1, 3])
             mk = binary_dilation(mk, iterations=3)
 
@@ -123,27 +180,26 @@ class LoadLinescanSegment(F):
 
             # second (fine) threshold
             mk = tf.square(tf.divide(tf.reduce_sum(dv, axis=2), 3.0))
-            th = 0.15  # threshold_yen(mk.numpy())
+            th = 0.05  # threshold_yen(mk.numpy())
             mk = tf.greater(mk, th)
 
             # mk = binary_opening(binary_closing(mk.numpy()))
 
             # normalize for uint8 RGB
 
+            vis = tf.multiply(vis, 255.0)
+            nir = tf.multiply(nir, 255.0)
             im = tf.multiply(im, 255.0)
             dv = tf.multiply(dv, 255.0)
 
             lss = LinescanSegment()
+            lss.save("vis", vis.numpy().astype("uint8"))
+            lss.save("nir", nir.numpy().astype("uint8"))
             lss.save("im", im.numpy().astype("uint8"))
             lss.save("dv", dv.numpy().astype("uint8"))
             lss.save("mk", mk)
 
             self.put((lss, th))
-
-            # cv2.imshow("im", im.numpy())
-            # cv2.imshow("dv", dv.numpy())
-            # cv2.imshow("mk", mk.astype("float64"))
-            # cv2.waitKey(1)
 
 
 def masked_mean(T, m):
@@ -183,6 +239,8 @@ class Linescan2:
 
         paired = list(zip(vis_files, nir_files))
 
+        self.vis = []
+        self.nir = []
         self.im = []
         self.dv = []
         self.mk = []
@@ -194,103 +252,24 @@ class Linescan2:
         for segment in EZ(
             Iter(paired),
             Seq(
-                (
-                    # GPU
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "0"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "1"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "2"}
-                    ),
-                    LoadLinescanSegment(
-                        self.crop, self.debug, env={"CUDA_VISIBLE_DEVICES": "3"}
-                    ),
-                    # # CPU
-                    # LoadLinescanSegment(
-                    #     self.crop,
-                    #     self.debug,
-                    #     env={"CUDA_VISIBLE_DEVICES": ""},
-                    #     device="/cpu:0",
-                    # ),
-                    # LoadLinescanSegment(
-                    #     self.crop,
-                    #     self.debug,
-                    #     env={"CUDA_VISIBLE_DEVICES": ""},
-                    #     device="/cpu:0",
-                    # ),
+                tuple(
+                    (
+                        LoadLinescanSegment(
+                            self.crop,
+                            self.debug,
+                            env={"CUDA_VISIBLE_DEVICES": str(1 + (i % 3))},
+                        )
+                        for i in range(20)
+                    )
                 ),
                 Stamp(),
             ),
         ).items():
 
-            if self.debug:
-                cv2.imshow("im", segment[0])
-                cv2.imshow("dv", segment[1])
-                cv2.waitKey(1)
+            # todo: imshow on debug
 
+            self.vis.append(segment[0].load("vis"))
+            self.nir.append(segment[0].load("nir"))
             self.im.append(segment[0].load("im"))
             self.dv.append(segment[0].load("dv"))
             self.mk.append(segment[0].load("mk"))
@@ -300,6 +279,8 @@ class Linescan2:
         print("loaded in", time.time() - start, "seconds")
         start = time.time()
 
+        self.vis = np.concatenate(self.vis)
+        self.nir = np.concatenate(self.nir)
         self.im = np.concatenate(self.im)
         self.dv = np.concatenate(self.dv)
         self.mk = np.concatenate(self.mk)
@@ -322,6 +303,7 @@ class Linescan2:
         print("total time", time.time() - very_start)
 
 
+"""
 class Linescan:
     # powered by numpy
     NIR_GLOB = "LS.NIR*.tif"
@@ -366,11 +348,11 @@ class Linescan:
                 :, crop:-crop, np.newaxis
             ][:, :, 0]
 
-            """
-            print("R pre", np.min(vis[:,:,0]), np.max(vis[:,:,0]))
-            print("G pre", np.min(vis[:,:,1]), np.max(vis[:,:,1]))
-            print("B pre", np.min(vis[:,:,2]), np.max(vis[:,:,2]))    
-            """
+            
+            # print("R pre", np.min(vis[:,:,0]), np.max(vis[:,:,0]))
+            # print("G pre", np.min(vis[:,:,1]), np.max(vis[:,:,1]))
+            # print("B pre", np.min(vis[:,:,2]), np.max(vis[:,:,2]))    
+            
 
             im = vis.copy()
             # visible light RGB gets compressed into to green/blue space
@@ -535,13 +517,13 @@ class Linescan:
         print("concat took", time.time() - start, "seconds")
 
         start = time.time()
-        """
-        self.mk2 = np.array(
-            binary_dilation(
-            binary_erosion(    self.mk2, iterations=5), 
-                                         iterations=5)
-            , dtype='bool')
-        """
+        
+        # self.mk2 = np.array(
+        #     binary_dilation(
+        #     binary_erosion(    self.mk2, iterations=5), 
+        #                                  iterations=5)
+        #     , dtype='bool')
+        
         # self.mk2 = self.mk2.astype('bool')
         self.mk2 = binary_erosion(opening(self.mk2))
 
@@ -566,6 +548,9 @@ def equalize(f):
     H = np.cumsum(h) / float(np.sum(h))
     e = np.floor(H[f.flatten().astype("int")] * 255.).astype("uint8")
     return e.reshape(f.shape)
+
+
+"""
 
 
 # NumPy / SciPy Recipes for Image Processing: Intensity Normalization and Histogram Equalization (PDF Download Available). Available from: https://www.researchgate.net/publication/281118372_NumPy_SciPy_Recipes_for_Image_Processing_Intensity_Normalization_and_Histogram_Equalization [accessed Mar 02 2018].
